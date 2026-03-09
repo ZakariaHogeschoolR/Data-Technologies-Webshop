@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "C6hEoU8YK4M=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Public\\Data-Technologies-Webshop\\backend\\WebshopApi\\webshopApi.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\zahar\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.5\\microsoft.aspnetcore.openapi.9.0.5.nupkg.sha512",
+    "C:\\Users\\zahar\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
