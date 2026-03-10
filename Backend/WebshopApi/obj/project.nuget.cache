@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7zjyMg2+UA4=",
+  "dgSpecHash": "j6LD1tKPASM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Public\\Data-Technologies-Webshop\\backend\\WebshopApi\\WebshopApi.csproj",
+  "projectFilePath": "C:\\Users\\Public\\Data-Technologies-Webshop\\Backend\\WebshopApi\\WebshopApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\zahar\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.5\\microsoft.aspnetcore.openapi.9.0.5.nupkg.sha512",
     "C:\\Users\\zahar\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.0\\microsoft.extensions.dependencyinjection.abstractions.9.0.0.nupkg.sha512",
