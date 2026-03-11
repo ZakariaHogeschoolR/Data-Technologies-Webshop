@@ -1,4 +1,5 @@
 using System.Data;
+using System.Threading.Tasks;
 using Npgsql;
 
 namespace ApplicationDbContext
@@ -11,12 +12,17 @@ namespace ApplicationDbContext
             _connectionString = connectionString;
         }
 
-        public NpgsqlConnection GetConnection()
+        public async Task<NpgsqlConnection> GetConnection()
         {
             var conn = new NpgsqlConnection(_connectionString);
-            conn.Open();
+            await conn.OpenAsync();
             return conn;
 
+        }
+
+        public async Task TestConnectionAsync()
+        {
+            using var connection = await GetConnection();
         }
     }
 }
