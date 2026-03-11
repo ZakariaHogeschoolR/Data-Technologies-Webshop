@@ -19,28 +19,28 @@ public class UserController: ControllerBase
         return Ok(users);
     }
 
-    [HttpGet("/id")]
+    [HttpGet("id")]
     public async Task<ActionResult<Users>> GetAllUsersById(int id)
     {
         var user = _userService.GetByIdService(id);
         return Ok(user);
     }
 
-    [HttpPost("/create")]
+    [HttpPost("create")]
     public async Task<ActionResult> CreateUser(Users user)
     {
         _userService.CreateService(user);
         return Ok();
     }
 
-    [HttpPost("/Update")]
+    [HttpPost("Update")]
     public async Task<ActionResult> UpdateUser(Users user)
     {
         _userService.UpdateService(user);
         return Ok();
     }
 
-    [HttpDelete("/Delete")]
+    [HttpDelete("Delete")]
     public async Task<ActionResult> DeleteUser(Users user)
     {
         _userService.DeleteService(user.Id);

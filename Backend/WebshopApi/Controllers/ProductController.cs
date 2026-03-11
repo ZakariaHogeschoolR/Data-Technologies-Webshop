@@ -19,29 +19,29 @@ public class ProductController: ControllerBase
         return Ok(products);
     }
 
-    [HttpGet("/id")]
-    public async Task<ActionResult<Products>> GetAllUsersById(int id)
+    [HttpGet("id")]
+    public async Task<ActionResult<Products>> GetAllProductsById(int id)
     {
         var product = _productService.GetByIdService(id);
         return Ok(product);
     }
 
-    [HttpPost("/create")]
+    [HttpPost("create")]
     public async Task<ActionResult> CreateProduct(Products product)
     {
         _productService.CreateService(product);
         return Ok();
     }
 
-    [HttpPost("/Update")]
+    [HttpPost("Update")]
     public async Task<ActionResult> UpdateProduct(Products product)
     {
         _productService.UpdateService(product);
         return Ok();
     }
 
-    [HttpDelete("/Delete")]
-    public async Task<ActionResult> DeleteUser(Products product)
+    [HttpDelete("Delete")]
+    public async Task<ActionResult> DeleteProduct(Products product)
     {
         _productService.DeleteService(product.Id);
         return Ok();
