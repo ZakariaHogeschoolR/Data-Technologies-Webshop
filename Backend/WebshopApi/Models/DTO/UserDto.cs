@@ -1,10 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
-using System.Net.Sockets;
-using Scalar.AspNetCore;
-namespace models
+namespace DataTransferObject
 {
-    public class Users
+    public class UserDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

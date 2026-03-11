@@ -1,5 +1,6 @@
 using ApplicationDbContext;
 using Scalar.AspNetCore;
+using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddSingleton(new DatabaseConnectie(connectionString));
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddOpenApi();
 
