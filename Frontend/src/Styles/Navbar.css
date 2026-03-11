@@ -1,0 +1,8 @@
+.Navbar{
+    position: fixed;
+    background-color: var(--beige);
+    width: 100%;
+    min-height: 80px;
+    left: 0;
+    right: 0;
+}

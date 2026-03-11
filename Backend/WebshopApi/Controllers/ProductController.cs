@@ -16,14 +16,14 @@ public class ProductController: ControllerBase
     [HttpGet()]
     public async Task<ActionResult<List<Products>>> GetAllProducts()
     {
-        var products = _productService.GetAllService();
+        var products = await _productService.GetAllService();
         return Ok(products);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Products>> GetAllProductsById(int id)
     {
-        var product = _productService.GetByIdService(id);
+        var product = await _productService.GetByIdService(id);
         return Ok(product);
     }
 

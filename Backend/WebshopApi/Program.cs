@@ -12,11 +12,23 @@ builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<UserService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
