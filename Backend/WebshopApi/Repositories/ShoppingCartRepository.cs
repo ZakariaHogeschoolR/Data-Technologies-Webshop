@@ -1,4 +1,5 @@
 using ApplicationDbContext;
+using models;
 
 public class ShoppingCartRepository
 {
