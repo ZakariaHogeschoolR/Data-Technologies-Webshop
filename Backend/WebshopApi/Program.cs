@@ -24,4 +24,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
+{
+    try
+    {
+        await dbService.TestConnectionAsync();
+        return Results.Ok(new { status = "Database verbinding succesvol!" });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Database fout: {ex.Message}");
+    }
+});
+
 app.Run();

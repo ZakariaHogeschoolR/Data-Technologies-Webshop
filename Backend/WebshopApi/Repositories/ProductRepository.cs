@@ -18,7 +18,7 @@ public class ProductRepository
     public async Task<List<Products?>> GetAllProducts()
     {
         var products = new List<Products>();
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
         var sql = "SELECT * FROM products";
 
         using var cmd = new NpgsqlCommand(sql, conn);
@@ -39,7 +39,7 @@ public class ProductRepository
 
     public async Task<Products?> GetProductById(int id)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "SELECT * FROM products WHERE id = @id";
 
@@ -63,7 +63,7 @@ public class ProductRepository
 
     public async void AddProduct(Products product)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "INSERT INTO products (name, description) VALUES (@name, @description)";
 
@@ -75,7 +75,7 @@ public class ProductRepository
 
     public async void UpdateProduct(Products product)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "UPDATE products SET name = @name, description = @description WHERE id = @id";
 
@@ -88,7 +88,7 @@ public class ProductRepository
 
     public async void DeleteProduct(int id)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "DELETE FROM products WHERE id = @id";
 

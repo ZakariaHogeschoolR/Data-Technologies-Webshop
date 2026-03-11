@@ -18,7 +18,7 @@ public class UserRepository
     public async Task<List<Users?>> GetAllUsers()
     {
         var users = new List<Users>();
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
         var sql = "SELECT * FROM users";
 
         using var cmd = new NpgsqlCommand(sql, conn);
@@ -39,7 +39,7 @@ public class UserRepository
 
     public async Task<Users?> GetUserById(int id)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "SELECT * FROM users WHERE id = @id";
 
@@ -63,7 +63,7 @@ public class UserRepository
 
     public async void AddUser(Users user)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "INSERT INTO users (name, email) VALUES (@name, @email)";
 
@@ -75,7 +75,7 @@ public class UserRepository
 
     public async void UpdateUser(Users user)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "UPDATE users SET name = @name, email = @email WHERE id = @id";
 
@@ -88,7 +88,7 @@ public class UserRepository
 
     public async void DeleteUser(int id)
     {
-        using var conn = _dbConnectie.GetConnection();
+        using var conn = await _dbConnectie.GetConnection();
 
         var sql = "DELETE FROM users WHERE id = @id";
 
