@@ -8,13 +8,21 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+Debug
 dist
 dist-ssr
 *.local
 
 # Editor directories and files
 .vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
 !.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/*.code-snippets
+!*.code-workspace
+# Built Visual Studio Code Extensions
+*.vsix
 .idea
 .DS_Store
 *.suo
