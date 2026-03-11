@@ -1,10 +1,10 @@
-public class Wishlist
+public class Wishlists
 {
     public int Id{get;set;}
     public string Name{get;set;}
-    public List<Product> Products;
+    public List<Products> Products;
     // public int Total{get;set;}
-    public Wishlist(){}
+    public Wishlists(){}
     public DateOnly CreatedAt{get;set;}
     public DateOnly UpdatedAt{get;set;}
 }
