@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useFetch } from "../CustomHooks/GetFetchHook";
 import '../../src/Styles/Product.css';
+import { Link } from "react-router-dom";
+
 
 type product =
 {
@@ -34,11 +36,13 @@ const Products = () => {
             </div>
             <div className="Products-Container">
                 {getProducts.map(prod => (
-                    <div className="Product-content">
-                        <p>{prod.name}</p>
-                        <p>{prod.description}</p>
-                        <p>{prod.price}</p>
-                    </div>
+                    <Link to={`products/${prod.id}`} className="link">
+                        <div className="Product-content">
+                            <p>{prod.name}</p>
+                            <p>{prod.description}</p>
+                            <p>{prod.price}</p>
+                        </div>
+                    </Link>
                 ))}
             </div>
             <section className="product-content-border-line"></section>

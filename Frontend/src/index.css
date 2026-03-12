@@ -21,4 +21,5 @@ body{
   overflow-y: auto;
   overflow-x: hidden;
   font-family: "Alfa Slab One", serif;
+  text-decoration: none;
 }

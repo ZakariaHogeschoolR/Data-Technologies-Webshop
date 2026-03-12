@@ -104,3 +104,8 @@
     background-color: var(--white);
     z-index: 99;
 }
+
+.link{
+    text-decoration: none;
+    color: black;
+}
