@@ -104,5 +104,4 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
     }
-    
 }

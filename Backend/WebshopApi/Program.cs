@@ -35,6 +35,7 @@ var app = builder.Build();
 
 app.UseCors("AllowAll");
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -56,12 +57,12 @@ app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
     {
         return Results.Problem($"Database fout: {ex.Message}");
     }
-});
+}).WithOpenApi(); 
 
 app.MapPost("/scrape", async (ScraperService scraperService) =>
 {
     await scraperService.ImportFromApiAsync();
     return Results.Ok(new { status = "Database gevuld!" });
-});
+}).WithOpenApi(); 
 
 app.Run();
