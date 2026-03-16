@@ -10,6 +10,8 @@ builder.Services.AddSingleton(new DatabaseConnectie(connectionString));
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<ShoppingCartRepository>();
+builder.Services.AddScoped<WishlistRepository>();
+builder.Services.AddScoped<WishlistService>();
 builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<UserService>();
