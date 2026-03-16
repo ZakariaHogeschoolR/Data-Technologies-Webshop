@@ -26,4 +26,6 @@ jobs:
 
       - name: Restore Dependencies
         run: dotnet Restore
-        
+      
+      - name: Build
+        run: dotnet build --no-restore
