@@ -1,15 +1,3 @@
 name: CI Pipeline
-
-  on: [push]
-    branches: [ CIPipeline ]
-    
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-    
-    steps:
-      - name: checkout repo
-        uses: actions/checkout@v4
-      
-      - name: Print hello
-        run: echo "Hello World"
+on: [push]
+  branches: [CIPipeline]
