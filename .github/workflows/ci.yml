@@ -28,4 +28,4 @@ jobs:
         run: dotnet Restore
       
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build Data-Technologies-Webshop.sln --no-restore
