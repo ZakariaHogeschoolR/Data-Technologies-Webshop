@@ -23,6 +23,9 @@ jobs:
           key: nuget-${{ hashFiles('**/*.csproj')}}
           restore-keys: |
             nuget-${{ runner.os }}
+      
+      - name: check for vulnerable packages
+        run: dotnet list Backend/WebshopApi/WebshopApi.csproj package --vulnerable
 
       - name: Restore Dependencies
         run: dotnet restore Backend/WebshopApi/WebshopApi.csproj
@@ -30,3 +33,4 @@ jobs:
       - name: Build
         working-directory: Backend/WebshopApi
         run: dotnet build WebshopApi.csproj --no-restore
+      
