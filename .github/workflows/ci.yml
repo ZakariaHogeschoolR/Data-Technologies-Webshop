@@ -28,5 +28,5 @@ jobs:
         run: dotnet Restore
       
       - name: Build
-        # working-directory: Backend\WebshopApi
-        run: dotnet build --no-restore
+        working-directory: Backend\WebshopApi
+        run: dotnet build WebshopApi.csproj --no-restore
