@@ -19,3 +19,10 @@ jobs:
       - name: Restore Dependencies
         run: dotnet Restore
         
+      - name: Cache NuGet Packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ hashFiles('**/*.csproj')}}
+          restore-keys: |
+            nuget-
