@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using models;
+using DataTransferObject;
 
 namespace Service
 {
@@ -24,12 +25,12 @@ namespace Service
             return await user;
         }
 
-        public void CreateService(Users user)
+        public void CreateService(UserDto user)
         {
             _userRepository.AddUser(user);
         }
 
-        public void UpdateService(Users user)
+        public void UpdateService(UserDto user)
         {
             _userRepository.UpdateUser(user);
         }

@@ -5,6 +5,7 @@ using System.Data.SqlTypes;
 using System.Data.Common;
 using System.Reflection.Metadata;
 using ApplicationDbContext;
+using DataTransferObject;
 
 public class UserRepository
 {
@@ -29,8 +30,13 @@ public class UserRepository
             users.Add( new Users
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                Name = reader.GetString(reader.GetOrdinal("name")),
-                Email = reader.GetString(reader.GetOrdinal("email"))
+                FirstName = reader.GetString(reader.GetOrdinal("first_name")),
+                LastName = reader.GetString(reader.GetOrdinal("last_name")),
+                Username = reader.GetString(reader.GetOrdinal("username")),
+                Email = reader.GetString(reader.GetOrdinal("email")),
+                Password = reader.GetString(reader.GetOrdinal("password")),
+                Address = reader.GetString(reader.GetOrdinal("address")),
+                PostCode = reader.GetString(reader.GetOrdinal("post_code")),
             });
         }
 
@@ -53,36 +59,50 @@ public class UserRepository
             return new Users
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                Name = reader.GetString(reader.GetOrdinal("name")),
-                Email = reader.GetString(reader.GetOrdinal("email"))
+                FirstName = reader.GetString(reader.GetOrdinal("first_name")),
+                LastName = reader.GetString(reader.GetOrdinal("last_name")),
+                Username = reader.GetString(reader.GetOrdinal("username")),
+                Email = reader.GetString(reader.GetOrdinal("email")),
+                Password = reader.GetString(reader.GetOrdinal("password")),
+                Address = reader.GetString(reader.GetOrdinal("address")),
+                PostCode = reader.GetString(reader.GetOrdinal("post_code")),
             };
         }
 
         return null;
     }
 
-    public async void AddUser(Users user)
+    public async void AddUser(UserDto user)
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "INSERT INTO users (name, email) VALUES (@name, @email)";
+        var sql = "INSERT INTO users (first_name, last_name, username, email, password, address, post_code) VALUES (@firstName, @lastName, @username, @email, @password, @address, @postcode)";
 
         using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@name", user.Name);
+        cmd.Parameters.AddWithValue("@firstName", user.FirstName);
+        cmd.Parameters.AddWithValue("@lastName", user.LastName);
+        cmd.Parameters.AddWithValue("@username", user.Username);
         cmd.Parameters.AddWithValue("@email", user.Email);
+        cmd.Parameters.AddWithValue("@password", user.Password);
+        cmd.Parameters.AddWithValue("@address", user.Address);
+        cmd.Parameters.AddWithValue("@postcode", user.PostCode);
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async void UpdateUser(Users user)
+    public async void UpdateUser(UserDto user)
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "UPDATE users SET name = @name, email = @email WHERE id = @id";
+        var sql = "UPDATE users SET first_name = @firstName, last_name = lastName, username = @username, email = @email, password = @password, address = @address, postcode = @postcode WHERE id = @id";
 
         using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@id", user.Id);
-        cmd.Parameters.AddWithValue("@name", user.Name);
+        cmd.Parameters.AddWithValue("@firstName", user.FirstName);
+        cmd.Parameters.AddWithValue("@lastName", user.LastName);
+        cmd.Parameters.AddWithValue("@username", user.Username);
         cmd.Parameters.AddWithValue("@email", user.Email);
+        cmd.Parameters.AddWithValue("@password", user.Password);
+        cmd.Parameters.AddWithValue("@address", user.Address);
+        cmd.Parameters.AddWithValue("@postcode", user.PostCode);
         await cmd.ExecuteNonQueryAsync();
     }
 

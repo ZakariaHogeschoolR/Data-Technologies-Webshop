@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using models;
 using Service;
+using DataTransferObject;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -19,31 +20,31 @@ public class UserController: ControllerBase
         return Ok(users);
     }
 
-    [HttpGet("/id")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<Users>> GetAllUsersById(int id)
     {
         var user = _userService.GetByIdService(id);
         return Ok(user);
     }
 
-    [HttpPost("/create")]
-    public async Task<ActionResult> CreateUser(Users user)
+    [HttpPost("create")]
+    public async Task<ActionResult> CreateUser(UserDto user)
     {
         _userService.CreateService(user);
         return Ok();
     }
 
-    [HttpPost("/Update")]
-    public async Task<ActionResult> UpdateUser(Users user)
+    [HttpPost("Update")]
+    public async Task<ActionResult> UpdateUser(UserDto user)
     {
         _userService.UpdateService(user);
         return Ok();
     }
 
-    [HttpDelete("/Delete")]
-    public async Task<ActionResult> DeleteUser(Users user)
+    [HttpDelete("Delete/{id}")]
+    public async Task<ActionResult> DeleteUser(int id)
     {
-        _userService.DeleteService(user.Id);
+        _userService.DeleteService(id);
         return Ok();
     }
 }
