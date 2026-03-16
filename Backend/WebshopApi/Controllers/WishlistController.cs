@@ -39,6 +39,7 @@ public class WishlistController : ControllerBase
         _wishlistservice.UpdateService(wishlistDTO);
         return Ok();
     }
+    [HttpDelete()]
     public async Task<ActionResult> DeleteWishlist(int id)
     {
         _wishlistservice.DeleteService(id);
