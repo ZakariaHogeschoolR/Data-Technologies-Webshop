@@ -30,17 +30,21 @@ const Products = () => {
             <section className="recent-border-line"></section>
             <div className="Products-Container-recent">
                 {getProducts.map(prod => (
-                    <div className="Product-content-recent">
-                    </div>
+                    <Link to={`products/${prod.id}`} className="link">
+                        <div className="Product-content-recent">
+                            <img src={prod.productImage} className="recent-ProductImage"/>
+                        </div>
+                    </Link>
                 ))}
             </div>
             <div className="Products-Container">
                 {getProducts.map(prod => (
                     <Link to={`products/${prod.id}`} className="link">
                         <div className="Product-content">
-                            <p>{prod.name}</p>
-                            <p>{prod.description}</p>
-                            <p>{prod.price}</p>
+                            <img src={prod.productImage} className="products-ProductImage"/>
+                            <p className="products-Name">{prod.name}</p>
+                            {/* <p className="products-Description">{prod.description}</p> */}
+                            <p className="products-Price-p-tag">{prod.price}</p>
                         </div>
                     </Link>
                 ))}

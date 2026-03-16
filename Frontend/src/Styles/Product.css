@@ -8,6 +8,7 @@
     flex-wrap: nowrap;
     gap: 80px;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .Products-Container::--webkit-scrollbar{
@@ -108,4 +109,31 @@
 .link{
     text-decoration: none;
     color: black;
+}
+
+.recent-ProductImage{
+    width: 270px;
+    height: 240px;
+}
+
+.products-ProductImage{
+    margin-left: 85px;
+    width: 200px;
+    height: 200px;
+}
+
+.products-Name{
+    margin-top: 50px;
+    margin-left: 0px;
+    color: var(--mint);
+}
+
+.products-Description{
+
+}
+
+.products-Price-p-tag{
+    margin-top: -200px;
+    margin-left: 320px;
+    color: var(--mint);
 }

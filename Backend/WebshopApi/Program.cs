@@ -11,6 +11,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ScraperService>();
 
 builder.Services.AddCors(options =>
 {
@@ -51,6 +52,12 @@ app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
     {
         return Results.Problem($"Database fout: {ex.Message}");
     }
+});
+
+app.MapPost("/scrape", async (ScraperService scraperService) =>
+{
+    await scraperService.ImportFromApiAsync();
+    return Results.Ok(new { status = "Database gevuld!" });
 });
 
 app.Run();
