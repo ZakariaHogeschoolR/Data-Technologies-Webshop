@@ -1,41 +1,68 @@
+using ApplicationDbContext;
+using Scalar.AspNetCore;
+using Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddSingleton(new DatabaseConnectie(connectionString));
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<ShoppingCartRepository>();
+builder.Services.AddScoped<WishlistRepository>();
+builder.Services.AddScoped<WishlistService>();
+builder.Services.AddScoped<ShoppingCartService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ScraperService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddOpenApi();
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
+
+app.UseCors("AllowAll");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapControllers();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    try
+    {
+        await dbService.TestConnectionAsync();
+        return Results.Ok(new { status = "Database verbinding succesvol!" });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Database fout: {ex.Message}");
+    }
+}).WithOpenApi(); 
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/scrape", async (ScraperService scraperService) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    await scraperService.ImportFromApiAsync();
+    return Results.Ok(new { status = "Database gevuld!" });
+}).WithOpenApi(); 
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
