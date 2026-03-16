@@ -66,7 +66,7 @@ public class ProductRepository
         return null;
     }
 
-    public async void AddProduct(ProductDto product)
+    public async Task AddProduct(ProductDto product)
     {
         using var conn = await _dbConnectie.GetConnection();
 
@@ -80,7 +80,7 @@ public class ProductRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async void UpdateProduct(ProductDto product)
+    public async Task UpdateProduct(ProductDto product)
     {
         using var conn = await _dbConnectie.GetConnection();
 
@@ -94,7 +94,7 @@ public class ProductRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async void DeleteProduct(int id)
+    public async Task DeleteProduct(int id)
     {
         using var conn = await _dbConnectie.GetConnection();
 

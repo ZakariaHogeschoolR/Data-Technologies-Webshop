@@ -13,12 +13,25 @@ builder.Services.AddScoped<ShoppingCartRepository>();
 builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ScraperService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -41,6 +54,12 @@ app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
     {
         return Results.Problem($"Database fout: {ex.Message}");
     }
+});
+
+app.MapPost("/scrape", async (ScraperService scraperService) =>
+{
+    await scraperService.ImportFromApiAsync();
+    return Results.Ok(new { status = "Database gevuld!" });
 });
 
 app.Run();

@@ -16,14 +16,14 @@ public class UserController: ControllerBase
     [HttpGet()]
     public async Task<ActionResult<List<Users>>> GetAllUsers()
     {
-        var users = _userService.GetAllService();
+        var users = await _userService.GetAllService();
         return Ok(users);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Users>> GetAllUsersById(int id)
     {
-        var user = _userService.GetByIdService(id);
+        var user = await _userService.GetByIdService(id);
         return Ok(user);
     }
 

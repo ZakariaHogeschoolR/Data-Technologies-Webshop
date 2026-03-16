@@ -72,7 +72,7 @@ public class UserRepository
         return null;
     }
 
-    public async void AddUser(UserDto user)
+    public async Task AddUser(UserDto user)
     {
         using var conn = await _dbConnectie.GetConnection();
 
@@ -89,7 +89,7 @@ public class UserRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async void UpdateUser(UserDto user)
+    public async Task UpdateUser(UserDto user)
     {
         using var conn = await _dbConnectie.GetConnection();
 
@@ -106,7 +106,7 @@ public class UserRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async void DeleteUser(int id)
+    public async Task DeleteUser(int id)
     {
         using var conn = await _dbConnectie.GetConnection();
 
