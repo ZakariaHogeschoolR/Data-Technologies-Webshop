@@ -24,9 +24,6 @@ jobs:
           restore-keys: |
             nuget-${{ runner.os }}
       
-      - name: check for vulnerable packages
-        run: dotnet list Backend/WebshopApi/WebshopApi.csproj package --vulnerable
-
       - name: Restore Dependencies
         run: dotnet restore Backend/WebshopApi/WebshopApi.csproj
       
@@ -34,3 +31,23 @@ jobs:
         working-directory: Backend/WebshopApi
         run: dotnet build WebshopApi.csproj --no-restore
       
+      - name: check for vulnerable packages
+        run: dotnet list Backend/WebshopApi/WebshopApi.csproj package --vulnerable
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQl
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+      
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQl analysis
+        uses: github/codeql-action/analyze@v3
