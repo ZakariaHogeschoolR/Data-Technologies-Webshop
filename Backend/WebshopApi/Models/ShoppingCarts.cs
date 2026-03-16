@@ -20,10 +20,11 @@ namespace models
         public float Total{get;set;}
         public DateOnly CreatedAt{get;set;}
         public DateOnly UpdatedAt{get;set;}
-        public ShoppingCarts(int userid)
-        {
-            UserId = userid;
-        }
+        // public ShoppingCarts(int userid)
+        // {
+        //     UserId = userid;
+        // }
+        public ShoppingCarts(){}
         /*
         gonna ask in meeting if stuff like sum price, or all products
         should only be done with sql

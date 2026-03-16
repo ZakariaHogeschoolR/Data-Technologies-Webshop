@@ -9,9 +9,18 @@ namespace Service
         {
             _shoppingcartRepository = shoppingcartRepository;        
         }
-        public async Task<List<ShoppingCarts?>> GetAllShoppingCarts(){}
-        public async Task<ShoppingCarts?> GetShoppingCartById(){}
-        public async Task<ShoppingCarts?> AddShoppingcarts(){}
+        public async Task<List<ShoppingCarts?>> GetAllShoppingCarts()
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<ShoppingCarts?> GetShoppingCartById()
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<ShoppingCarts?> AddShoppingcarts()
+        {
+            throw new NotImplementedException();
+        }
         public async void CreateService(Products product){}
         public async void UpdateteService(){}
         public async void DeleteService(){}
