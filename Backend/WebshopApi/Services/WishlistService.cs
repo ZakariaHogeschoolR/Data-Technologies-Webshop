@@ -1,3 +1,4 @@
+using DataTransferObject;
 using models;
 namespace Service
 {
@@ -10,11 +11,15 @@ namespace Service
         }
         public async Task<List<Wishlists?>> GetAllWishLists()
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            Task<List<Wishlists?>> wishlists = _wishlistRepository.GetAllWishLists();
+            return await wishlists;
         }
-        public async Task<Wishlists?> GetWishlistsById()
+        public async Task<Wishlists?> GetWishlistsById(int id)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            Task<Wishlists?> wishlist = _wishlistRepository.GetWishlistsById(id);
+            return await wishlist;
         }   
         public async Task<List<Products?>> GetAllProducts()
         {
@@ -24,8 +29,17 @@ namespace Service
         {
             throw new NotImplementedException();
         }
-        public async void CreateService(){}
-        public async void UpdateService(){}
-        public async void DeleteService(){}
+        public async void CreateService(WishlistDTO wishlistDTO)
+        {
+            _wishlistRepository.AddWishlist(wishlistDTO);
+        }
+        public async void UpdateService(WishlistDTO wishlistDTO)
+        {
+            _wishlistRepository.UpdateWishlist(wishlistDTO);
+        }
+        public async void DeleteService(int id)
+        {
+            _wishlistRepository.DeleteWishlist(id);
+        }
     }
 }
