@@ -28,4 +28,5 @@ jobs:
         run: dotnet Restore
       
       - name: Build
-        run: dotnet build Data-Technologies-Webshop.sln --no-restore
+        working-directory: Backend\WebshopApi
+        run: dotnet build --no-restore
