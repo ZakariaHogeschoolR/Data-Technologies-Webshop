@@ -1,6 +1,7 @@
 using ApplicationDbContext;
 using models;
 using Npgsql;
+using DataTransferObject;
 
 public class ShoppingCartRepository
 {
@@ -21,7 +22,9 @@ public class ShoppingCartRepository
         {
             shoppingcarts.Add(new ShoppingCarts
             {
-                UserId =  reader.GetOrdinal("userid")
+                Id = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
+                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                Quantity = reader.GetInt32(reader.GetOrdinal("quantity"))
             });
         }
 
@@ -41,40 +44,58 @@ public class ShoppingCartRepository
             return new ShoppingCarts
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                UserId = reader.GetInt32(reader.GetOrdinal("userid"))
+                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                Quantity = reader.GetInt32(reader.GetOrdinal("quantity"))
             };
         }
 
         return null;
     }
-    public async void AddShoppingCarts(ShoppingCarts shoppingcarts)
+    public async void AddShoppingCarts(ShoppingCartDTO shoppingcarts)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "INSERT INTO shoppingcarts (id,userid) VALUES (@id,@userid)";
+        var sql = "INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)";
 
         using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@id", shoppingcarts.Id);
-        cmd.Parameters.AddWithValue("@userid", shoppingcarts.UserId);
+        cmd.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.Id);
+        cmd.Parameters.AddWithValue("@product_id", shoppingcarts.ProductId);
+        cmd.Parameters.AddWithValue("@quantity", shoppingcarts.Quantity);
         await cmd.ExecuteNonQueryAsync();
     }
     //in between table
-    public async void AddProduct(Products product)
+    public async void AddProduct(Products product, int quantity)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "INSERT INTO shoppingcarts_products (Items) VALUES (@Id,@name)";
+        var sql = "INSERT INTO winkelwage (product_id, quantity) VALUES (@id, @quantity)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", product.Id);
-        cmd.Parameters.AddWithValue("@name", product.Name);
+        cmd.Parameters.AddWithValue("@id", quantity);
         await cmd.ExecuteNonQueryAsync();
     }
-    public async void UpdateShoppingcarts(){}
+    public async void UpdateShoppingcarts(int id, int quantity)
+    {
+        using var conn = await _dbconnectie.GetConnection();
+        var sql = "UPDATE winkelwagen SET (product_id, quantity) VALUES(@id,@quantity)";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@quantity", quantity);
+        await cmd.ExecuteNonQueryAsync();
+    }
     public async void DeleteShoppingCarts(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE FROM shoppingcarts SELECT * WHERE (id) VALUES (@id)";
+        var sql = "DELETE * FROM shoppingcarts SELECT * WHERE (id) VALUES (@id)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
     }
-    public async void DeleteProductFromShoppingcarts(){}
+    public async void DeleteProductFromShoppingcarts(int userid, int id)
+    {
+        using var conn = await _dbconnectie.GetConnection();
+        var sql = "DELETE * FROM winkelwagen WHERE (product_id, winkelwagen_user_id) VALUES (@id,@userid)";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@userid", userid);
+        await cmd.ExecuteNonQueryAsync();
+    }
 }

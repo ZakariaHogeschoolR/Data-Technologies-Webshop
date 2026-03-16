@@ -1,3 +1,4 @@
+using DataTransferObject;
 using models;
 
 namespace Service
@@ -11,19 +12,31 @@ namespace Service
         }
         public async Task<List<ShoppingCarts?>> GetAllShoppingCarts()
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            Task<List<ShoppingCarts?>> shoppingcarts =  _shoppingcartRepository.GetAllShoppingCarts();
+            return await shoppingcarts;
         }
-        public async Task<ShoppingCarts?> GetShoppingCartById()
+        public async Task<ShoppingCarts?> GetShoppingCartById(int id)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            Task<ShoppingCarts?> shoppingCart = _shoppingcartRepository.GetShoppingCartById(id);
+            return await shoppingCart;
         }
-        public async Task<ShoppingCarts?> AddShoppingcarts()
+        public async void CreateService(ShoppingCartDTO shoppingcartDTO)
         {
-            throw new NotImplementedException();
+           _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
         }
-        public async void CreateService(Products product){}
-        public async void UpdateteService(){}
-        public async void DeleteService(){}
-        public async void DeleteProductsService(){}
+        public async void UpdateteService(ProductDto productDto, int quantity)
+        {
+            _shoppingcartRepository.UpdateShoppingcarts(productDto.Id, quantity);
+        }
+        public async void DeleteService(int id)
+        {
+            _shoppingcartRepository.DeleteShoppingCarts(id);
+        }
+        public async void DeleteProductsService(int userid, int id)
+        {
+            _shoppingcartRepository.DeleteProductFromShoppingcarts(userid, id);
+        }
     }
 }

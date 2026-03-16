@@ -1,5 +1,6 @@
 using ApplicationDbContext;
 using models;
+using Npgsql;
 
 public class WishlistRepository
 {
@@ -11,7 +12,16 @@ public class WishlistRepository
     }
     public async Task<List<Wishlists?>> GetAllWishLists()
     {
-        throw new NotImplementedException();
+        List<Wishlists?> wishlists = new List<Wishlists?>();
+        using var conn = await _dbconnectie.GetConnection();
+        var sql = "SELECT * FROM wishlist";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+        while(await reader.ReadAsync())
+        {
+            wishlists.Add(new Wishlists{});
+        }
+        return wishlists;
     }
     public async Task<Wishlists?> GetWishlistsById()
     {

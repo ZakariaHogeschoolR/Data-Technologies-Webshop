@@ -14,10 +14,10 @@ namespace models
     public class ShoppingCarts
     {
         public int Id{get;set;}
-        public int UserId{get;set;}
+        public int ProductId{get;set;}
         public List<int> ShoppingProducts{get;set;}//Items? betere naam
         // public int Quantity{get;set;}
-        public float Total{get;set;}
+        public int Quantity{get;set;}
         public DateOnly CreatedAt{get;set;}
         public DateOnly UpdatedAt{get;set;}
         // public ShoppingCarts(int userid)
