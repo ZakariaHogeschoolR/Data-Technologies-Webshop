@@ -23,10 +23,12 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj')}}
           restore-keys: |
             nuget-${{ runner.os }}
-      
       - name: Restore Dependencies
         run: dotnet restore Backend/WebshopApi/WebshopApi.csproj
       
+      - name: Lint Code (Dotnet Format)
+        run: dotnet format Backend/WebshopApi/WebshopApi.csproj --verify-no-changes --no-restore
+
       - name: Build
         working-directory: Backend/WebshopApi
         run: dotnet build WebshopApi.csproj --no-restore
