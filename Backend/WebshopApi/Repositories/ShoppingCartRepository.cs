@@ -1,7 +1,10 @@
 using ApplicationDbContext;
-using models;
-using Npgsql;
+
 using DataTransferObject;
+
+using models;
+
+using Npgsql;
 
 public class ShoppingCartRepository
 {
@@ -18,7 +21,7 @@ public class ShoppingCartRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
             shoppingcarts.Add(new ShoppingCarts
             {
@@ -39,7 +42,7 @@ public class ShoppingCartRepository
 
         using var reader = await cmd.ExecuteReaderAsync();
 
-        if(await reader.ReadAsync())
+        if (await reader.ReadAsync())
         {
             return new ShoppingCarts
             {

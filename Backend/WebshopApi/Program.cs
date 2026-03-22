@@ -1,5 +1,7 @@
 using ApplicationDbContext;
+
 using Scalar.AspNetCore;
+
 using Service;
 
 var builder = WebApplication.CreateBuilder(args);

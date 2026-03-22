@@ -1,13 +1,22 @@
-using DataTransferObject;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Service
+using DataTransferObject;
+
+namespace Service;
+
+public class ScraperService
 {
-    public class ScraperService
+    private readonly ProductRepository _productRepository;
+    private readonly HttpClient _http;
+
+    public ScraperService(ProductRepository productRepository)
     {
-        private readonly ProductRepository _productRepository;
-        private readonly HttpClient _http;
+        _productRepository = productRepository;
+        _http = new HttpClient();
+        _http.DefaultRequestHeaders.Add("User-Agent",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+    }
 
         public ScraperService(ProductRepository productRepository)
         {
@@ -22,7 +31,9 @@ namespace Service
             var json = File.ReadAllText(@"C:\Users\zahar\Downloads\sportsworld_products.json");
             var items = JsonSerializer.Deserialize<List<FakeStoreProduct>>(json);
 
-            foreach (var item in items)
+        foreach (var item in items)
+        {
+            var product = new ProductDto
             {
                 var fullName = item.Name.Replace("\n", " ").Trim(); // ✅ "adidas Ajax Originals Icons T-Shirt Adults"
                 var enriched = EnrichFromName(fullName);
@@ -38,6 +49,7 @@ namespace Service
                 await _productRepository.AddProduct(product);
             }
         }
+    }
 
         private (string Description, string Team, string Season, string KitType) EnrichFromName(string name)
         {

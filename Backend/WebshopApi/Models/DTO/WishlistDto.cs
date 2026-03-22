@@ -1,10 +1,9 @@
-namespace DataTransferObject
+namespace DataTransferObject;
+
+public class WishlistDTO
 {
-    public class WishlistDTO
-    {
-        public int Id{get;set;}
-        public string Name{get;set;}
-        public int ProductId{get;set;}
-        public int UserId{get;set;}
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int ProductId { get; set; }
+    public int UserId { get; set; }
 }
