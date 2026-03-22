@@ -1,11 +1,10 @@
-using Npgsql;
-using System.Threading.Tasks;
-using models;
-using System.Data.SqlTypes;
-using System.Data.Common;
-using System.Reflection.Metadata;
 using ApplicationDbContext;
+
 using DataTransferObject;
+
+using models;
+
+using Npgsql;
 
 public class ProductRepository
 {
@@ -25,9 +24,9 @@ public class ProductRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
-            products.Add( new Products
+            products.Add(new Products
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
@@ -104,5 +103,5 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
     }
-    
+
 }

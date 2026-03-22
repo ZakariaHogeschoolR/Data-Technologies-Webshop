@@ -1,7 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using models;
-using Service;
 using DataTransferObject;
+
+using Microsoft.AspNetCore.Mvc;
+
+using models;
+
+using Service;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -19,7 +22,7 @@ public class ShoppingCartController : ControllerBase
         var shoppingcarts = _shoppingcartservice.GetAllShoppingCarts();
         return Ok(shoppingcarts);
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById(int id)
     {

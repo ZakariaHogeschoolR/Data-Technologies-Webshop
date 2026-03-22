@@ -1,11 +1,14 @@
-using Microsoft.AspNetCore.Mvc;
-using models;
-using Service;
 using DataTransferObject;
+
+using Microsoft.AspNetCore.Mvc;
+
+using models;
+
+using Service;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductController: ControllerBase
+public class ProductController : ControllerBase
 {
     private readonly ProductService _productService;
     public ProductController(ProductService productService)
