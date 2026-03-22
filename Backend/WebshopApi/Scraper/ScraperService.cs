@@ -1,6 +1,6 @@
-using DataTransferObject;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DataTransferObject;
 
 namespace Service
 {
