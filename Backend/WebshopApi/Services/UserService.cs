@@ -27,7 +27,8 @@ namespace Service
 
         public async Task CreateService(UserDto user)
         {
-            await _userRepository.AddUser(user);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            await _userRepository.AddUser(user with { Password = hashedPassword });
         }
 
         public async Task UpdateService(UserDto user)
