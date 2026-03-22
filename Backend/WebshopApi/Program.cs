@@ -59,12 +59,12 @@ app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
     {
         return Results.Problem($"Database fout: {ex.Message}");
     }
-}).WithOpenApi(); 
+}).WithOpenApi();
 
 app.MapPost("/scrape", async (ScraperService scraperService) =>
 {
     await scraperService.ImportFromApiAsync();
     return Results.Ok(new { status = "Database gevuld!" });
-}).WithOpenApi(); 
+}).WithOpenApi();
 
 app.Run();

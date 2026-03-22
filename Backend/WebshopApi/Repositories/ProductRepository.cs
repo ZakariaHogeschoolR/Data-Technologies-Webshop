@@ -1,11 +1,11 @@
-using Npgsql;
-using models;
 using ApplicationDbContext;
 
 using DataTransferObject;
 
 using models;
+using models;
 
+using Npgsql;
 using Npgsql;
 
 public class ProductRepository
