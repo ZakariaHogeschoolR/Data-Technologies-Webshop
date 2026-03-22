@@ -1,8 +1,17 @@
 @WebshopApi_HostAddress = http://localhost:5261
 
-GET {{WebshopApi_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{WebshopApi_HostAddress}}/api/Auth/register
+Content-Type: application/json
 
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "username": "johndoe",
+  "email": "john.doe@gmail.com",
+  "password": "John",
+  "address": "Test",
+  "postcode": "1111AA"
+}
 ###
 POST {{WebshopApi_HostAddress}}/api/Auth/login
 Content-Type: application/json
@@ -11,3 +20,5 @@ Content-Type: application/json
   "email": "john.doe@gmail.com",
   "password": "John"
 }
+###
+POST {{WebshopApi_HostAddress}}/api/Auth/logout
