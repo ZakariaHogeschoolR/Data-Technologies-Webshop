@@ -22,9 +22,17 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
+});
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".Webshop.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddOpenApi();
@@ -57,12 +65,12 @@ app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
     {
         return Results.Problem($"Database fout: {ex.Message}");
     }
-}).WithOpenApi(); 
+}).WithOpenApi();
 
 app.MapPost("/scrape", async (ScraperService scraperService) =>
 {
     await scraperService.ImportFromApiAsync();
     return Results.Ok(new { status = "Database gevuld!" });
-}).WithOpenApi(); 
+}).WithOpenApi();
 
 app.Run();
