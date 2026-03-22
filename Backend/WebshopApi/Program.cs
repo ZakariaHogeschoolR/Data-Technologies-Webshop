@@ -42,6 +42,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 app.UseCors("AllowAll");
+app.UseSession();
 
 
 // Configure the HTTP request pipeline.
