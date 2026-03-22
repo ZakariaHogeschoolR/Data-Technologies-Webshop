@@ -1,10 +1,21 @@
-namespace DataTransferObject;
+using System.ComponentModel.DataAnnotations;
 
-public class ProductDto
+namespace DataTransferObject
 {
-    public int Id { get; set; }
-    public string ProductImage { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public decimal Price { get; set; }
+    public class ProductDto
+    {
+        public int Id { get; set; }
+
+        [Required]
+        public string ProductImage { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Description { get; set; }
+
+        [Range(0.01, 999999)]
+        public decimal Price { get; set; }
+    }
 }

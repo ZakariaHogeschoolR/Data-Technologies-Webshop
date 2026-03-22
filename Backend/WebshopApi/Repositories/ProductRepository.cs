@@ -1,3 +1,5 @@
+using Npgsql;
+using models;
 using ApplicationDbContext;
 
 using DataTransferObject;
@@ -15,7 +17,7 @@ public class ProductRepository
         _dbConnectie = dbConnectie;
     }
 
-    public async Task<List<Products?>> GetAllProducts()
+    public async Task<List<Products>> GetAllProducts()
     {
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
@@ -69,7 +71,8 @@ public class ProductRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "INSERT INTO products (product_image, name, description, price) VALUES (@productImage, @name, @description, @price)";
+        var sql = @"INSERT INTO products (product_image, name, description, price)
+                    VALUES (@productImage, @name, @description, @price)";
 
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
@@ -83,9 +86,15 @@ public class ProductRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "UPDATE products SET product_image = @productImage, name = @name, description = @description, price = @price WHERE id = @id";
+        var sql = @"UPDATE products
+                    SET product_image = @productImage,
+                        name = @name,
+                        description = @description,
+                        price = @price
+                    WHERE id = @id";
 
         using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", product.Id);
         cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
         cmd.Parameters.AddWithValue("@name", product.Name);
         cmd.Parameters.AddWithValue("@description", product.Description);
@@ -103,5 +112,4 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
     }
-
 }
