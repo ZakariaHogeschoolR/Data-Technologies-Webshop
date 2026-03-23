@@ -3,6 +3,7 @@ export default function Wishlist(){
     return(
         <>
         <div className="wishlist-container">
+            <p className="wishlist-name"></p>
             <div className="products-list">
                 <ul>
                     <li>Poduct1 name, price: 11.99, quantity: 2</li>
