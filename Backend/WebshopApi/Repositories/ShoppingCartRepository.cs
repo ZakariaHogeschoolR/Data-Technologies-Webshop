@@ -54,13 +54,13 @@ public class ShoppingCartRepository
     public async void AddShoppingCarts(ShoppingCartDTO shoppingcarts)
     {
         await using var batch = new NpgsqlBatch(await _dbconnectie.GetConnection());
-        var cmd1 = new NpgsqlBatchCommand("INSERT INTO winkelwagen_users (id, user_id) VALUES (@ID, @USER_ID)");
-        cmd1.Parameters.AddWithValue("@ID", shoppingcarts.Id);
-        cmd1.Parameters.AddWithValue("@USER_ID", shoppingcarts.User_Id);
+        var cmd1 = new NpgsqlBatchCommand("INSERT INTO winkelwagen_users (user_id) VALUES (@USER_ID) RETURNING id");
+        // cmd1.Parameters.AddWithValue("@ID", shoppingcarts.Id);
+        cmd1.Parameters.AddWithValue("@USER_ID", shoppingcarts.UserId);
         batch.BatchCommands.Add(cmd1);
 
         var cmd2 = new NpgsqlBatchCommand("INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)");
-        cmd2.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.Id);
+        cmd2.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.UserId);
         cmd2.Parameters.AddWithValue("@product_id", shoppingcarts.ProductId);
         cmd2.Parameters.AddWithValue("@quantity", shoppingcarts.Quantity);
 

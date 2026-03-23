@@ -7,13 +7,14 @@ import Home from "../src/Component/Pages/Home";
 import About from "../src/Component/Pages/About";
 import NotFound from "../src/Component/Pages/NotFound";
 import ProductDetail from './Component/ProductDetail';
+import Winkelwagen from './Component/Layout/Winkelwagen';
 
 const router = createHashRouter([
   {
     path: '/',
     element: <Layout />, 
     children: [
-          { index: true, element: <Home /> },
+          { index: true, element: <Winkelwagen /> },
           { path: 'about', element: <About /> },
           { path: 'products/:id', element: <ProductDetail/>},
           { path: '*', element: <NotFound /> },
