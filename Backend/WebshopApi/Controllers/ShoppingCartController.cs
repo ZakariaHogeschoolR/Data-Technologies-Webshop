@@ -16,14 +16,14 @@ public class ShoppingCartController : ControllerBase
     [HttpGet()]
     public async Task<ActionResult<List<ShoppingCarts>>> GetAllShoppingCarts()
     {
-        var shoppingcarts = _shoppingcartservice.GetAllShoppingCarts();
+        var shoppingcarts = await _shoppingcartservice.GetAllShoppingCarts();
         return Ok(shoppingcarts);
     }
     
     [HttpGet("{id}")]
     public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById(int id)
     {
-        var shoppingcart = _shoppingcartservice.GetShoppingCartById(id);
+        var shoppingcart = await _shoppingcartservice.GetShoppingCartById(id);
         return Ok(shoppingcart);
     }
 

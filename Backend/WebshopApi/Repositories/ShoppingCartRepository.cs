@@ -14,7 +14,7 @@ public class ShoppingCartRepository
     {
         List<ShoppingCarts> shoppingcarts = new List<ShoppingCarts>();
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "SELECT * FROM shoppingcarts";
+        var sql = "SELECT * FROM winkelwagen";
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
@@ -33,7 +33,7 @@ public class ShoppingCartRepository
     public async Task<ShoppingCarts?> GetShoppingCartById(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "SELECT * FROM shoppingcarts WHERE id = @id";
+        var sql = "SELECT * FROM winkelwagen WHERE winkelwagen_users_id = @id";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
 
@@ -43,7 +43,7 @@ public class ShoppingCartRepository
         {
             return new ShoppingCarts
             {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Id = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
                 ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
                 Quantity = reader.GetInt32(reader.GetOrdinal("quantity"))
             };
@@ -66,7 +66,7 @@ public class ShoppingCartRepository
     public async void AddProduct(Products product, int quantity)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "INSERT INTO winkelwage (product_id, quantity) VALUES (@id, @quantity)";
+        var sql = "INSERT INTO winkelwagen (product_id, quantity) VALUES (@id, @quantity)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", product.Id);
         cmd.Parameters.AddWithValue("@id", quantity);
@@ -84,7 +84,7 @@ public class ShoppingCartRepository
     public async void DeleteShoppingCarts(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE * FROM shoppingcarts SELECT * WHERE (id) VALUES (@id)";
+        var sql = "DELETE * FROM winkelwagen SELECT * WHERE (winkelwagen_users_id) VALUES (@id)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
@@ -92,7 +92,7 @@ public class ShoppingCartRepository
     public async void DeleteProductFromShoppingcarts(int userid, int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE * FROM winkelwagen WHERE (product_id, winkelwagen_user_id) VALUES (@id,@userid)";
+        var sql = "DELETE * FROM winkelwagen WHERE (product_id, winkelwagen_users_id) VALUES (@id,@userid)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
         cmd.Parameters.AddWithValue("@userid", userid);
