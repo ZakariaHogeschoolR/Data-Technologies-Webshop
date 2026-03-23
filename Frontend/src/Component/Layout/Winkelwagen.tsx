@@ -1,3 +1,5 @@
+import '../../Styles/Winkelwagen.css';
+
 export default function Winkelwagen(){
     return(
         <>
@@ -10,7 +12,7 @@ export default function Winkelwagen(){
                     <li>Poduct4 name, price: 59.99, quantity: 2</li>
                 </ul>
             </div>
-            <div className="total-price">78, 96</div>
+            <div className="total-price">78.96</div>
         </div>
         </>
     );
