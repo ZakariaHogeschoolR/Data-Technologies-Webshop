@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { useFetch } from '../CustomHooks/GetFetchHook';
 import NotFound from '../Component/Pages/NotFound';
 import '../Styles/ProductDetail.css';
+import { AddRecentProducts } from "./storage/recentProducts";
+import { useEffect } from "react";
 
 type product =
 {
@@ -15,11 +17,18 @@ type product =
 const ProductDetail = () => {
     const { id } = useParams();
     const { data, isLoading, error } = useFetch<product>({ url: `http://localhost:5261/api/Product/${id}` });
+    useEffect(() => {
+        if(data)
+        {
+            AddRecentProducts(data);
+        }
+    }, [data]);
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
     if (error || !data) {
         return <NotFound />;
     }
+
     return (
         <>
             <p className="product-id-content">PRODUCT {id}</p>
