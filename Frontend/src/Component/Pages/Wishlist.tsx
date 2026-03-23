@@ -3,7 +3,7 @@ export default function Wishlist(){
     return(
         <>
         <div className="wishlist-container">
-            <p className="wishlist-name"></p>
+            <h1 className="wishlist-name">Name</h1>
             <div className="products-list">
                 <ul>
                     <li>Poduct1 name, price: 11.99, quantity: 2</li>
