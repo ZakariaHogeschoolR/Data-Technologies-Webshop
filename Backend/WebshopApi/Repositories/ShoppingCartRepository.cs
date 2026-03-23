@@ -53,14 +53,34 @@ public class ShoppingCartRepository
     }
     public async void AddShoppingCarts(ShoppingCartDTO shoppingcarts)
     {
-        using var conn = await _dbconnectie.GetConnection();
-        var sql = "INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)";
+        await using var batch = new NpgsqlBatch(await _dbconnectie.GetConnection());
+        var cmd1 = new NpgsqlBatchCommand("INSERT INTO winkelwagen_users (id, user_id) VALUES (@ID, @USER_ID)");
+        cmd1.Parameters.AddWithValue("@ID", shoppingcarts.Id);
+        cmd1.Parameters.AddWithValue("@USER_ID", shoppingcarts.User_Id);
+        batch.BatchCommands.Add(cmd1);
 
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.Id);
-        cmd.Parameters.AddWithValue("@product_id", shoppingcarts.ProductId);
-        cmd.Parameters.AddWithValue("@quantity", shoppingcarts.Quantity);
-        await cmd.ExecuteNonQueryAsync();
+        var cmd2 = new NpgsqlBatchCommand("INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)");
+        cmd2.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.Id);
+        cmd2.Parameters.AddWithValue("@product_id", shoppingcarts.ProductId);
+        cmd2.Parameters.AddWithValue("@quantity", shoppingcarts.Quantity);
+
+        // {
+        //     BatchCommands =
+        //     {
+        //         new("INSERT INTO winkelwagen_users (id, user_id) VALUES (@ID, @USER_ID)"),
+        //         new("INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)")
+        //     }
+        // };
+        
+        await using var reader = await batch.ExecuteReaderAsync();
+
+        // using var conn = await _dbconnectie.GetConnection();
+        // var sql = "INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)";
+
+        // cmd.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.Id);
+        // cmd.Parameters.AddWithValue("@product_id", shoppingcarts.ProductId);
+        // cmd.Parameters.AddWithValue("@quantity", shoppingcarts.Quantity);
+        // await cmd.ExecuteNonQueryAsync();
     }
     //in between table
     public async void AddProduct(Products product, int quantity)
