@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useFetch } from "../CustomHooks/GetFetchHook";
+import { GetRecentProducts } from "./storage/recentProducts";
 import '../../src/Styles/Product.css';
 import { Link } from "react-router-dom";
 
@@ -16,20 +18,24 @@ type product =
 const Products = () => {
     const [getProducts, setProducts] = useState<product[]>([]);
     const { data, isLoading, error } = useFetch<product[]>({ url: "http://localhost:5261/api/Product" });
+    const [recent, setRecent ] = useState<product[]>([]);
+    const location = useLocation();
     useEffect(() => {
         if (data) {
             setProducts(data);
         }
     }, [data]);
+    useEffect(() => {
+        setRecent(GetRecentProducts());
+    }, [location.pathname]);
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
-
     return (
         <>
             <p className="recent">RECENT</p>
             <section className="recent-border-line"></section>
             <div className="Products-Container-recent">
-                {getProducts.map(prod => (
+                {recent.map(prod => (
                     <Link to={`products/${prod.id}`} className="link">
                         <div className="Product-content-recent">
                             <img src={prod.productImage} className="recent-ProductImage"/>
