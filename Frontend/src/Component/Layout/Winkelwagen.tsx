@@ -13,7 +13,7 @@ export default function Winkelwagen(){
             async function getData(){
                 setLoading(true)
                 try{
-                    const reponse = await fetch(`http://localhost:5261/scalar/#tag/shoppingcart/GET/api/ShoppingCart/${id}`, {
+                    const reponse = await fetch(`http://localhost:5261/api/ShoppingCart/${id}`, {
                         headers:{
                             "Content-Type": "application/json",
                             "Accept": "application/json"
