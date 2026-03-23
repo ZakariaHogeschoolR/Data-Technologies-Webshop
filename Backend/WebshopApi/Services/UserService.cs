@@ -25,20 +25,34 @@ namespace Service
             return await user;
         }
 
-        public void CreateService(UserDto user)
+        public async Task CreateService(UserDto user)
         {
-            _userRepository.AddUser(user);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            await _userRepository.AddUser(user with { Password = hashedPassword });
         }
 
-        public void UpdateService(UserDto user)
+        public async Task UpdateService(UserDto user)
         {
-            _userRepository.UpdateUser(user);
+            await _userRepository.UpdateUser(user);
         }
 
-        public void DeleteService(int id)
+        public async Task DeleteService(int id)
         {
-            _userRepository.DeleteUser(id);
+            await _userRepository.DeleteUser(id);
+        }
+
+        public async Task RegisterService(Register data)
+        {
+            await CreateService(new UserDto(null, data.FirstName, data.LastName, data.Username, data.Email,
+                data.Password, data.Address, data.PostCode));
+        }
+
+        public async Task<Users?> LoginService(Login data)
+        {
+            var user = await _userRepository.GetUserByEmail(data.Email);
+            if (user == null) return null;
+            
+            return BCrypt.Net.BCrypt.Verify(data.Password, user.Password) ? user : null;
         }
     }
-    
 }
