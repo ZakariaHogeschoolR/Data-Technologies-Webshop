@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import '../../Styles/Winkelwagen.css';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 export default function Winkelwagen(){
-    const {id} = useParams()
+    // const {id} = useParams()
     const [winkelwagenItems, setWinkelwagenItems] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(``)
@@ -11,19 +11,22 @@ export default function Winkelwagen(){
     useEffect(() =>
         {
             async function getData(){
-                setLoading(true)
                 try{
-                    const reponse = await fetch(`http://localhost:5261/api/ShoppingCart/${id}`, {
+                    setLoading(true)
+                    const request = await fetch(`http://localhost:5261/api/ShoppingCart/`, {
                         headers:{
                             "Content-Type": "application/json",
                             "Accept": "application/json"
                         }
                     })
-                    const json = await reponse.json()
+                    console.log(request)
+                    const json = await request.json()
+                    console.log(json)
                     setWinkelwagenItems(json) 
                 }
                 catch(e){
-                    setError(`fetch winkelwagen failed`)
+                    console.log(`error: `+e)
+                    setError(`${e}`)
                 }
                 finally{
                     setLoading(false)
@@ -32,7 +35,7 @@ export default function Winkelwagen(){
             getData()
         }, [])
     if(loading) return <>Loading...</>
-    if(error != null) return <>Error: {error}</>
+    if (winkelwagenItems.length == 0) return <>No winkelwagens</>
     return(
         <>
         <div className="Winkelwagen_container">

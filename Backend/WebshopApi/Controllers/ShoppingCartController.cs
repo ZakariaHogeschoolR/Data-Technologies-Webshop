@@ -28,7 +28,7 @@ public class ShoppingCartController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts(ShoppingCartDTO shoppingCartDTO)
+    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDTO)
     {
         _shoppingcartservice.CreateService(shoppingCartDTO);
         return Ok();
