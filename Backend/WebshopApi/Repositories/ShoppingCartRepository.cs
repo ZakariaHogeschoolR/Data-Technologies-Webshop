@@ -30,6 +30,27 @@ public class ShoppingCartRepository
 
         return shoppingcarts;
     }
+
+    public async Task<List<WinkelwagenUser>> GetAllWinkelwagenUsers()
+    {
+        List<WinkelwagenUser> users = new List<WinkelwagenUser>();
+        using var conn = await _dbconnectie.GetConnection();
+        var sql = "SELECT * FROM winkelwagen_users";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while(await reader.ReadAsync())
+        {
+            users.Add(new WinkelwagenUser
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                UserId = reader.GetInt32(reader.GetOrdinal("user_id")),
+            });
+        }
+
+        return users;
+    }
+
     public async Task<ShoppingCarts?> GetShoppingCartById(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
@@ -51,42 +72,25 @@ public class ShoppingCartRepository
 
         return null;
     }
-    public async void AddShoppingCarts(ShoppingCartDTO shoppingcarts)
+    public async Task AddShoppingCarts(ShoppingCartDTO shoppingcarts)
     {
-        await using var batch = new NpgsqlBatch(await _dbconnectie.GetConnection());
-        var cmd1 = new NpgsqlBatchCommand("INSERT INTO winkelwagen_users (user_id) VALUES (@USER_ID) RETURNING id");
-        // cmd1.Parameters.AddWithValue("@ID", shoppingcarts.Id);
-        cmd1.Parameters.AddWithValue("@USER_ID", shoppingcarts.UserId);
-        batch.BatchCommands.Add(cmd1);
-
-        var cmd2 = new NpgsqlBatchCommand("INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)");
-        cmd2.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.UserId);
-        cmd2.Parameters.AddWithValue("@product_id", shoppingcarts.ProductId);
-        cmd2.Parameters.AddWithValue("@quantity", shoppingcarts.Quantity);
-
-        // {
-        //     BatchCommands =
-        //     {
-        //         new("INSERT INTO winkelwagen_users (id, user_id) VALUES (@ID, @USER_ID)"),
-        //         new("INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)")
-        //     }
-        // };
-        
-        await using var reader = await batch.ExecuteReaderAsync();
-
-        // using var conn = await _dbconnectie.GetConnection();
-        // var sql = "INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) VALUES (@winkelwagen_users_id,@product_id, @quantity)";
-
-        // cmd.Parameters.AddWithValue("@winkelwagen_users_id", shoppingcarts.Id);
-        // cmd.Parameters.AddWithValue("@product_id", shoppingcarts.ProductId);
-        // cmd.Parameters.AddWithValue("@quantity", shoppingcarts.Quantity);
-        // await cmd.ExecuteNonQueryAsync();
+        using var conn = await _dbconnectie.GetConnection();
+        var cmd = new NpgsqlCommand(@"INSERT INTO winkelwagen_users (user_id, created_at) 
+        VALUES (@U_ID, @CR_AT) ON CONFLICT (user_id) 
+        DO UPDATE SET user_id = EXCLUDED.user_id RETURNING id", conn);
+        cmd.Parameters.AddWithValue("@U_ID", shoppingcarts.UserId);
+        cmd.Parameters.AddWithValue("@CR_AT", DateTime.UtcNow);
+        var internalId = await cmd.ExecuteScalarAsync();
+        var cmd1 = new NpgsqlCommand(@"INSERT INTO winkelwagen (winkelwagen_users_id) 
+        VALUES (@U_ID)", conn);
+        cmd1.Parameters.AddWithValue("U_ID", internalId);
+        await cmd1.ExecuteNonQueryAsync();
     }
     //in between table
     public async void AddProduct(Products product, int quantity)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "INSERT INTO winkelwagen (product_id, quantity) VALUES (@id, @quantity)";
+        var sql = "UPDATE winkelwagen (product_id, quantity) VALUES (@id, @quantity) WHERE user_id= @U_ID";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", product.Id);
         cmd.Parameters.AddWithValue("@id", quantity);

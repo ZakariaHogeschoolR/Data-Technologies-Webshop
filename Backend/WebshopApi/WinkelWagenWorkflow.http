@@ -7,15 +7,19 @@ Accept: application/json
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart
 Accept: application/json
 ###
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart/users
+Accept: application/json
+###
 GET {{WebshopApi_HostAddress}}/api/User
 Accept: application/json
 
 ###
 POST {{WebshopApi_HostAddress}}/api/ShoppingCart/create
 Content-Type: application/json
+Accept: application/json
 
 {
-  "userId": 4,
+  "userId": 1,
   "id" : 1,
   "productId": 1,
   "quantity": 1

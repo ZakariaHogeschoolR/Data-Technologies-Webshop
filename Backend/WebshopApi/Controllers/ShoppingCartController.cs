@@ -27,22 +27,29 @@ public class ShoppingCartController : ControllerBase
         return Ok(shoppingcart);
     }
 
+    [HttpGet("users")]
+    public async Task<ActionResult> GetAllWinkelwagenUsers()
+    {
+        var result = await _shoppingcartservice.GetAllWinkelwagenUsers();
+        return Ok(result);
+    }
+
     [HttpPost("create")]
     public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDTO)
     {
-        _shoppingcartservice.CreateService(shoppingCartDTO);
-        return Ok();
+        await _shoppingcartservice.CreateService(shoppingCartDTO);
+        return Created();
     }
     [HttpPut("update")]
     public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts(ProductDto productDto, int quantity)
     {
         _shoppingcartservice.UpdateteService(productDto, quantity);
-        return Ok();
+        return NoContent();
     }
     [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult> DeleteShoppingcart(int id)
     {
         _shoppingcartservice.DeleteService(id);
-        return Ok();
+        return NoContent();
     }
 }

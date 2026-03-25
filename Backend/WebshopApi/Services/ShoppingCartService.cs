@@ -22,9 +22,15 @@ namespace Service
             Task<ShoppingCarts?> shoppingCart = _shoppingcartRepository.GetShoppingCartById(id);
             return await shoppingCart;
         }
-        public async void CreateService(ShoppingCartDTO shoppingcartDTO)
+        public async Task<List<WinkelwagenUser>> GetAllWinkelwagenUsers()
         {
-           _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
+            // throw new NotImplementedException();
+            Task<List<WinkelwagenUser>> shoppingCart = _shoppingcartRepository.GetAllWinkelwagenUsers();
+            return await shoppingCart;
+        }
+        public async Task CreateService(ShoppingCartDTO shoppingcartDTO)
+        {
+           await _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
         }
         public async void UpdateteService(ProductDto productDto, int quantity)
         {
