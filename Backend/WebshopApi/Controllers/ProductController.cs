@@ -33,6 +33,32 @@ public class ProductController : ControllerBase
 
         return Ok(product);
     }
+    
+    [HttpGet("by-price/{price:double}")]
+    public async Task<ActionResult<Products>> GetProductByPrice(double price)
+    {
+        var product = await _productService.GetByPriceService(price);
+
+        if (product == null)
+        {
+            return NotFound($"Product with id {price} was not found.");
+        }
+
+        return Ok(product);
+    }
+
+    [HttpGet("by-name/{name}")]
+    public async Task<ActionResult<Products>> GetProductByName(string name)
+    {
+        var product = await _productService.GetByNameService(name);
+
+        if (product == null)
+        {
+            return NotFound($"Product with id {name} was not found.");
+        }
+
+        return Ok(product);
+    }
 
     [HttpPost("create")]
     public async Task<ActionResult> CreateProduct([FromBody] ProductDto product)
