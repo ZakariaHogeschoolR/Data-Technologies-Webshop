@@ -41,9 +41,9 @@ public class ShoppingCartController : ControllerBase
         return Created();
     }
     [HttpPut("update")]
-    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts(ProductDto productDto, int quantity)
+    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDTO)
     {
-        _shoppingcartservice.UpdateteService(productDto, quantity);
+        _shoppingcartservice.UpdateteService(shoppingCartDTO);
         return NoContent();
     }
     [HttpDelete("delete/{id:int}")]

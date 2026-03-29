@@ -1,19 +1,31 @@
 ﻿@WebshopApi_HostAddress = http://localhost:5261
 
-GET {{WebshopApi_HostAddress}}/weatherforecast/
-Accept: application/json
 
-###
+### first check to show current or no shoppingcart exists/ check if create worked
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart
 Accept: application/json
-###
+### check if products exist
+GET {{WebshopApi_HostAddress}}/api/Product/
+### create product if product does not exist
+### check if users exists
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart/users
 Accept: application/json
-###
-GET {{WebshopApi_HostAddress}}/api/User
+POST {{WebshopApi_HostAddress}}/api/Product/create
+Content-Type: application/json
 Accept: application/json
 
+{
+  "id": 1,
+  "productImage": "image_url",
+  "name": "Test1",
+  "description": "description_test1",
+  "price": 1
+}
 ###
+# GET {{WebshopApi_HostAddress}}/api/User
+# Accept: application/json
+
+### make user a shoppingcart
 POST {{WebshopApi_HostAddress}}/api/ShoppingCart/create
 Content-Type: application/json
 Accept: application/json
@@ -24,4 +36,20 @@ Accept: application/json
   "productId": 1,
   "quantity": 1
 }
+### update Quantity
+PUT {{WebshopApi_HostAddress}}/api/ShoppingCart/update
+Content-Type: application/json
+Accept: application/json
+
+{
+    "id": 2,
+    "productId": 1,
+    "shoppingProducts": null,
+    "quantity": 1,
+    "createdAt": "0001-01-01",
+    "updatedAt": "0001-01-01"
+  }
+
+###Delete ShoppingCart
+DELETE {{WebshopApi_HostAddress}}/api/ShoppingCart/delete/2
 ###

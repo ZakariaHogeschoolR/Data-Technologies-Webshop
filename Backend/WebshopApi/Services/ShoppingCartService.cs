@@ -32,17 +32,17 @@ namespace Service
         {
            await _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
         }
-        public async void UpdateteService(ProductDto productDto, int quantity)
+        public async void UpdateteService(ShoppingCartDTO shoppingCartDTO)
         {
-            _shoppingcartRepository.UpdateShoppingcarts(productDto.Id, quantity);
+            _shoppingcartRepository.UpdateShoppingcarts(shoppingCartDTO);
         }
         public async void DeleteService(int id)
         {
             _shoppingcartRepository.DeleteShoppingCarts(id);
         }
-        public async void DeleteProductsService(int userid, int id)
+        public async void DeleteProductsService(ShoppingCartDTO shoppingCartDTO)
         {
-            _shoppingcartRepository.DeleteProductFromShoppingcarts(userid, id);
+            _shoppingcartRepository.DeleteProductFromShoppingcarts(shoppingCartDTO);
         }
     }
 }
