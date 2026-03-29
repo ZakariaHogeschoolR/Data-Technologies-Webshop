@@ -33,6 +33,13 @@ public class ProductController : ControllerBase
 
         return Ok(product);
     }
+    
+    [HttpGet("by-price/{price: double}")]
+    public async Task<ActionResult<List<Products>>> GetAllProductsByPrice(double price)
+    {
+        var products = await _productService.GetByPriceService(price);
+        return Ok(products);
+    }
 
     [HttpPost("create")]
     public async Task<ActionResult> CreateProduct([FromBody] ProductDto product)
