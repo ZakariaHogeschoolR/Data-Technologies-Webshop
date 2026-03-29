@@ -36,7 +36,7 @@ public class UserRepository
                 Email = reader.GetString(reader.GetOrdinal("email")),
                 Password = reader.GetString(reader.GetOrdinal("password")),
                 Address = reader.GetString(reader.GetOrdinal("address")),
-                PostCode = reader.GetString(reader.GetOrdinal("post_code")),
+                PostCode = reader.GetString(reader.GetOrdinal("postcode")),
             });
         }
 
@@ -65,18 +65,44 @@ public class UserRepository
                 Email = reader.GetString(reader.GetOrdinal("email")),
                 Password = reader.GetString(reader.GetOrdinal("password")),
                 Address = reader.GetString(reader.GetOrdinal("address")),
-                PostCode = reader.GetString(reader.GetOrdinal("post_code")),
+                PostCode = reader.GetString(reader.GetOrdinal("postcode")),
             };
         }
 
         return null;
     }
 
+    public async Task<Users?> GetUserByEmail(string email)
+    {
+        await using var conn = await _dbConnectie.GetConnection();
+
+        const string sql = "SELECT * FROM users WHERE email = @email";
+
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@email", email);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync()) return null;
+
+        return new Users
+        {
+            Id = reader.GetInt32(reader.GetOrdinal("id")),
+            FirstName = reader.GetString(reader.GetOrdinal("first_name")),
+            LastName = reader.GetString(reader.GetOrdinal("last_name")),
+            Username = reader.GetString(reader.GetOrdinal("username")),
+            Email = reader.GetString(reader.GetOrdinal("email")),
+            Password = reader.GetString(reader.GetOrdinal("password")),
+            Address = reader.GetString(reader.GetOrdinal("address")),
+            PostCode = reader.GetString(reader.GetOrdinal("postcode"))
+        };
+    }
+
     public async Task AddUser(UserDto user)
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "INSERT INTO users (first_name, last_name, username, email, password, address, post_code) VALUES (@firstName, @lastName, @username, @email, @password, @address, @postcode)";
+        var sql = "INSERT INTO users (first_name, last_name, username, email, password, address, postcode) VALUES (@firstName, @lastName, @username, @email, @password, @address, @postcode)";
 
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@firstName", user.FirstName);

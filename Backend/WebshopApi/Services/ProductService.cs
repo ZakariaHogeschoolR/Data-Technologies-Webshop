@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using DataTransferObject;
 using models;
 
@@ -15,36 +14,33 @@ namespace Service
 
         public async Task<List<Products>> GetAllService()
         {
-            Task<List<Products?>> products = _productRepository.GetAllProducts();
-            return await products;
+            return await _productRepository.GetAllProducts();
         }
 
-        public async Task<Products> GetByIdService(int id)
+        public async Task<Products?> GetByIdService(int id)
         {
-            Task<Products?> product = _productRepository.GetProductById(id);
-            return await product;
+            return await _productRepository.GetProductById(id);
         }
-
+      
         public async Task<List<Products>> GetByPriceService(double price)
         {
             Task<List<Products?>> products = _productRepository.GetProductsByPrice(price);
             return await products;
         }
-
-        public void CreateService(ProductDto product)
+      
+        public async Task CreateService(ProductDto product)
         {
-            _productRepository.AddProduct(product);
+            await _productRepository.AddProduct(product);
         }
 
-        public void UpdateService(ProductDto product)
+        public async Task UpdateService(ProductDto product)
         {
-            _productRepository.UpdateProduct(product);
+            await _productRepository.UpdateProduct(product);
         }
 
-        public void DeleteService(int id)
+        public async Task DeleteService(int id)
         {
-            _productRepository.DeleteProduct(id);
+            await _productRepository.DeleteProduct(id);
         }
     }
-    
 }

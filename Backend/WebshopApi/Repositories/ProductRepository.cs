@@ -1,9 +1,5 @@
 using Npgsql;
-using System.Threading.Tasks;
 using models;
-using System.Data.SqlTypes;
-using System.Data.Common;
-using System.Reflection.Metadata;
 using ApplicationDbContext;
 using DataTransferObject;
 
@@ -16,7 +12,7 @@ public class ProductRepository
         _dbConnectie = dbConnectie;
     }
 
-    public async Task<List<Products?>> GetAllProducts()
+    public async Task<List<Products>> GetAllProducts()
     {
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
@@ -25,9 +21,9 @@ public class ProductRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
-            products.Add( new Products
+            products.Add(new Products
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
@@ -95,7 +91,8 @@ public class ProductRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "INSERT INTO products (product_image, name, description, price) VALUES (@productImage, @name, @description, @price)";
+        var sql = @"INSERT INTO products (product_image, name, description, price)
+                    VALUES (@productImage, @name, @description, @price)";
 
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
@@ -109,9 +106,15 @@ public class ProductRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "UPDATE products SET product_image = @productImage, name = @name, description = @description, price = @price WHERE id = @id";
+        var sql = @"UPDATE products
+                    SET product_image = @productImage,
+                        name = @name,
+                        description = @description,
+                        price = @price
+                    WHERE id = @id";
 
         using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", product.Id);
         cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
         cmd.Parameters.AddWithValue("@name", product.Name);
         cmd.Parameters.AddWithValue("@description", product.Description);
@@ -129,5 +132,4 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
     }
-    
 }

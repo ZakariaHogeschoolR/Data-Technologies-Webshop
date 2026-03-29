@@ -9,6 +9,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddSingleton(new DatabaseConnectie(connectionString));
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<ShoppingCartRepository>();
+builder.Services.AddScoped<WishlistRepository>();
+builder.Services.AddScoped<WishlistService>();
+builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ScraperService>();
@@ -18,9 +22,17 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
+});
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".Webshop.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddOpenApi();
@@ -30,6 +42,8 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 app.UseCors("AllowAll");
+app.UseSession();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -52,12 +66,12 @@ app.MapGet("/db-test", async (DatabaseConnectie dbService) =>
     {
         return Results.Problem($"Database fout: {ex.Message}");
     }
-});
+}).WithOpenApi();
 
 app.MapPost("/scrape", async (ScraperService scraperService) =>
 {
     await scraperService.ImportFromApiAsync();
     return Results.Ok(new { status = "Database gevuld!" });
-});
+}).WithOpenApi();
 
 app.Run();
