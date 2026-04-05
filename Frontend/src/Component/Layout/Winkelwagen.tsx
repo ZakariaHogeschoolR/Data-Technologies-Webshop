@@ -10,16 +10,25 @@ interface winkelwagen{
     createdAt:string,
     updatedAt:string
 }
+type product =
+{
+    id: number;
+    productImage: string;
+    name: string;
+    description: string;
+    price: number;
+}
 export default function Winkelwagen(){
     // const {id} = useParams()
     const [winkelwagenItems, setWinkelwagenItems] = useState<winkelwagen[]>([])
+    const [products, setProducts] = useState<product[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(``)
     const [inError, setInError] = useState(false)
 
     useEffect(() =>
         {
-            async function getData(){
+            async function getWinkelwagenData(){
                 try{
                     setLoading(true)
                     const request = await fetch(`http://localhost:5261/api/ShoppingCart/2`, {
@@ -33,17 +42,54 @@ export default function Winkelwagen(){
                     console.log(json)
                     setWinkelwagenItems([json]) 
                 }
-                catch(e){
+                catch(err){
                     setInError(true)
-                    setError(`${e}`)
-                    console.log(`error: `+ e)
+                    setError(`${err}`)
+                    console.log(`error: `+ err)
                 }
                 finally{
                     setLoading(false)
                 }
             }
-            getData()
+            getWinkelwagenData()
         }, [])
+    useEffect(()=>{
+        async function getProductnamesFromWinkelwagen() {
+            if (winkelwagenItems.length === 0) return;
+            try{
+                // const results: product[] = [];
+                // setLoading(true)
+                // winkelwagenItems.forEach(async winkelwagen => {
+                //     const request = await fetch(`http://localhost:5261/Product/${winkelwagen.productId}`,{
+                //         headers:{
+                //             "Content-Type":"Application/json",
+                //             "Accept":"Application/json"
+                //         }
+                //     })
+                //     console.log({request});
+                //     const json :product = await request.json();
+                //     console.log(json);
+                //     results.push(json)
+                // });
+                // setProducts(results)
+                const productPromises = winkelwagenItems.map(async (ww) =>{
+                    const request = await fetch(`http://localhost:5261/api/Product/${ww.productId}`)
+                    return await request.json() as product
+                })
+                const results = await Promise.all(productPromises)
+                setProducts(results)
+            }
+            catch(err){
+                setInError(true)
+                setError(`${err}`)
+                console.log(`error: `+ err)
+            }
+            finally{
+                setLoading(false)
+            }
+        }
+        getProductnamesFromWinkelwagen()
+    }, [winkelwagenItems])
     if(loading) return <>Loading...</>
     // if (winkelwagenItems.length == 0) return <>No winkelwagens</>
     if(inError) return <>{error}</>
@@ -52,7 +98,7 @@ export default function Winkelwagen(){
         <div className="Winkelwagen_container">
             {/* <p>{winkelwagenItems}</p> */}
             <div className="items-lijst">
-                <ul>
+                {/* <ul>
                     {winkelwagenItems.map((winkelwagen) =>(
                         <li key={winkelwagen.id}>{winkelwagen.id}<br/>
                             Name:  {winkelwagen.productId} x Quan:{winkelwagen.quantity}<br/>
@@ -60,6 +106,19 @@ export default function Winkelwagen(){
                             {winkelwagen.updatedAt}
                         </li>
                     ))}
+                </ul> */}
+                <ul>
+                    {winkelwagenItems.map((winkelwagen) => {
+                        const product = products.find(p => p.id == winkelwagen.productId)
+                        return(<>
+                        <li key={winkelwagen.id}>
+                            {product&& (
+                                <img src={`${product.productImage}`}
+                                alt={`${product.name}`}
+                                style={{width:`2rem`, height:`2rem`}}/>)}
+                        </li>
+                        </>);
+                    })}
                 </ul>
             </div>
             <div className="total-price"></div>
