@@ -21,7 +21,13 @@ namespace Service
         {
             return await _productRepository.GetProductById(id);
         }
-
+      
+        public async Task<List<Products>> GetByPriceService(double price)
+        {
+            Task<List<Products?>> products = _productRepository.GetProductsByPrice(price);
+            return await products;
+        }
+      
         public async Task CreateService(ProductDto product)
         {
             await _productRepository.AddProduct(product);
