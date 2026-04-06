@@ -29,7 +29,8 @@ public class ProductRepository
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Description = reader.GetString(reader.GetOrdinal("description")),
-                Price = reader.GetDecimal(reader.GetOrdinal("price"))
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
         }
 
@@ -55,7 +56,8 @@ public class ProductRepository
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Description = reader.GetString(reader.GetOrdinal("description")),
-                Price = reader.GetDecimal(reader.GetOrdinal("price"))
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             };
         }
 
@@ -91,15 +93,36 @@ public class ProductRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = @"INSERT INTO products (product_image, name, description, price)
-                    VALUES (@productImage, @name, @description, @price)";
+        var sql = @"INSERT INTO products (product_image, name, description, price, team_id)
+                    VALUES (@productImage, @name, @description, @price, @teamId)";
 
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
         cmd.Parameters.AddWithValue("@name", product.Name);
         cmd.Parameters.AddWithValue("@description", product.Description);
         cmd.Parameters.AddWithValue("@price", product.Price);
+        cmd.Parameters.AddWithValue("@teamId", product.TeamId);
         await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task<int> AddProductScrape(ProductDto product)
+    {
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = @"
+            INSERT INTO products (product_image, name, description, price, team_id)
+            VALUES (@productImage, @name, @description, @price, @teamId)
+            RETURNING id;
+        ";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
+        cmd.Parameters.AddWithValue("@name", product.Name);
+        cmd.Parameters.AddWithValue("@description", product.Description);
+        cmd.Parameters.AddWithValue("@price", product.Price);
+        cmd.Parameters.AddWithValue("@teamId", product.TeamId);
+
+        var productId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+        return productId;
     }
 
     public async Task UpdateProduct(ProductDto product)
@@ -119,6 +142,62 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@name", product.Name);
         cmd.Parameters.AddWithValue("@description", product.Description);
         cmd.Parameters.AddWithValue("@price", product.Price);
+        
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task<int> GetOrCreateTeam(string name, string type)
+    {
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = @"
+            INSERT INTO teams (name, type)
+            VALUES (@name, @type)
+            ON CONFLICT (name)
+            DO UPDATE SET type = EXCLUDED.type
+            RETURNING id;
+        ";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@type", type);
+
+        var result = await cmd.ExecuteScalarAsync();
+
+        return Convert.ToInt32(result);
+    }
+
+    public async Task<int> GetOrCreateCategory(string name)
+    {
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = @"
+            INSERT INTO category (name)
+            VALUES (@name)
+            ON CONFLICT (name)
+            DO UPDATE SET name = EXCLUDED.name
+            RETURNING id;
+        ";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@name", name);
+
+        var result = await cmd.ExecuteScalarAsync();
+
+        return Convert.ToInt32(result);
+    }
+
+    public async Task AddProductCategory(int productId, int categoryId)
+    {
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = @"
+            INSERT INTO product_categories (product_id, category_id)
+            VALUES (@productId, @categoryId)
+            ON CONFLICT (product_id, category_id) DO NOTHING;
+        ";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@productId", productId);
+        cmd.Parameters.AddWithValue("@categoryId", categoryId);
+
         await cmd.ExecuteNonQueryAsync();
     }
 
