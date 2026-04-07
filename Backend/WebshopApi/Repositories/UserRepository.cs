@@ -96,7 +96,7 @@ public class UserRepository
             Email = reader.GetString(reader.GetOrdinal("email")),
             Password = reader.GetString(reader.GetOrdinal("password")),
             Address = reader.GetString(reader.GetOrdinal("address")),
-            PostCode = reader.GetString(reader.GetOrdinal("postcode"))
+            PostCode = reader.GetString(reader.GetOrdinal("postcode")),
             Role = reader.GetString(reader.GetOrdinal("role")),
         };
     }

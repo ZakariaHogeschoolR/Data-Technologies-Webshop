@@ -15,15 +15,18 @@ builder.Services.AddScoped<WishlistService>();
 builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<TeamRepository>();
+builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<ScraperService>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 

@@ -7,6 +7,7 @@ import Home from "../src/Component/Pages/Home";
 import About from "../src/Component/Pages/About";
 import NotFound from "../src/Component/Pages/NotFound";
 import ProductDetail from './Component/ProductDetail';
+import AdminPage from "../src/Component/Pages/AdminPage";
 
 const router = createHashRouter([
   {
@@ -16,6 +17,7 @@ const router = createHashRouter([
           { index: true, element: <Home /> },
           { path: 'about', element: <About /> },
           { path: 'products/:id', element: <ProductDetail/>},
+          { path: 'admin', element: <AdminPage /> },
           { path: '*', element: <NotFound /> },
     ],
   }
