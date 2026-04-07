@@ -21,6 +21,13 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("team/{id}")]
+    public async Task<ActionResult<List<Products>>> GetAllProductsByTeam(int id)
+    {
+        var products = await _productService.GetAllByTeamService(id);
+        return Ok(products);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Products>> GetProductById(int id)
     {
@@ -34,11 +41,30 @@ public class ProductController : ControllerBase
         return Ok(product);
     }
     
-    [HttpGet("by-price/{price: double}")]
-    public async Task<ActionResult<List<Products>>> GetAllProductsByPrice(double price)
+    [HttpGet("by-price/{price:double}")]
+    public async Task<ActionResult<Products>> GetProductByPrice(double price)
     {
-        var products = await _productService.GetByPriceService(price);
-        return Ok(products);
+        var product = await _productService.GetByPriceService(price);
+
+        if (product == null)
+        {
+            return NotFound($"Product with id {price} was not found.");
+        }
+
+        return Ok(product);
+    }
+
+    [HttpGet("by-name/{name}")]
+    public async Task<ActionResult<Products>> GetProductByName(string name)
+    {
+        var product = await _productService.GetByNameService(name);
+
+        if (product == null)
+        {
+            return NotFound($"Product with id {name} was not found.");
+        }
+
+        return Ok(product);
     }
 
     [HttpPost("create")]
