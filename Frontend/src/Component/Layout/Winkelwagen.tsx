@@ -74,6 +74,9 @@ export default function Winkelwagen(){
                 // setProducts(results)
                 const productPromises = winkelwagenItems.map(async (ww) =>{
                     const request = await fetch(`http://localhost:5261/api/Product/${ww.productId}`)
+                    // const json = await request.json();
+                    // console.log(json)
+                    // return await json as product
                     return await request.json() as product
                 })
                 const results = await Promise.all(productPromises)
@@ -116,12 +119,14 @@ export default function Winkelwagen(){
                                 <img src={`${product.productImage}`}
                                 alt={`${product.name}`}
                                 style={{width:`2rem`, height:`2rem`}}/>)}
+                                {product ? product.name : `Loading...`}, price: {product ? product.price: 0.00};
+                                <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p> 
                         </li>
                         </>);
                     })}
                 </ul>
+                
             </div>
-            <div className="total-price"></div>
         </div>
         </>
     );
