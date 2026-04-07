@@ -21,6 +21,13 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("team/{id}")]
+    public async Task<ActionResult<List<Products>>> GetAllProductsByTeam(int id)
+    {
+        var products = await _productService.GetAllByTeamService(id);
+        return Ok(products);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Products>> GetProductById(int id)
     {
