@@ -14,5 +14,5 @@ namespace models
         public string Password { get; set; }
         public string Address { get; set; }
         public string PostCode { get; set; }
-    }
+        public string Role { get; set; } = "user";
 }
