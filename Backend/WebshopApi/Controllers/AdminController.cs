@@ -1,3 +1,4 @@
+using DataTransferObject;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 
@@ -18,7 +19,18 @@ public class AdminController(UserService userService, ProductService productServ
     {
         if (!IsAdmin()) return Forbid();
         var users = await userService.GetAllService();
-        return Ok(users);
+        var result = users.Select(u => new AdminUserDto
+        {
+            Id = u.Id,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            Username = u.Username,
+            Email = u.Email,
+            Address = u.Address,
+            PostCode = u.PostCode,
+            Role = u.Role
+        });
+        return Ok(result);
     }
 
     [HttpGet("products")]
