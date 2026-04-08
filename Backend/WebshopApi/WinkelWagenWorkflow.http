@@ -4,6 +4,9 @@
 ### first check to show current or no shoppingcart exists/ check if create worked
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart
 Accept: application/json
+### first check to show winkelwagens connected to winkelwagen_user_id
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart/1
+Accept: application/json
 ### check if products exist
 GET {{WebshopApi_HostAddress}}/api/Product/
 ### check if users exists

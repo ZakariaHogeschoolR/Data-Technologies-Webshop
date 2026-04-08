@@ -51,8 +51,9 @@ public class ShoppingCartRepository
         return users;
     }
 
-    public async Task<ShoppingCarts?> GetShoppingCartById(int id)
+    public async Task<List<ShoppingCarts?>> GetShoppingCartById(int id)
     {
+        var shoppingcartslist = new List<ShoppingCarts>();
         using var conn = await _dbconnectie.GetConnection();
         var sql = "SELECT * FROM winkelwagen WHERE winkelwagen_users_id = @id";
         using var cmd = new NpgsqlCommand(sql, conn);
@@ -60,17 +61,17 @@ public class ShoppingCartRepository
 
         using var reader = await cmd.ExecuteReaderAsync();
 
-        if(await reader.ReadAsync())
+        while(await reader.ReadAsync())
         {
-            return new ShoppingCarts
+            shoppingcartslist.Add(new ShoppingCarts
             {
                 Id = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
                 ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
                 Quantity = reader.GetInt32(reader.GetOrdinal("quantity"))
-            };
+            });
         }
 
-        return null;
+        return shoppingcartslist;
     }
     public async Task AddShoppingCarts(ShoppingCartDTO shoppingcarts)
     {

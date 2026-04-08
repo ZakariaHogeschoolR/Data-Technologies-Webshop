@@ -16,11 +16,11 @@ namespace Service
             Task<List<ShoppingCarts?>> shoppingcarts =  _shoppingcartRepository.GetAllShoppingCarts();
             return await shoppingcarts;
         }
-        public async Task<ShoppingCarts?> GetShoppingCartById(int id)
+        public async Task<List<ShoppingCarts?>> GetShoppingCartById(int id)
         {
             // throw new NotImplementedException();
-            Task<ShoppingCarts?> shoppingCart = _shoppingcartRepository.GetShoppingCartById(id);
-            return await shoppingCart;
+            Task<List<ShoppingCarts?>> shoppingCarts = _shoppingcartRepository.GetShoppingCartById(id);
+            return await shoppingCarts;
         }
         public async Task<List<WinkelwagenUser>> GetAllWinkelwagenUsers()
         {
