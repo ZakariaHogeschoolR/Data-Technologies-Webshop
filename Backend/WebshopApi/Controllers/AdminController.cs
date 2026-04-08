@@ -40,4 +40,19 @@ public class AdminController(UserService userService, ProductService productServ
         var products = await productService.GetAllService();
         return Ok(products);
     }
+    
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetStats()
+    {
+        if (!IsAdmin()) return Forbid();
+        
+        var users = await userService.GetAllService();
+        var products = await productService.GetAllService();
+        
+        return Ok(new
+        {
+            totalUsers = users.Count,
+            totalProducts = products.Count
+        });
+    }
 }
