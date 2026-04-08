@@ -120,7 +120,7 @@ export default function Winkelwagen(){
                                 <img src={`${product.productImage}`}
                                 alt={`${product.name}`}
                                 style={{width:`2rem`, height:`2rem`}}/>)}
-                                {product ? product.name : `Loading...`}, price: {product ? product.price: 0.00};
+                                Name: {product ? product.name : `Loading...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};
                                 <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p> 
                         </li>
                         </>);
