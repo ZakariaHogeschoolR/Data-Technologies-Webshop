@@ -1,12 +1,12 @@
-
-import Products from "../src/Component/Products";
 import './App.css'
+import Winkelwagen from "./Component/Layout/Winkelwagen";
 
 function App() {
 
   return (
     <>
-      <Products/>
+      {/* <Products/> */}
+      <Winkelwagen/>
     </>
   )
 }

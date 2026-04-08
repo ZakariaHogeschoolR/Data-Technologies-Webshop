@@ -16,33 +16,40 @@ public class ShoppingCartController : ControllerBase
     [HttpGet()]
     public async Task<ActionResult<List<ShoppingCarts>>> GetAllShoppingCarts()
     {
-        var shoppingcarts = _shoppingcartservice.GetAllShoppingCarts();
+        var shoppingcarts = await _shoppingcartservice.GetAllShoppingCarts();
         return Ok(shoppingcarts);
     }
     
     [HttpGet("{id}")]
     public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById(int id)
     {
-        var shoppingcart = _shoppingcartservice.GetShoppingCartById(id);
+        var shoppingcart = await _shoppingcartservice.GetShoppingCartById(id);
         return Ok(shoppingcart);
     }
 
-    [HttpPost("create")]
-    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts(ShoppingCartDTO shoppingCartDTO)
+    [HttpGet("users")]
+    public async Task<ActionResult> GetAllWinkelwagenUsers()
     {
-        _shoppingcartservice.CreateService(shoppingCartDTO);
-        return Ok();
+        var result = await _shoppingcartservice.GetAllWinkelwagenUsers();
+        return Ok(result);
+    }
+
+    [HttpPost("create")]
+    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDTO)
+    {
+        await _shoppingcartservice.CreateService(shoppingCartDTO);
+        return Created();
     }
     [HttpPut("update")]
-    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts(ProductDto productDto, int quantity)
+    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDTO)
     {
-        _shoppingcartservice.UpdateteService(productDto, quantity);
-        return Ok();
+        _shoppingcartservice.UpdateteService(shoppingCartDTO);
+        return NoContent();
     }
     [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult> DeleteShoppingcart(int id)
     {
         _shoppingcartservice.DeleteService(id);
-        return Ok();
+        return NoContent();
     }
 }

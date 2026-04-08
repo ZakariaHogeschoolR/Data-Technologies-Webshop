@@ -1,0 +1,13 @@
+.Winkelwagen_container{
+    /* max-width: 50rem; */
+    background-color: white;
+    border: 1rem white;
+    border-radius: 0.25rem;
+}
+.items-lijst{
+    list-style: none;
+    justify-self:center;
+}
+.items-lijst ul{
+    list-style: none;
+}

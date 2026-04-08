@@ -1,0 +1,53 @@
+﻿@WebshopApi_HostAddress = http://localhost:5261
+
+
+### first check to show current or no shoppingcart exists/ check if create worked
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart
+Accept: application/json
+### check if products exist
+GET {{WebshopApi_HostAddress}}/api/Product/
+### check if users exists
+GET {{WebshopApi_HostAddress}}/api/User/
+### check if winkelwagen_users exists
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart/users
+Accept: application/json
+### create product if product does not exist
+POST {{WebshopApi_HostAddress}}/api/Product/create
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "productImage": "image_url",
+  "name": "Testvoorwinkelwagen1",
+  "description": "description_test1",
+  "price": 1
+}
+### make user a shoppingcart
+POST {{WebshopApi_HostAddress}}/api/ShoppingCart/create
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": 1,
+  "id" : 1,
+  "productId": 3,
+  "quantity": 100
+}
+### update Quantity
+PUT {{WebshopApi_HostAddress}}/api/ShoppingCart/update
+Content-Type: application/json
+Accept: application/json
+
+{
+    "id": 2,
+    "productId": 1,
+    "shoppingProducts": null,
+    "quantity": 1,
+    "createdAt": "0001-01-01",
+    "updatedAt": "0001-01-01"
+  }
+
+###Delete ShoppingCart
+DELETE {{WebshopApi_HostAddress}}/api/ShoppingCart/delete/2
+###

@@ -22,21 +22,27 @@ namespace Service
             Task<ShoppingCarts?> shoppingCart = _shoppingcartRepository.GetShoppingCartById(id);
             return await shoppingCart;
         }
-        public async void CreateService(ShoppingCartDTO shoppingcartDTO)
+        public async Task<List<WinkelwagenUser>> GetAllWinkelwagenUsers()
         {
-           _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
+            // throw new NotImplementedException();
+            Task<List<WinkelwagenUser>> shoppingCart = _shoppingcartRepository.GetAllWinkelwagenUsers();
+            return await shoppingCart;
         }
-        public async void UpdateteService(ProductDto productDto, int quantity)
+        public async Task CreateService(ShoppingCartDTO shoppingcartDTO)
         {
-            _shoppingcartRepository.UpdateShoppingcarts(productDto.Id, quantity);
+           await _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
+        }
+        public async void UpdateteService(ShoppingCartDTO shoppingCartDTO)
+        {
+            _shoppingcartRepository.UpdateShoppingcarts(shoppingCartDTO);
         }
         public async void DeleteService(int id)
         {
             _shoppingcartRepository.DeleteShoppingCarts(id);
         }
-        public async void DeleteProductsService(int userid, int id)
+        public async void DeleteProductsService(ShoppingCartDTO shoppingCartDTO)
         {
-            _shoppingcartRepository.DeleteProductFromShoppingcarts(userid, id);
+            _shoppingcartRepository.DeleteProductFromShoppingcarts(shoppingCartDTO);
         }
     }
 }
