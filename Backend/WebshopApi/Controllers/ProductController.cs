@@ -21,6 +21,20 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("next")]
+    public async Task<ActionResult<List<Products>>> GetNextProducts([FromQuery] int lastId)
+    {
+        var products = await _productService.GetAllNextService(lastId);
+        return Ok(products);
+    }
+
+    [HttpGet("prev")]
+    public async Task<ActionResult<List<Products>>> GetPrevProducts([FromQuery] int firstId)
+    {
+        var products = await _productService.GetAllPrevService(firstId);
+        return Ok(products);
+    }
+
     [HttpGet("team/{id}")]
     public async Task<ActionResult<List<Products>>> GetAllProductsByTeam(int id)
     {
