@@ -1,4 +1,7 @@
+using System.Text;
 using ApplicationDbContext;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Service;
 
@@ -18,6 +21,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TeamRepository>();
 builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<ScraperService>();
+builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddCors(options =>
 {
@@ -30,13 +34,23 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.Cookie.Name = ".Webshop.Session";
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.IsEssential = true;
-});
+var jwt = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwt["SecretKey"]!);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwt["Issuer"],
+        ValidAudience = jwt["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ClockSkew = TimeSpan.Zero
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddOpenApi();
 
@@ -45,7 +59,8 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 app.UseCors("AllowAll");
-app.UseSession();
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 // Configure the HTTP request pipeline.
