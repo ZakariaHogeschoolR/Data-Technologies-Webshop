@@ -27,7 +27,6 @@ public class AuthController(UserService service, TokenService tokenService) : Co
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        HttpContext.Session.Clear();
         return Ok(new { message = "Logged out" });
     }
 }
