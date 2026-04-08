@@ -14,6 +14,7 @@ export function useFetch<T>({ url }: UseFetchProps) {
             setIsLoading(true);
             try {
                 const response = await fetch(url, {
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json",

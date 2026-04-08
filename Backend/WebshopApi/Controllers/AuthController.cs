@@ -24,7 +24,7 @@ public class AuthController(UserService service) : ControllerBase
         HttpContext.Session.SetInt32("UserId", user.Id);
         HttpContext.Session.SetString("UserEmail", user.Email);
         HttpContext.Session.SetString("UserUsername", user.Username);
-
+        HttpContext.Session.SetString("UserRole", user.Role);
         return Ok(new { message = "Logged in" });
     }
 

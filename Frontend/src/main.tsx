@@ -8,6 +8,7 @@ import About from "../src/Component/Pages/About";
 import NotFound from "../src/Component/Pages/NotFound";
 import ProductDetail from './Component/ProductDetail';
 import Winkelwagen from './Component/Layout/Winkelwagen';
+import AdminPage from "../src/Component/Pages/AdminPage";
 
 const router = createHashRouter([
   {
@@ -18,6 +19,7 @@ const router = createHashRouter([
           { path: 'about', element: <About /> },
           { path: 'products/:id', element: <ProductDetail/>},
           {path: `winkelwagen/:id`, element: <Winkelwagen/>},
+          { path: 'admin', element: <AdminPage /> },
           { path: '*', element: <NotFound /> },
     ],
   }

@@ -19,23 +19,39 @@ namespace Service
 
         public async Task ImportFromApiAsync()
         {
-            var json = File.ReadAllText(@"C:\Users\zahar\Downloads\sportsworld_products.json");
+            var json = File.ReadAllText(@"C:\Users\Public\Data-Technologies-Webshop\Backend\WebshopApi\Scraper\data\products_with_teams.json");
             var items = JsonSerializer.Deserialize<List<FakeStoreProduct>>(json);
 
             foreach (var item in items)
             {
-                var fullName = item.Name.Replace("\n", " ").Trim(); // ✅ "adidas Ajax Originals Icons T-Shirt Adults"
+                var fullName = item.Name.Replace("\n", " ").Trim();
+
                 var enriched = EnrichFromName(fullName);
 
+                // 🔥 TEAM
+                var teamName = item.Team ?? enriched.Team ?? "Unknown";
+                var teamType = item.TeamType ?? "club"; // bv: national / club
+
+                var teamId = await _productRepository.GetOrCreateTeam(teamName, teamType);
+
+                // 🔥 CATEGORY
+                var categoryName = item.Category ?? "other";
+                var categoryId = await _productRepository.GetOrCreateCategory(categoryName);
+
+                // 🔥 PRODUCT
                 var product = new ProductDto
                 {
                     Name         = fullName,
                     Price        = item.Price,
                     Description  = enriched.Description,
-                    ProductImage = item.Image
+                    ProductImage = item.Image,
+                    TeamId       = teamId
                 };
 
-                await _productRepository.AddProduct(product);
+                var productId = await _productRepository.AddProductScrape(product);
+
+                // 🔗 LINK CATEGORY
+                await _productRepository.AddProductCategory(productId, categoryId);
             }
         }
 
@@ -105,36 +121,24 @@ namespace Service
             [JsonPropertyName("name")]
             public string Name { get; set; }
 
-            [JsonPropertyName("brand")]
-            public string Brand { get; set; }
-
             [JsonPropertyName("team")]
             public string Team { get; set; }
 
-            [JsonPropertyName("season")]
-            public string Season { get; set; }
+            [JsonPropertyName("teamType")]
+            public string TeamType { get; set; }
 
-            [JsonPropertyName("kitType")]
-            public string KitType { get; set; }
-
-            [JsonPropertyName("imageUrl")]      // ✅ was "imageUrl" — wrong for this file
+            [JsonPropertyName("image")]      // ✅ was "imageUrl" — wrong for this file
             public string Image { get; set; }
 
-            [JsonPropertyName("productUrl")]     // ✅ was "productUrl" — wrong for this file
+            [JsonPropertyName("link")]     // ✅ was "productUrl" — wrong for this file
             public string Detail { get; set; }
 
             [JsonPropertyName("price")]
             [JsonConverter(typeof(FlexiblePriceConverter))]
             public decimal Price { get; set; }
 
-            [JsonPropertyName("currency")]
-            public string Currency { get; set; }
-
-            [JsonPropertyName("source")]
-            public string Source { get; set; }
-
-            [JsonPropertyName("description")]
-            public string Description { get; set; }
+            [JsonPropertyName("category")]
+            public string Category { get; set; }
         }
     }
 }

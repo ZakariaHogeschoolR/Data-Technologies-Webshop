@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useFetch } from '../CustomHooks/GetFetchHook';
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import NotFound from '../Component/Pages/NotFound';
 import '../Styles/ProductDetail.css';
 import { AddRecentProducts } from "./storage/recentProducts";
@@ -12,15 +14,25 @@ type product =
     name: string;
     description: string;
     price: number;
+    teamId: number;
 }
 
 const ProductDetail = () => {
     const { id } = useParams();
     const { data, isLoading, error } = useFetch<product>({ url: `http://localhost:5261/api/Product/${id}` });
+    const [productsByTeam, setProductsByTeam] = useState<product[]>([]);
     useEffect(() => {
-        if(data)
+        if(data )
         {
             AddRecentProducts(data);
+            fetch(`http://localhost:5261/api/Product/team/${data.teamId}`)
+            .then(res => res.json())
+            .then(result => {
+                console.log("teamId:", data.teamId);
+                console.log("API result:", result);
+                setProductsByTeam(result);
+            })
+            .catch(err => console.log("Fetch error:", err));
         }
     }, [data]);
     if (isLoading) return <p>Loading...</p>;
@@ -28,7 +40,6 @@ const ProductDetail = () => {
     if (error || !data) {
         return <NotFound />;
     }
-
     return (
         <>
             <p className="product-id-content">PRODUCT {id}</p>
@@ -45,6 +56,18 @@ const ProductDetail = () => {
             </div>
             <p className="you-may-also-like-p-tag">You may also like</p>
             <section className="border-line-may-also-like"></section>
+            <div className="Products-Team-Container">
+                {productsByTeam.map(prod => (
+                    <Link to={`/products/${prod.id}`} className="link">
+                        <div className="Product-Team-content">
+                            <img src={prod.productImage} className="products-Team-ProductImage"/>
+                            <p className="products-Team-Name">{prod.name}</p>
+                            {/* <p className="products-Team-Description">{prod.description}</p> */}
+                            <p className="products-Team-Price-p-tag">{prod.price}</p>
+                        </div>
+                    </Link>
+                ))}
+            </div>
             <section className="border-line-may-also-like-end"></section>
         </>
     );

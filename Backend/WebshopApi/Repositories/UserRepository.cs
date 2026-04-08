@@ -37,6 +37,7 @@ public class UserRepository
                 Password = reader.GetString(reader.GetOrdinal("password")),
                 Address = reader.GetString(reader.GetOrdinal("address")),
                 PostCode = reader.GetString(reader.GetOrdinal("postcode")),
+                Role = reader.GetString(reader.GetOrdinal("role")),
             });
         }
 
@@ -66,6 +67,7 @@ public class UserRepository
                 Password = reader.GetString(reader.GetOrdinal("password")),
                 Address = reader.GetString(reader.GetOrdinal("address")),
                 PostCode = reader.GetString(reader.GetOrdinal("postcode")),
+                Role = reader.GetString(reader.GetOrdinal("role")),
             };
         }
 
@@ -94,7 +96,8 @@ public class UserRepository
             Email = reader.GetString(reader.GetOrdinal("email")),
             Password = reader.GetString(reader.GetOrdinal("password")),
             Address = reader.GetString(reader.GetOrdinal("address")),
-            PostCode = reader.GetString(reader.GetOrdinal("postcode"))
+            PostCode = reader.GetString(reader.GetOrdinal("postcode")),
+            Role = reader.GetString(reader.GetOrdinal("role")),
         };
     }
 
@@ -102,8 +105,7 @@ public class UserRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "INSERT INTO users (first_name, last_name, username, email, password, address, postcode) VALUES (@firstName, @lastName, @username, @email, @password, @address, @postcode)";
-
+        var sql = "INSERT INTO users (first_name, last_name, username, email, password, address, postcode, role) VALUES (@firstName, @lastName, @username, @email, @password, @address, @postcode, @role)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@firstName", user.FirstName);
         cmd.Parameters.AddWithValue("@lastName", user.LastName);
@@ -112,6 +114,7 @@ public class UserRepository
         cmd.Parameters.AddWithValue("@password", user.Password);
         cmd.Parameters.AddWithValue("@address", user.Address);
         cmd.Parameters.AddWithValue("@postcode", user.PostCode);
+        cmd.Parameters.AddWithValue("@role", "user");
         await cmd.ExecuteNonQueryAsync();
     }
 
