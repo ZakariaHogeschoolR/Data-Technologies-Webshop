@@ -7,7 +7,7 @@ namespace Service;
 
 public class TokenService(IConfiguration configuration)
 {
-    public string GenerateToken(int userId, string email, string username)
+    public string GenerateToken(int userId, string email, string username, string role)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]!));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -16,7 +16,8 @@ public class TokenService(IConfiguration configuration)
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email),
-            new Claim("username", username)
+            new Claim("username", username),
+            new Claim(ClaimTypes.Role, role),
         };
 
         var token = new SecurityTokenDescriptor

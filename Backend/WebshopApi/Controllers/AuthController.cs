@@ -20,7 +20,7 @@ public class AuthController(UserService service, TokenService tokenService) : Co
     {
         var user = await service.LoginService(data);
         if (user == null) return Unauthorized(new { message = "Invalid email or password" });
-        var token = tokenService.GenerateToken(user.Id, user.Email, user.Username);
+        var token = tokenService.GenerateToken(user.Id, user.Email, user.Username, user.Role);
         return Ok(new { token });
     }
 

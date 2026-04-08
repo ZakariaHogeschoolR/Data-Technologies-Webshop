@@ -10,8 +10,7 @@ public class AdminController(UserService userService, ProductService productServ
 {
     private bool IsAdmin()
     {
-        var role = HttpContext.Session.GetString("UserRole");
-        return role == "admin";
+        return User.IsInRole("Admin");
     }
 
     [HttpGet("users")]
