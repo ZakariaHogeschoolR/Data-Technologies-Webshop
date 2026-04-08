@@ -110,13 +110,18 @@ public class ShoppingCartRepository
         cmd.Parameters.AddWithValue("@QUAN", shoppingCartDTO.Quantity);
         await cmd.ExecuteNonQueryAsync();
     }
-    public async void DeleteShoppingCarts(int id)
+    public async Task DeleteShoppingCarts(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
         var sql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id =@id";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
+
+        var sql1 = "DELETE FROM winkelwagen_users WHERE user_id =@id";
+        using var cmd1 = new NpgsqlCommand(sql1, conn);
+        cmd1.Parameters.AddWithValue("@id", id);
+        await cmd1.ExecuteNonQueryAsync();
     }
     public async void DeleteProductFromShoppingcarts(ShoppingCartDTO shoppingCartDTO)
     {

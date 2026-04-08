@@ -36,9 +36,9 @@ namespace Service
         {
             _shoppingcartRepository.UpdateShoppingcarts(shoppingCartDTO);
         }
-        public async void DeleteService(int id)
+        public async Task DeleteService(int id)
         {
-            _shoppingcartRepository.DeleteShoppingCarts(id);
+            await _shoppingcartRepository.DeleteShoppingCarts(id);
         }
         public async void DeleteProductsService(ShoppingCartDTO shoppingCartDTO)
         {
