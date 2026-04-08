@@ -75,10 +75,11 @@ public class ShoppingCartRepository
     public async Task AddShoppingCarts(ShoppingCartDTO shoppingcarts)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var cmd = new NpgsqlCommand(@"INSERT INTO [IF NOT EXIST] winkelwagen_users (user_id, created_at) 
-        VALUES (@U_ID, @CR_AT)", conn);
+        var cmd = new NpgsqlCommand(@"INSERT INTO winkelwagen_users (user_id, created_at) 
+        VALUES (@U_ID, @CR_AT) ON CONFLICT (user_id) DO NOTHING", conn);
         cmd.Parameters.AddWithValue("@U_ID", shoppingcarts.UserId);
         cmd.Parameters.AddWithValue("@CR_AT", DateTime.UtcNow);
+        await cmd.ExecuteNonQueryAsync();
         var cmd1 = new NpgsqlCommand(@"INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) 
         VALUES (@U_ID, @P_ID, @QUAN)", conn);
         cmd1.Parameters.AddWithValue("U_ID", shoppingcarts.UserId);

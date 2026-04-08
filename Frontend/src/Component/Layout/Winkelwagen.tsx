@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import '../../Styles/Winkelwagen.css';
+import { useParams } from 'react-router-dom';
 // import { useParams } from 'react-router-dom';
 
 interface winkelwagen{
@@ -19,7 +20,7 @@ type product =
     price: number;
 }
 export default function Winkelwagen(){
-    // const {id} = useParams()
+    const {id} = useParams()
     const [winkelwagenItems, setWinkelwagenItems] = useState<winkelwagen[]>([])
     const [products, setProducts] = useState<product[]>([])
     const [loading, setLoading] = useState(true)
@@ -31,7 +32,7 @@ export default function Winkelwagen(){
             async function getWinkelwagenData(){
                 try{
                     setLoading(true)
-                    const request = await fetch(`http://localhost:5261/api/ShoppingCart/2`, {
+                    const request = await fetch(`http://localhost:5261/api/ShoppingCart/${id}`, {
                         headers:{
                             "Content-Type": "application/json",
                             "Accept": "application/json"

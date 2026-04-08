@@ -7,6 +7,8 @@ Accept: application/json
 ### check if products exist
 GET {{WebshopApi_HostAddress}}/api/Product/
 ### check if users exists
+GET {{WebshopApi_HostAddress}}/api/User/
+### check if winkelwagen_users exists
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart/users
 Accept: application/json
 ### create product if product does not exist
@@ -21,17 +23,13 @@ Accept: application/json
   "description": "description_test1",
   "price": 1
 }
-###
-# GET {{WebshopApi_HostAddress}}/api/User
-# Accept: application/json
-
 ### make user a shoppingcart
 POST {{WebshopApi_HostAddress}}/api/ShoppingCart/create
 Content-Type: application/json
 Accept: application/json
 
 {
-  "userId": 2,
+  "userId": 1,
   "id" : 1,
   "productId": 3,
   "quantity": 100
