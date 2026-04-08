@@ -4,7 +4,7 @@ import winkelwagenIcon from '../../assets/shopping-cart.png'
 
 const Navbar = () => 
 {
-    const testParam = 2
+    const testParam = 1
     return(
         <>
             <nav className="Navbar">

@@ -4,6 +4,12 @@
 ### first check to show current or no shoppingcart exists/ check if create worked
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart
 Accept: application/json
+### first check to show winkelwagens connected to winkelwagen_user_id, 1 as of writing
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart/1
+Accept: application/json
+### first check to show winkelwagens connected to winkelwagen_user_id, 3 as of writing
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart/3
+Accept: application/json
 ### check if products exist
 GET {{WebshopApi_HostAddress}}/api/Product/
 ### check if users exists
@@ -29,10 +35,10 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "userId": 1,
-  "id" : 1,
-  "productId": 3,
-  "quantity": 100
+  "userId": 2,
+  "id" : 2,
+  "productId": 2,
+  "quantity": 22
 }
 ### update Quantity
 PUT {{WebshopApi_HostAddress}}/api/ShoppingCart/update

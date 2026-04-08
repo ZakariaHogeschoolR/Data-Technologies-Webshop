@@ -40,8 +40,8 @@ export default function Winkelwagen(){
                     })
                     // console.log(request)
                     const json = await request.json()
-                    console.log(json)
-                    setWinkelwagenItems([json]) 
+                    // console.log(json)
+                    setWinkelwagenItems(json) 
                 }
                 catch(err){
                     setInError(true)
@@ -114,16 +114,14 @@ export default function Winkelwagen(){
                 <ul>
                     {winkelwagenItems.map((winkelwagen) => {
                         const product = products.find(p => p.id == winkelwagen.productId)
-                        return(<>
-                        <li key={winkelwagen.id}>
+                        return(<li key={winkelwagen.id}>
                             {product&& (
                                 <img src={`${product.productImage}`}
                                 alt={`${product.name}`}
                                 style={{width:`2rem`, height:`2rem`}}/>)}
-                                {product ? product.name : `Loading...`}, price: {product ? product.price: 0.00};
+                                Name: {product ? product.name : `Loading...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};
                                 <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p> 
-                        </li>
-                        </>);
+                        </li>);
                     })}
                 </ul>
                 
