@@ -16,9 +16,63 @@ public class ProductRepository
     {
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
-        var sql = "SELECT * FROM products";
+        var sql = "SELECT * FROM products LIMIT 30;";
 
         using var cmd = new NpgsqlCommand(sql, conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        return products;
+    }
+    public async Task<List<Products>> GetProductsPrev(int lastId)
+    {
+        var products = new List<Products>();
+        using var conn = await _dbConnectie.GetConnection();
+
+        var sql = "SELECT * FROM products WHERE id < @lastId ORDER BY id ASC LIMIT 30";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("lastId", lastId);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        return products;
+    }
+    public async Task<List<Products>> GetProductsNext(int lastId)
+    {
+        var products = new List<Products>();
+        using var conn = await _dbConnectie.GetConnection();
+
+        var sql = "SELECT * FROM products WHERE id > @lastId ORDER BY id LIMIT 30;";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("lastId", lastId);
+
         using var reader = await cmd.ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
@@ -67,7 +121,7 @@ public class ProductRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "SELECT * FROM products WHERE id = @id";
+        var sql = "SELECT * FROM products WHERE id = @id ";
 
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);

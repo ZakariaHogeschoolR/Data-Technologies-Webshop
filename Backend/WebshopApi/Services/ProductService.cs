@@ -19,6 +19,18 @@ public class ProductService
         return await products;
     }
 
+    public async Task<List<Products>> GetAllPrevService(int lastId)
+    {
+        Task<List<Products?>> products = _productRepository.GetProductsPrev(lastId);
+        return await products;
+    }
+
+    public async Task<List<Products>> GetAllNextService(int lastId)
+    {
+        Task<List<Products?>> products = _productRepository.GetProductsNext(lastId);
+        return await products;
+    }
+
     public async Task<List<Products>> GetAllByTeamService(int id)
     {
         Task<List<Products?>> products = _productRepository.GetAllProductsByTeam(id);
