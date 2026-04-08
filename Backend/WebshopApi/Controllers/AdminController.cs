@@ -34,10 +34,10 @@ public class AdminController(UserService userService, ProductService productServ
     }
 
     [HttpGet("products")]
-    public async Task<IActionResult> GetAllProducts()
+    public async Task<IActionResult> GetAllProductsAdmin()
     {
         if (!IsAdmin()) return Forbid();
-        var products = await productService.GetAllService();
+        var products = await productService.GetAllServiceAdmin();
         return Ok(products);
     }
     
@@ -47,7 +47,7 @@ public class AdminController(UserService userService, ProductService productServ
         if (!IsAdmin()) return Forbid();
         
         var users = await userService.GetAllService();
-        var products = await productService.GetAllService();
+        var products = await productService.GetAllServiceAdmin();
         
         return Ok(new
         {

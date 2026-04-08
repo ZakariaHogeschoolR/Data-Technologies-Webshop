@@ -36,6 +36,32 @@ public class ProductRepository
 
         return products;
     }
+    
+    public async Task<List<Products>> GetAllProductsAdmin()
+    {
+        var products = new List<Products>();
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = "SELECT * FROM products;";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        return products;
+    }
+
     public async Task<List<Products>> GetProductsPrev(int lastId)
     {
         var products = new List<Products>();
