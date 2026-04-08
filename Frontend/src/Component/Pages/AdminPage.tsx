@@ -19,13 +19,28 @@ type Product = {
     teamId: number;
 };
 
+type Stats = {
+    totalUsers: number;
+    totalProducts: number;
+};
+
 const AdminPage = () => {
     const { data: users, isLoading: usersLoading } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
     const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: "http://localhost:5261/api/Admin/products" });
-
+    const { data: stats } = useFetch<Stats>({ url: "http://localhost:5261/api/Admin/stats" });
     return (
         <div className="admin-container">
             <h1 className="admin-title">Admin Panel</h1>
+            <div className="admin-stats">
+            <div className="stat-card">
+                <p className="stat-number">{stats?.totalUsers ?? 0}</p>
+                <p className="stat-label">Total Users</p>
+            </div>
+            <div className="stat-card">
+                <p className="stat-number">{stats?.totalProducts ?? 0}</p>
+                <p className="stat-label">Total Products</p>
+            </div>
+        </div>
 
             <section className="admin-section">
                 <h2 className="admin-section-title">Users</h2>
