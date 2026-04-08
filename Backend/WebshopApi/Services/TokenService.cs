@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Service;
 
-public abstract class TokenService(IConfiguration configuration)
+public class TokenService(IConfiguration configuration)
 {
     public string GenerateToken(int userId, string email, string username)
     {
