@@ -18,6 +18,12 @@ public class ProductService
         Task<List<Products?>> products = _productRepository.GetAllProducts();
         return await products;
     }
+    
+    public async Task<List<Products>> GetAllServiceAdmin()
+    {
+        Task<List<Products?>> products = _productRepository.GetAllProductsAdmin();
+        return await products;
+    }
 
     public async Task<List<Products>> GetAllPrevService(int lastId)
     {
