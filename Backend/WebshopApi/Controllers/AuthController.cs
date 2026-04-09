@@ -22,7 +22,7 @@ public class AuthController(UserService service, TokenService tokenService) : Co
         if (user == null) return Unauthorized(new { message = "Invalid email or password" });
 
         var token = tokenService.GenerateToken(user);
-        return Ok(new { message = "Logged in", token });
+        return Ok(new { message = "Logged in", token, username = user.Username, role = user.Role });
     }
 
     [HttpPost("logout")]

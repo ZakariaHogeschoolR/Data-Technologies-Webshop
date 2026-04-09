@@ -43,7 +43,7 @@ const Auth = () => {
 
             const {token, username, role} = await res.json();
 
-            localStorage.setItem('jwtToken', token);
+            localStorage.setItem('token', token);
             localStorage.setItem('username', username);
             localStorage.setItem('role', role);
 
@@ -87,7 +87,7 @@ const Auth = () => {
     const handleLogout = async () => {
         reset();
         await fetch(`${API}/logout`, {method: 'POST'});
-        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('role');
         setLoggedIn(null);
