@@ -12,7 +12,7 @@ const Navbar = () => {
     const handleLogout = async () => {
         await fetch('http://localhost:5261/api/Auth/logout', {method: 'POST'});
 
-        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('role');
 
