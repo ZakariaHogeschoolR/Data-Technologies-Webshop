@@ -9,18 +9,20 @@ import NotFound from "../src/Component/Pages/NotFound";
 import ProductDetail from './Component/ProductDetail';
 import Winkelwagen from './Component/Layout/Winkelwagen';
 import AdminPage from "../src/Component/Pages/AdminPage";
+import Authentication from "./Component/Pages/Authentication.tsx";
 
 const router = createHashRouter([
   {
     path: '/',
-    element: <Layout />, 
+    element: <Layout />,
     children: [
-          { index: true, element: <Home /> },
-          { path: 'about', element: <About /> },
-          { path: 'products/:id', element: <ProductDetail/>},
-          {path: `winkelwagen/:id`, element: <Winkelwagen/>},
-          { path: 'admin', element: <AdminPage /> },
-          { path: '*', element: <NotFound /> },
+        { index: true, element: <Home /> },
+        { path: 'about', element: <About /> },
+        { path: 'products/:id', element: <ProductDetail/>},
+        {path: `winkelwagen/:id`, element: <Winkelwagen/>},
+        { path: 'admin', element: <AdminPage /> },
+        { path: '*', element: <NotFound /> },
+        {path: 'auth', element: <Authentication/>},
     ],
   }
 ]);

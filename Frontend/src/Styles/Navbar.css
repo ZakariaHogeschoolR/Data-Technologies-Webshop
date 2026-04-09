@@ -1,8 +1,91 @@
-.Navbar{
+.Navbar {
     position: fixed;
     background-color: var(--beige);
     width: 100%;
     min-height: 80px;
     left: 0;
     right: 0;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.Navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 10px 20px;
+}
+
+.Navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.Navbar-auth {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.Navbar-brand {
+    font-family: "Alfa Slab One", serif;
+    font-size: 22px;
+    color: var(--dark-green);
+    text-decoration: none;
+    letter-spacing: 3px;
+}
+
+.Navbar-brand:hover {
+    color: var(--mint);
+}
+
+.Navbar-username {
+    font-family: "Alfa Slab One", serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--dark-green);
+    text-transform: uppercase;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.Navbar-login {
+    font-family: "Alfa Slab One", serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    background-color: var(--dark-green);
+    padding: 8px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.Navbar-login:hover {
+    background-color: #0a2b1f;
+}
+
+.Navbar-logout {
+    font-family: "Alfa Slab One", serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dark-green);
+    background-color: transparent;
+    border: 2px solid var(--mint);
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.Navbar-logout:hover {
+    background-color: var(--mint);
+    color: var(--white);
 }

@@ -1,0 +1,190 @@
+.auth-page {
+    min-height: 100vh;
+    background-color: var(--mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.auth-card {
+    background-color: var(--beige);
+    border-radius: 20px;
+    width: 480px;
+    padding: 50px 50px 40px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── tab switcher ── */
+.auth-tabs {
+    display: flex;
+    margin-bottom: 40px;
+    border-bottom: 3px solid var(--mint);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    font-family: "Alfa Slab One", serif;
+    font-size: 16px;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+    letter-spacing: 1px;
+}
+
+.auth-tab.active {
+    color: var(--dark-green);
+    border-bottom: 3px solid var(--dark-green);
+    margin-bottom: -3px;
+}
+
+/* ── form ── */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.auth-row {
+    display: flex;
+    gap: 14px;
+}
+
+.auth-row .auth-field {
+    flex: 1;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.auth-field label {
+    font-family: "Alfa Slab One", serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--dark-green);
+    text-transform: uppercase;
+}
+
+.auth-field input {
+    background-color: var(--white);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 13px;
+    color: var(--dark-green);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.auth-field input:focus {
+    border-color: var(--mint);
+}
+
+.auth-field input::placeholder {
+    color: #bbb;
+    font-family: "Alfa Slab One", serif;
+    font-size: 12px;
+}
+
+/* ── submit button ── */
+.auth-submit {
+    margin-top: 10px;
+    padding: 16px;
+    background-color: var(--dark-green);
+    color: var(--beige);
+    border: none;
+    border-radius: 10px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.auth-submit:hover {
+    background-color: #0a2b1f;
+    transform: translateY(-1px);
+}
+
+.auth-submit:active {
+    transform: translateY(0);
+}
+
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── feedback ── */
+.auth-error {
+    background-color: #ffe0e0;
+    color: #b00;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.auth-success {
+    background-color: #d0f0e0;
+    color: var(--dark-green);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* ── logged-in state ── */
+.auth-logged-in {
+    text-align: center;
+}
+
+.auth-logged-in h2 {
+    font-family: "Alfa Slab One", serif;
+    color: var(--dark-green);
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.auth-logged-in p {
+    color: #777;
+    font-family: "Alfa Slab One", serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+}
+
+.auth-logout {
+    padding: 14px 40px;
+    background-color: var(--mint);
+    color: var(--dark-green);
+    border: none;
+    border-radius: 10px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.auth-logout:hover {
+    background-color: #50b890;
+}
