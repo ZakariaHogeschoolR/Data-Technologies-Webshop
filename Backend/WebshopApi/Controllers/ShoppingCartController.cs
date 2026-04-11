@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using models;
 using Service;
 using DataTransferObject;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -13,6 +16,7 @@ public class ShoppingCartController : ControllerBase
         _shoppingcartservice = shoppingcartService;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet()]
     public async Task<ActionResult<List<ShoppingCarts>>> GetAllShoppingCarts()
     {
@@ -20,10 +24,15 @@ public class ShoppingCartController : ControllerBase
         return Ok(shoppingcarts);
     }
     
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById(int id)
+    [Authorize]
+    [HttpGet("mine")]
+    public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById()
     {
-        var shoppingcart = await _shoppingcartservice.GetShoppingCartById(id);
+        var userIdString = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        return Ok(userIdString);
+        if(string.IsNullOrEmpty(userIdString)) return Unauthorized();
+        var userId = int.Parse(userIdString);
+        var shoppingcart = await _shoppingcartservice.GetShoppingCartById(userId);
         return Ok(shoppingcart);
     }
 
