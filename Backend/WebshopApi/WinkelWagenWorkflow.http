@@ -1,12 +1,20 @@
 ﻿@WebshopApi_HostAddress = http://localhost:5261
+# @name login
+POST {{WebshopApi_HostAddress}}/api/Auth/login
+Content-Type: application/json
 
-
+{
+  "email": "john.doe@gmail.com",
+  "password": "John"
+}
+###
+@token = {{login.response.body.$.token}}
 ### first check to show current or no shoppingcart exists/ check if create worked
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart
 Accept: application/json
 ###
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart/mine
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUyNjEvIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MjYxLyIsImV4cCI6MTc3NTkzMzg5Mywic3ViIjoiMSIsImVtYWlsIjoiam9obi5kb2VAZ21haWwuY29tIiwiVXNlcm5hbWUiOiJqb2huZG9lIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzU5MzAyOTMsIm5iZiI6MTc3NTkzMDI5M30.18lZvtn_8F7V41HFcMT6sx-iIh_RwEem5S52SXjM4NQ
+Authorization: Bearer {{token}}
 Accept: application/json
 ### check if products exist
 GET {{WebshopApi_HostAddress}}/api/Product/

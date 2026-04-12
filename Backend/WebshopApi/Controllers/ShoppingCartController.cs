@@ -24,17 +24,18 @@ public class ShoppingCartController : ControllerBase
         return Ok(shoppingcarts);
     }
     
-    [Authorize]
-    [HttpGet("mine")]
-    public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById()
-    {
-        var userIdString = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        return Ok(userIdString);
-        if(string.IsNullOrEmpty(userIdString)) return Unauthorized();
-        var userId = int.Parse(userIdString);
-        var shoppingcart = await _shoppingcartservice.GetShoppingCartById(userId);
-        return Ok(shoppingcart);
-    }
+        [Authorize]
+        [HttpGet("mine")]
+        public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // return Ok(userIdString);
+            if(string.IsNullOrEmpty(userIdString)) return Unauthorized();
+            var userId = int.Parse(userIdString);
+            // return Ok(userId);
+            var shoppingcart = await _shoppingcartservice.GetShoppingCartById(userId);
+            return Ok(shoppingcart);
+        }
 
     [HttpGet("users")]
     public async Task<ActionResult> GetAllWinkelwagenUsers()
