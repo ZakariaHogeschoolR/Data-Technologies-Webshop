@@ -134,6 +134,16 @@ public class UserRepository
         cmd.Parameters.AddWithValue("@postcode", user.PostCode);
         await cmd.ExecuteNonQueryAsync();
     }
+    
+    public async Task UpdatePassword(int id, string hashedPassword)
+{
+    using var conn = await _dbConnectie.GetConnection();
+    var sql = "UPDATE users SET password = @password WHERE id = @id";
+    using var cmd = new NpgsqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@id", id);
+    cmd.Parameters.AddWithValue("@password", hashedPassword);
+    await cmd.ExecuteNonQueryAsync();
+}
 
     public async Task DeleteUser(int id)
     {
