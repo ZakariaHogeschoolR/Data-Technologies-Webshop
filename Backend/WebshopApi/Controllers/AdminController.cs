@@ -47,4 +47,11 @@ public class AdminController(UserService userService, ProductService productServ
             totalProducts = products.Count
         });
     }
+
+    [HttpPost("users/{id}/reset-password")]
+    public async Task<IActionResult> ResetPassword(int id, [FromBody] AdminResetPasswordDto data)
+    {
+        await userService.ResetPasswordService(id, data.NewPassword);
+        return Ok(new { message = "Password reset successful" });
+    }
 }
