@@ -1,5 +1,7 @@
 import { useFetch } from "../../CustomHooks/GetFetchHook";
 import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import '../../Styles/AdminPage.css';
 
 type User = {
@@ -26,13 +28,24 @@ type Stats = {
 };
 
 const AdminPage = () => {
-    const { data: users, isLoading: usersLoading } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const role = localStorage.getItem("role");
+        if (!token || role !== "admin") {
+            navigate("/auth");
+        }
+    }, []);
+    
+    const { data: users, isLoading: usersLoading, } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
     const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: "http://localhost:5261/api/Admin/products" });
     const { data: stats } = useFetch<Stats>({ url: "http://localhost:5261/api/Admin/stats" });
 
     const [resetUserId, setResetUserId] = useState<number | null>(null);
     const [newPassword, setNewPassword] = useState("");
     const [resetMessage, setResetMessage] = useState("");
+    const [userList, setUserList] = useState<User[] | null>(null);
 
     const handleResetPassword = async (id: number) => {
         const token = localStorage.getItem("token");
@@ -53,6 +66,27 @@ const AdminPage = () => {
             setResetMessage("Something went wrong.");
         }
     };
+
+    const handleDeleteUser = async (id: number) => {
+        if (!confirm("Are you sure you want to delete this user?")) return;
+
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/users/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (res.ok) {
+            setResetMessage("User deleted successfully!");
+            setUserList((prev) => (prev ?? users ?? []).filter(u => u.id !== id));
+        } else {
+            setResetMessage("Something went wrong.");
+        }
+    };
+
+    const displayedUsers = userList ?? users;
 
     return (
         <div className="admin-container">
@@ -87,7 +121,7 @@ const AdminPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {users?.map(u => (
+                            {displayedUsers?.map(u => (
                                 <tr key={u.id}>
                                     <td>{u.id}</td>
                                     <td>{u.firstName} {u.lastName}</td>
@@ -126,13 +160,22 @@ const AdminPage = () => {
                                                 </button>
                                             </div>
                                         ) : (
-                                            <button
-                                                onClick={() => { setResetUserId(u.id); setResetMessage(""); }}
-                                                className="admin-badge badge-user"
-                                                style={{ cursor: "pointer", border: "none" }}
-                                            >
-                                                Reset Password
-                                            </button>
+                                            <div style={{ display: "flex", gap: "6px" }}>
+                                                <button
+                                                    onClick={() => { setResetUserId(u.id); setResetMessage(""); }}
+                                                    className="admin-badge badge-user"
+                                                    style={{ cursor: "pointer", border: "none" }}
+                                                >
+                                                    Reset Password
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteUser(u.id)}
+                                                    className="admin-badge badge-admin"
+                                                    style={{ cursor: "pointer", border: "none", backgroundColor: "#c0392b" }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
                                         )}
                                     </td>
                                 </tr>
