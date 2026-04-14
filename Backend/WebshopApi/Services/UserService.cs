@@ -36,6 +36,12 @@ namespace Service
             await _userRepository.UpdateUser(user);
         }
 
+        public async Task ResetPasswordService(int id, string newPassword)
+        {
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _userRepository.UpdatePassword(id, hashedPassword);
+        }
+
         public async Task DeleteService(int id)
         {
             await _userRepository.DeleteUser(id);
