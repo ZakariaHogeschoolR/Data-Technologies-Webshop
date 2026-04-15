@@ -19,7 +19,7 @@ const router = createHashRouter([
         { index: true, element: <Home /> },
         { path: 'about', element: <About /> },
         { path: 'products/:id', element: <ProductDetail/>},
-        {path: `winkelwagen/:id`, element: <Winkelwagen/>},
+        {path: `winkelwagen/mine`, element: <Winkelwagen/>},
         { path: 'admin', element: <AdminPage /> },
         { path: '*', element: <NotFound /> },
         {path: 'auth', element: <Authentication/>},

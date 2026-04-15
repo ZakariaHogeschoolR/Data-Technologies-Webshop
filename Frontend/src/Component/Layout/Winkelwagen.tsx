@@ -20,22 +20,24 @@ type product =
     price: number;
 }
 export default function Winkelwagen(){
-    const {id} = useParams()
+    // const {id} = useParams()
     const [winkelwagenItems, setWinkelwagenItems] = useState<winkelwagen[]>([])
     const [products, setProducts] = useState<product[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(``)
     const [inError, setInError] = useState(false)
+    const token = localStorage.getItem(`token`)
 
     useEffect(() =>
         {
             async function getWinkelwagenData(){
                 try{
                     setLoading(true)
-                    const request = await fetch(`http://localhost:5261/api/ShoppingCart/${id}`, {
+                    const request = await fetch(`http://localhost:5261/api/ShoppingCart/mine`, {
                         headers:{
                             "Content-Type": "application/json",
-                            "Accept": "application/json"
+                            "Accept": "application/json",
+                            "Authorization":`Bearer ${token}`
                         }
                     })
                     // console.log(request)
@@ -96,21 +98,12 @@ export default function Winkelwagen(){
     }, [winkelwagenItems])
     if(loading) return <>Loading...</>
     // if (winkelwagenItems.length == 0) return <>No winkelwagens</>
-    if(inError) return <>{error}</>
+    else if(inError) return <>{error}</>
+    else if (winkelwagenItems.length == 0) return (<p>Your shoppingcart is empty. Add Products to see them here.</p>)
     return(
         <>
         <div className="Winkelwagen_container">
-            {/* <p>{winkelwagenItems}</p> */}
             <div className="items-lijst">
-                {/* <ul>
-                    {winkelwagenItems.map((winkelwagen) =>(
-                        <li key={winkelwagen.id}>{winkelwagen.id}<br/>
-                            Name:  {winkelwagen.productId} x Quan:{winkelwagen.quantity}<br/>
-                            {winkelwagen.createdAt}<br/>
-                            {winkelwagen.updatedAt}
-                        </li>
-                    ))}
-                </ul> */}
                 <ul>
                     {winkelwagenItems.map((winkelwagen) => {
                         const product = products.find(p => p.id == winkelwagen.productId)
@@ -119,10 +112,10 @@ export default function Winkelwagen(){
                                 <img src={`${product.productImage}`}
                                 alt={`${product.name}`}
                                 style={{width:`2rem`, height:`2rem`}}/>)}
-                                Name: {product ? product.name : `Loading...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};
+                                Name: {product ? product.name : `Error...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};
                                 <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p> 
-                        </li>);
-                    })}
+                                </li>);
+                            })}
                 </ul>
                 
             </div>

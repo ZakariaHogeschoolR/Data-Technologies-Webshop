@@ -4,15 +4,15 @@ POST {{WebshopApi_HostAddress}}/api/Auth/login
 Content-Type: application/json
 
 {
-  "email": "john.doe@gmail.com",
-  "password": "John"
+  "email": "wwt@gmail.com",
+  "password": "password"
 }
 ###
 @token = {{login.response.body.$.token}}
 ### first check to show current or no shoppingcart exists/ check if create worked
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart
 Accept: application/json
-###
+### winkelwagen voor de ingelogde gebruiker
 GET {{WebshopApi_HostAddress}}/api/ShoppingCart/mine
 Authorization: Bearer {{token}}
 Accept: application/json
