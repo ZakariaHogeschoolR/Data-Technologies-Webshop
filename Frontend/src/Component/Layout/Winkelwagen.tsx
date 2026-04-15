@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import '../../Styles/Winkelwagen.css';
-import { useParams } from 'react-router-dom';
-// import { useParams } from 'react-router-dom';
 
 interface winkelwagen{
     id: number,
