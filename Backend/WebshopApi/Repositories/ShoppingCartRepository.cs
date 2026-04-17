@@ -85,8 +85,11 @@ public class ShoppingCartRepository
             cmd.Parameters.AddWithValue("@CR_AT", DateTime.UtcNow);
             var result = await cmd.ExecuteScalarAsync();
             var newWUID = Convert.ToInt32(result);
-            var cmd1 = new NpgsqlCommand(@"INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) 
-            VALUES (@WU_ID, @P_ID, @QUAN)", conn);
+            var cmd1 = new NpgsqlCommand(@"INSERT INTO winkelwagen 
+            (winkelwagen_users_id, product_id, quantity) 
+            VALUES (@WU_ID, @P_ID, @QUAN)
+            ON CONFLICT (winkelwagen_users_id, product_id)
+            DO UPDATE SET quantity = winkelwagen.quantity + EXCLUDED.quantity", conn);
             cmd1.Parameters.AddWithValue("WU_ID", newWUID);
             cmd1.Parameters.AddWithValue("P_ID", shoppingcarts.ProductId);
             cmd1.Parameters.AddWithValue("QUAN", shoppingcarts.Quantity);

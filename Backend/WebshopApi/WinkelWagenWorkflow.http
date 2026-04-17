@@ -43,7 +43,6 @@ Accept: application/json
 
 {
   "userId": 2,
-  "id" : 2,
   "productId": 2,
   "quantity": 22
 }
