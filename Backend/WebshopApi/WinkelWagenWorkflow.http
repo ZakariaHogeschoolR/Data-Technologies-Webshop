@@ -42,7 +42,6 @@ Authorization: Bearer {{token}}
 Accept: application/json
 
 {
-  "userId": 2,
   "productId": 2,
   "quantity": 22
 }
