@@ -38,6 +38,7 @@ Accept: application/json
 ### make user a shoppingcart
 POST {{WebshopApi_HostAddress}}/api/ShoppingCart/create
 Content-Type: application/json
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {

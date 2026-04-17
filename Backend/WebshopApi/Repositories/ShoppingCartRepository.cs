@@ -76,18 +76,28 @@ public class ShoppingCartRepository
     public async Task AddShoppingCarts(ShoppingCartDTO shoppingcarts)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var cmd = new NpgsqlCommand(@"INSERT INTO winkelwagen_users (user_id, created_at) 
-        VALUES (@U_ID, @CR_AT) ON CONFLICT (user_id) DO UPDATE SET user_id = EXCLUDED.user_id RETURNING id", conn);
-        cmd.Parameters.AddWithValue("@U_ID", shoppingcarts.UserId);
-        cmd.Parameters.AddWithValue("@CR_AT", DateTime.UtcNow);
-        var result = await cmd.ExecuteScalarAsync();
-        var newWUID = Convert.ToInt32(result);
-        var cmd1 = new NpgsqlCommand(@"INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) 
-        VALUES (@WU_ID, @P_ID, @QUAN)", conn);
-        cmd1.Parameters.AddWithValue("WU_ID", newWUID);
-        cmd1.Parameters.AddWithValue("P_ID", shoppingcarts.ProductId);
-        cmd1.Parameters.AddWithValue("QUAN", shoppingcarts.Quantity);
-        await cmd1.ExecuteNonQueryAsync();
+        using var transaction = await conn.BeginTransactionAsync();
+        try
+        {
+            var cmd = new NpgsqlCommand(@"INSERT INTO winkelwagen_users (user_id, created_at) 
+            VALUES (@U_ID, @CR_AT) ON CONFLICT (user_id) DO UPDATE SET user_id = EXCLUDED.user_id RETURNING id", conn);
+            cmd.Parameters.AddWithValue("@U_ID", shoppingcarts.UserId);
+            cmd.Parameters.AddWithValue("@CR_AT", DateTime.UtcNow);
+            var result = await cmd.ExecuteScalarAsync();
+            var newWUID = Convert.ToInt32(result);
+            var cmd1 = new NpgsqlCommand(@"INSERT INTO winkelwagen (winkelwagen_users_id, product_id, quantity) 
+            VALUES (@WU_ID, @P_ID, @QUAN)", conn);
+            cmd1.Parameters.AddWithValue("WU_ID", newWUID);
+            cmd1.Parameters.AddWithValue("P_ID", shoppingcarts.ProductId);
+            cmd1.Parameters.AddWithValue("QUAN", shoppingcarts.Quantity);
+            await cmd1.ExecuteNonQueryAsync();
+            await transaction.CommitAsync();
+        }
+        catch(Exception ex)
+        {
+            await transaction.RollbackAsync();
+            throw new Exception("Error in making winkelwagen: " + ex.Message);
+        }
     }
     //in between table
     // public async void ChangeQuantity(Products product, int quantity)
