@@ -80,13 +80,13 @@ const ProductDetail = () => {
     }
     return (
         <>
-            <div className="Addtowinkelwagenwindow">
-                <p>Add quantity to Shoppingcart:</p>
-                <input id="quantity" type="number" min={1} max={100} onChange={(e) => setQuantity(parseInt(e.target.value))}/>
-                <button onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
-            </div>
             <p className="product-id-content">PRODUCT {id}</p>
             <section className="product-border-line"></section>
+            <div className="Addtowinkelwagenwindow">
+                <p>Add quantity to Shoppingcart:</p>
+                <input id="quantity" type="number" min={1} max={11} onChange={(e) => setQuantity(parseInt(e.target.value))}/>
+                <button onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
+            </div>
             <div className="product-container">
                 <div className="product-content">
                     <img src={data.productImage} className="product-img-content"/> 
