@@ -7,7 +7,6 @@ const Navbar = () => {
     const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
     const navigate = useNavigate();
 
-    const testParam = 1;
 
     const handleLogout = async () => {
         await fetch('http://localhost:5261/api/Auth/logout', {method: 'POST'});
@@ -27,7 +26,7 @@ const Navbar = () => {
 
             <div className="Navbar-actions">
 
-                <Link to={`/winkelwagen/${testParam}`} className="winkelwagen-link">
+                <Link to={`/winkelwagen/mine`} className="winkelwagen-link">
                     <img
                         src={winkelwagenIcon}
                         alt="Shopping Cart"

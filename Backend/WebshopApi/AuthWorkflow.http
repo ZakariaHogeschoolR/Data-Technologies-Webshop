@@ -2,7 +2,6 @@
 
 POST {{WebshopApi_HostAddress}}/api/Auth/register
 Content-Type: application/json
-
 {
   "firstName": "John",
   "lastName": "Doe",
@@ -13,12 +12,25 @@ Content-Type: application/json
   "postcode": "1111AA"
 }
 ###
+POST {{WebshopApi_HostAddress}}/api/Auth/register
+Content-Type: application/json
+
+{
+  "firstName": "winkelwagen",
+  "lastName": "tester",
+  "username": "winkelwagentester",
+  "email": "wwt@gmail.com",
+  "password": "password",
+  "address": "winkelwagentester",
+  "postcode": "1111AA"
+}
+###
 POST {{WebshopApi_HostAddress}}/api/Auth/login
 Content-Type: application/json
 
 {
-  "email": "john.doe@gmail.com",
-  "password": "John"
+  "email": "wwt@gmail.com",
+  "password": "password"
 }
 ###
 POST {{WebshopApi_HostAddress}}/api/Auth/logout

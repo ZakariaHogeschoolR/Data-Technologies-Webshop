@@ -16,11 +16,10 @@ namespace Service
             Task<List<ShoppingCarts?>> shoppingcarts =  _shoppingcartRepository.GetAllShoppingCarts();
             return await shoppingcarts;
         }
-        public async Task<List<ShoppingCarts?>> GetShoppingCartById(int id)
+        public async Task<List<ShoppingCarts>> GetShoppingCartById(int id)
         {
             // throw new NotImplementedException();
-            Task<List<ShoppingCarts?>> shoppingCarts = _shoppingcartRepository.GetShoppingCartById(id);
-            return await shoppingCarts;
+            return await _shoppingcartRepository.GetShoppingCartById(id);
         }
         public async Task<List<WinkelwagenUser>> GetAllWinkelwagenUsers()
         {
@@ -28,9 +27,9 @@ namespace Service
             Task<List<WinkelwagenUser>> shoppingCart = _shoppingcartRepository.GetAllWinkelwagenUsers();
             return await shoppingCart;
         }
-        public async Task CreateService(ShoppingCartDTO shoppingcartDTO)
+        public async Task<ShoppingCarts> CreateService(ShoppingCartDTO shoppingcartDTO)
         {
-           await _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
+           return await _shoppingcartRepository.AddShoppingCarts(shoppingcartDTO);
         }
         public async void UpdateteService(ShoppingCartDTO shoppingCartDTO)
         {
