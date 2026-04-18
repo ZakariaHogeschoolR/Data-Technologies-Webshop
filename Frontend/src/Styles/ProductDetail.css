@@ -156,3 +156,12 @@
     margin-left: 320px;
     color: var(--mint);
 }
+.Addtowinkelwagenwindow{
+    position: relative;
+    background-color: beige;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+.Addtowinkelwagenwindow{
+    justify-self: center;
+}

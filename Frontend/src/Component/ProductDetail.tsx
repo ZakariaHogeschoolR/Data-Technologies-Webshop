@@ -21,10 +21,48 @@ const ProductDetail = () => {
     const { id } = useParams();
     const { data, isLoading, error } = useFetch<product>({ url: `http://localhost:5261/api/Product/${id}` });
     const [productsByTeam, setProductsByTeam] = useState<product[]>([]);
+    const token = localStorage.getItem(`token`)
+
+    const [quantity, setQuantity] = useState(1)
+
+    async function AddToWinkelwagen(){
+        // console.log(quantity)
+        // const { id } = useParams();
+        if(!token){
+            alert(`Log in eerst om producten toe te voegen`)
+            return;
+        }
+
+        try{
+            const response = await fetch(`http://localhost:5261/api/ShoppingCart/create`, { headers:{
+                "Content-Type" : "application/json",
+                "Accept" : "application/json",
+                "Authorization": `Bearer ${token}`
+            }, method: `POST`,
+            body: JSON.stringify({
+                // id: id,
+                productId : id,
+                quantity: quantity,
+                // createdAt: new Date().toISOString(),
+                // updatedAt: new Date().toISOString(),
+            })
+        })
+        if(!response.ok){
+            const errorData = await response.text();
+            throw new Error(`Server fout: ${response.status} - ${errorData}`)
+        }
+        const json = await response.json();
+        console.log(json);
+        alert(`product toegevoegd aan winkelwagen`)
+    }
+    catch(e){
+        console.log(`Something went wrong: ${e}`)
+    }
+}
     useEffect(() => {
         if(data )
-        {
-            AddRecentProducts(data);
+            {
+                AddRecentProducts(data);
             fetch(`http://localhost:5261/api/Product/team/${data.teamId}`)
             .then(res => res.json())
             .then(result => {
@@ -44,6 +82,11 @@ const ProductDetail = () => {
         <>
             <p className="product-id-content">PRODUCT {id}</p>
             <section className="product-border-line"></section>
+            <div className="Addtowinkelwagenwindow">
+                <p>Add quantity to Shoppingcart:</p>
+                <input id="quantity" type="number" min={1} max={11} onChange={(e) => setQuantity(parseInt(e.target.value))}/>
+                <button onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
+            </div>
             <div className="product-container">
                 <div className="product-content">
                     <img src={data.productImage} className="product-img-content"/> 
