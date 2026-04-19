@@ -3,7 +3,7 @@ name: CI Pipeline
 on: 
   push:
     # branches:
-      # - development
+    #   - development
   # pull_request:
 
 jobs:
@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Setup .Net
         uses: actions/setup-dotnet@v4
