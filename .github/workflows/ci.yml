@@ -87,10 +87,8 @@ jobs:
                 "content" : "🛡️ **CodeQL Analyse Voltooid**\n**Status:** ${{ job.status }}\n**Repository:** ${{ github.repository }}\n**Link naar run:** https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         run: |
-          curl -X POST -H "application/json" \
-          -d '{
-            "status": "${{ job.status }}",
-            "repository": "${{ github.repository }}",
-            "run_id": "${{ github.run_id }}",
-            "url": "https://github.com{{ github.repository }}/actions/${{ github.run_id }}"
-          }' "${{ secrets.DISCORD_WEBHOOK }}"
+          curl -F "content=🛡️ **CodeQL Analyse Voltooid**
+          **Status:** ${{ job.status }}
+          **Repo:** ${{ github.repository }}
+          **Run:** https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          "${{ secrets.DISCORD_WEBHOOK }}"
