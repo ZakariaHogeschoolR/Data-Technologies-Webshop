@@ -81,11 +81,15 @@ jobs:
 
       - name: Send Webhook Notification
         if: always()
+        env:
+          DISCORD_PAYLOAD: |
+            {
+                "content" : "🛡️ **CodeQL Analyse Voltooid**\n**Status:** ${{ job.status }}\n**Repository:** ${{ github.repository }}\n**Link naar run:** https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
         run: |
           curl -X POST -H "application/json" \
           -d '{
             "status": "${{ job.status }}",
-            "content" : "🛡️ **CodeQL Analyse Voltooid**\n**Status:** ${{ job.status }}\n**Repository:** ${{ github.repository }}\n**Link naar run:** https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}"
             "repository": "${{ github.repository }}",
             "run_id": "${{ github.run_id }}",
             "url": "https://github.com{{ github.repository }}/actions/${{ github.run_id }}"
