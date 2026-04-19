@@ -75,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: codeql-results
-          path: ../results/*.sarif
+          path: ${{ github.workspace }}/../results/*.sarif
 
       - name: Send Webhook Notification
         if: always()
