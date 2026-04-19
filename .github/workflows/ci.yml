@@ -2,9 +2,6 @@ name: CI Pipeline
 
 on: 
   push:
-    # branches:
-    #   - development
-  # pull_request:
 
 jobs:
   build:
@@ -39,7 +36,7 @@ jobs:
         run: dotnet list Backend/WebshopApi/WebshopApi.csproj package --vulnerable > vulnerability-report.txt || true
       
       - name: Upload Reports
-        uses: actions/upload-artifacts@v4
+        uses: actions/upload-artifact@v4
         with:
           name: ci-reports
           path: |
