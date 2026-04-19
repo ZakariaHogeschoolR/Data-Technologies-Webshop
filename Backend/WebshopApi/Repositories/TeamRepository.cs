@@ -1,7 +1,10 @@
-using Npgsql;
-using models;
 using ApplicationDbContext;
+
 using DataTransferObject;
+
+using models;
+
+using Npgsql;
 
 public class TeamRepository
 {

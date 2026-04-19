@@ -1,8 +1,12 @@
 using System.Text;
+
 using ApplicationDbContext;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
 using Scalar.AspNetCore;
+
 using Service;
 
 var builder = WebApplication.CreateBuilder(args);

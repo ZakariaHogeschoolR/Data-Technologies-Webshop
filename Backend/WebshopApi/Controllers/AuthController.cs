@@ -1,5 +1,7 @@
-﻿using DataTransferObject;
+using DataTransferObject;
+
 using Microsoft.AspNetCore.Mvc;
+
 using Service;
 
 namespace WebshopApi.Controllers;

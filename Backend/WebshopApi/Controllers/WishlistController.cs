@@ -1,7 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using models;
-using Service;
 using DataTransferObject;
+
+using Microsoft.AspNetCore.Mvc;
+
+using models;
+
+using Service;
 [ApiController]
 [Route("api/[controller]")]
 public class WishlistController : ControllerBase
@@ -11,14 +14,14 @@ public class WishlistController : ControllerBase
     {
         _wishlistservice = wishlistService;
     }
-    
+
     [HttpGet()]
     public async Task<ActionResult<List<Wishlists>>> GetAllWishlists()
     {
         var wishlists = _wishlistservice.GetAllWishLists();
         return Ok(wishlists);
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Wishlists>> GetWishlistById(int id)
     {

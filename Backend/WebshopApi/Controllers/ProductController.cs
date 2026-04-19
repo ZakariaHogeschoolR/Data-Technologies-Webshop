@@ -1,7 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using models;
-using Service;
 using DataTransferObject;
+
+using Microsoft.AspNetCore.Mvc;
+
+using models;
+
+using Service;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -54,7 +57,7 @@ public class ProductController : ControllerBase
 
         return Ok(product);
     }
-    
+
     [HttpGet("by-price/{price:double}")]
     public async Task<ActionResult<Products>> GetProductByPrice(double price)
     {
