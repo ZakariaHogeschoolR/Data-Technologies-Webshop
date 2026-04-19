@@ -10,12 +10,12 @@ trim_trailing_whitespace = true
 [*.cs]
 # OOP NAMING CONVENTIONS
 #Interfaces moeten met een I beginnen
-dotnet_naming_rule.interface_should_begun_with_i.severity = suggestion
+dotnet_naming_rule.interface_should_begun_with_i.severity = warning
 dotnet_naming_rule.interface_should_begun_with_i.symbols = interface
 dotnet_naming_rule.interface_should_begun_with_i.style = begun_with_i
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
-dotnet_naming_symbols.interface.applicable_accesabilities = *
+dotnet_naming_symbols.interface.applicable_accessibilities = *
 
 dotnet_naming_style.begun_with_i.required_prefix = I
 dotnet_naming_style.begun_with_i.capitalization = pascal_case

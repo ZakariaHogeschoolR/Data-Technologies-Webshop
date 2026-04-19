@@ -13,60 +13,28 @@ public class ProductService
         _productRepository = productRepository;
     }
 
-    public async Task<List<Products>> GetAllService()
+    public async Task<List<Products?>> GetAllService()
     {
-        Task<List<Products?>> products = _productRepository.GetAllProducts();
-        return await products;
+        return await _productRepository.GetAllProducts();
     }
 
-    public async Task<Products> GetByIdService(int id)
+    public async Task<Products?> GetByIdService(int id)
     {
-        Task<Products?> product = _productRepository.GetProductById(id);
-        return await product;
+        return await _productRepository.GetProductById(id);
     }
 
-    public void CreateService(ProductDto product)
+    public async Task CreateService(ProductDto product)
     {
-        _productRepository.AddProduct(product);
+        await _productRepository.AddProduct(product);
     }
 
-    public void UpdateService(ProductDto product)
+    public async Task UpdateService(ProductDto product)
     {
-        _productRepository.UpdateProduct(product);
+        await _productRepository.UpdateProduct(product);
     }
 
-    public void DeleteService(int id)
+    public async Task DeleteService(int id)
     {
-        private readonly ProductRepository _productRepository;
-
-        public ProductService(ProductRepository productRepository)
-        {
-            _productRepository = productRepository;
-        }
-
-        public async Task<List<Products>> GetAllService()
-        {
-            return await _productRepository.GetAllProducts();
-        }
-
-        public async Task<Products?> GetByIdService(int id)
-        {
-            return await _productRepository.GetProductById(id);
-        }
-
-        public async Task CreateService(ProductDto product)
-        {
-            await _productRepository.AddProduct(product);
-        }
-
-        public async Task UpdateService(ProductDto product)
-        {
-            await _productRepository.UpdateProduct(product);
-        }
-
-        public async Task DeleteService(int id)
-        {
-            await _productRepository.DeleteProduct(id);
-        }
+        await _productRepository.DeleteProduct(id);
     }
 }
