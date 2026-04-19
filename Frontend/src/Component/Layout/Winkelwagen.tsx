@@ -24,9 +24,10 @@ export default function Winkelwagen(){
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(``)
     const [inError, setInError] = useState(false)
+
     const token = localStorage.getItem(`token`)
 
-    // gebruik useMemo() voor het caching van een resultaat 
+    // gebruik useMemo() voor het caching van een resultaat
     // van een calculatie tussen rerenders(pagina herladen). cool!
     // https://react.dev/reference/react/useMemo
     const totalPrice = useMemo(()=>{
@@ -37,6 +38,10 @@ export default function Winkelwagen(){
     }, [winkelwagenItems, products])
     useEffect(() =>
         {
+            if(!token){
+                setLoading(false)
+                return;
+            }
             async function getWinkelwagenData(){
                 try{
                     setLoading(true)
@@ -50,7 +55,7 @@ export default function Winkelwagen(){
                     // console.log(request)
                     const json = await request.json()
                     // console.log(json)
-                    setWinkelwagenItems(json) 
+                    setWinkelwagenItems(json)
                 }
                 catch(err){
                     setInError(true)
@@ -62,7 +67,7 @@ export default function Winkelwagen(){
                 }
             }
             getWinkelwagenData()
-        }, [])
+        }, [token])
     useEffect(()=>{
         async function getProductnamesFromWinkelwagen() {
             if (winkelwagenItems.length === 0) return;
@@ -89,6 +94,11 @@ export default function Winkelwagen(){
     if(loading) return <>Loading...</>
     // if (winkelwagenItems.length == 0) return <>No winkelwagens</>
     else if(inError) return <>{error}</>
+    else if(!token){
+        return(<div className='Winkelwagen_container'>
+            <p>Je moet een account hebben en ingelogd zijn om te kunnen shoppen.</p>
+        </div>)
+    }
     else if (winkelwagenItems.length == 0) return (<p>Your shoppingcart is empty. Add Products to see them here.</p>)
     return(
         <>
@@ -105,7 +115,7 @@ export default function Winkelwagen(){
                                 style={{width:`5rem`, height:`5rem`}}/>
                                 )}
                                 <p>Name: {product ? product.name : `Error...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};</p>
-                                <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p> 
+                                <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p>
                                 </li>
                                 );
                             }
