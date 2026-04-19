@@ -52,7 +52,7 @@
 }
 
 .recent{
-    color: var(--beige);
+    color: var(--dark-blue);
     margin-top: 50px;
     margin-left: 65px;
     font-size: 20px;
@@ -79,7 +79,7 @@
 }
 
 .trending-teams{
-    color: var(--beige);
+    color: var(--dark-blue);
     margin-top: 50px;
     margin-left: 65px;
     font-size: 20px;
@@ -139,9 +139,59 @@
 }
 
 .prev-button{
-
+    font-family: 'Alfa Slab One';
+    font-size: 30px;
+    color: var(--dark-blue);
+    background-color: var(--mint);
+    width: 100px;
+    height: 50px;
+    margin-left: 80px;
+    margin-top: -65px;
+    border: 2px solid var(--beige);
+    z-index: 9999;
+    border-radius: 10px;
+    transition: all 0.35s ease;
 }
 
 .next-button{
-    
+    font-family: 'Alfa Slab One';
+    font-size: 30px;
+    color: var(--dark-blue);
+    background-color: var(--mint);
+    width: 100px;
+    height: 50px;
+    justify-content: right;
+    right: 0;
+    margin-left: 1550px;
+    margin-top: -125px;
+    margin-bottom: 40px;
+    border: 2px solid var(--beige);
+    z-index: 9999;
+    border-radius: 10px;
+    transition: all 0.35s ease;
+
+}
+
+.prev-button:hover,
+.next-button:hover
+{
+    transform: translateY(-3px) scale(1.03);
+    animation: glowBorder 2s infinite ease-in-out;
+}
+
+@keyframes glowBorder{
+    0%{
+        border-color: var(--beige);
+        box-shadow: 0 0 0px var(--beige);
+    }
+
+    50%{
+        border-color: white;
+        box-shadow: 0 0 12px var(--beige);
+    }
+
+    100%{
+        border-color: var(--beige);
+        box-shadow: 0 0 0px var(--beige);
+    }
 }

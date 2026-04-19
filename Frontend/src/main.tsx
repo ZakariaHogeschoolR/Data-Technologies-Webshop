@@ -7,6 +7,7 @@ import Home from "../src/Component/Pages/Home";
 import About from "../src/Component/Pages/About";
 import NotFound from "../src/Component/Pages/NotFound";
 import ProductDetail from './Component/ProductDetail';
+import CategoryDetail from './Component/CategoryDetail.tsx'
 import Winkelwagen from './Component/Layout/Winkelwagen';
 import AdminPage from "../src/Component/Pages/AdminPage";
 import Authentication from "./Component/Pages/Authentication.tsx";
@@ -19,6 +20,7 @@ const router = createHashRouter([
         { index: true, element: <Home /> },
         { path: 'about', element: <About /> },
         { path: 'products/:id', element: <ProductDetail/>},
+        { path: 'category/:id', element: <CategoryDetail/>},
         {path: `winkelwagen/mine`, element: <Winkelwagen/>},
         { path: 'admin', element: <AdminPage /> },
         { path: '*', element: <NotFound /> },
