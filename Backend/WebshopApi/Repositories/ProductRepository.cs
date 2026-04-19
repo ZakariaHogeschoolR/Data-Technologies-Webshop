@@ -1,7 +1,10 @@
-using Npgsql;
-using models;
 using ApplicationDbContext;
+
 using DataTransferObject;
+
+using models;
+
+using Npgsql;
 
 public class ProductRepository
 {
@@ -36,7 +39,7 @@ public class ProductRepository
 
         return products;
     }
-    
+
     public async Task<List<Products>> GetAllProductsAdmin()
     {
         var products = new List<Products>();
@@ -116,7 +119,7 @@ public class ProductRepository
 
         return products;
     }
-    
+
     public async Task<List<Products>> GetAllProductsByTeam(int id)
     {
         var products = new List<Products>();
@@ -232,9 +235,9 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@price", price);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
-            products.Add( new Products
+            products.Add(new Products
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
@@ -300,7 +303,7 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@name", product.Name);
         cmd.Parameters.AddWithValue("@description", product.Description);
         cmd.Parameters.AddWithValue("@price", product.Price);
-        
+
         await cmd.ExecuteNonQueryAsync();
     }
 

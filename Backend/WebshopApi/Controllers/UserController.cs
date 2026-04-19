@@ -1,11 +1,14 @@
-using Microsoft.AspNetCore.Mvc;
-using models;
-using Service;
 using DataTransferObject;
+
+using Microsoft.AspNetCore.Mvc;
+
+using models;
+
+using Service;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController: ControllerBase
+public class UserController : ControllerBase
 {
     private readonly UserService _userService;
     public UserController(UserService userService)

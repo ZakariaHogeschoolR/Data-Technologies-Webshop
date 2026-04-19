@@ -1,7 +1,10 @@
 using ApplicationDbContext;
-using models;
-using Npgsql;
+
 using DataTransferObject;
+
+using models;
+
+using Npgsql;
 
 public class ShoppingCartRepository
 {
@@ -18,7 +21,7 @@ public class ShoppingCartRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
             shoppingcarts.Add(new ShoppingCarts
             {
@@ -39,7 +42,7 @@ public class ShoppingCartRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
             users.Add(new WinkelwagenUser
             {
@@ -55,7 +58,7 @@ public class ShoppingCartRepository
     {
         var shoppingcartslist = new List<ShoppingCarts>();
         using var conn = await _dbconnectie.GetConnection();
-        
+
         var sql = @"SELECT w.winkelwagen_users_id, w.product_id,
         w.quantity, wu.created_at
         FROM winkelwagen w 
@@ -68,7 +71,7 @@ public class ShoppingCartRepository
 
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
             shoppingcartslist.Add(new ShoppingCarts
             {
@@ -89,37 +92,37 @@ public class ShoppingCartRepository
         {
             var cmd = new NpgsqlCommand(@"INSERT INTO winkelwagen_users (user_id, created_at) 
             VALUES (@U_ID, @CR_AT) ON CONFLICT (user_id) DO UPDATE SET user_id = EXCLUDED.user_id RETURNING id, created_at", conn);
-            
+
             cmd.Parameters.AddWithValue("@U_ID", shoppingcarts.UserId);
             cmd.Parameters.AddWithValue("@CR_AT", DateTime.UtcNow);
-            
+
             using var reader = await cmd.ExecuteReaderAsync();
-            if(!await reader.ReadAsync()) throw new Exception("winkelwagen_user kon niet gemaakt worden");
+            if (!await reader.ReadAsync()) throw new Exception("winkelwagen_user kon niet gemaakt worden");
             var WUid = reader.GetInt32(reader.GetOrdinal("id"));
-            var createdAt =reader.GetDateTime(reader.GetOrdinal("created_at"));
+            var createdAt = reader.GetDateTime(reader.GetOrdinal("created_at"));
             await reader.CloseAsync();
             // var newWUID = Convert.ToInt32(result);
-            
+
             var cmd1 = new NpgsqlCommand(@"INSERT INTO winkelwagen 
             (winkelwagen_users_id, product_id, quantity) 
             VALUES (@WU_ID, @P_ID, @QUAN)
             ON CONFLICT (winkelwagen_users_id, product_id)
             DO UPDATE SET quantity = winkelwagen.quantity + EXCLUDED.quantity
             RETURNING winkelwagen_users_id, quantity", conn);
-            
+
             cmd1.Parameters.AddWithValue("WU_ID", WUid);
             cmd1.Parameters.AddWithValue("P_ID", shoppingcarts.ProductId);
             cmd1.Parameters.AddWithValue("QUAN", shoppingcarts.Quantity);
 
             using var reader1 = await cmd1.ExecuteReaderAsync();
-            if(!await reader1.ReadAsync()) throw new Exception("kon product niet toevoegen aan winkelwagen");
-            
+            if (!await reader1.ReadAsync()) throw new Exception("kon product niet toevoegen aan winkelwagen");
+
             var Wid = reader1.GetInt32(reader1.GetOrdinal("winkelwagen_users_id"));
             var quantity = reader1.GetInt32(reader1.GetOrdinal("quantity"));
             await reader1.CloseAsync();
-            
+
             await transaction.CommitAsync();
-            
+
             return new ShoppingCarts
             {
                 Id = Wid,
@@ -128,9 +131,9 @@ public class ShoppingCartRepository
                 CreatedAt = DateOnly.FromDateTime(createdAt),
                 UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
             };
-            
+
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync();
             throw new Exception("Error in making winkelwagen: " + ex.Message);

@@ -1,6 +1,8 @@
 using DataTransferObject;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Service;
 
 namespace WebshopApi.Controllers;

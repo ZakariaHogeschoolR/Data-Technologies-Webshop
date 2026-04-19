@@ -1,11 +1,15 @@
-using Npgsql;
-using System.Threading.Tasks;
-using models;
-using System.Data.SqlTypes;
 using System.Data.Common;
+using System.Data.SqlTypes;
 using System.Reflection.Metadata;
+using System.Threading.Tasks;
+
 using ApplicationDbContext;
+
 using DataTransferObject;
+
+using models;
+
+using Npgsql;
 
 public class UserRepository
 {
@@ -25,9 +29,9 @@ public class UserRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
-            users.Add( new Users
+            users.Add(new Users
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 FirstName = reader.GetString(reader.GetOrdinal("first_name")),
@@ -134,16 +138,16 @@ public class UserRepository
         cmd.Parameters.AddWithValue("@postcode", user.PostCode);
         await cmd.ExecuteNonQueryAsync();
     }
-    
+
     public async Task UpdatePassword(int id, string hashedPassword)
-{
-    using var conn = await _dbConnectie.GetConnection();
-    var sql = "UPDATE users SET password = @password WHERE id = @id";
-    using var cmd = new NpgsqlCommand(sql, conn);
-    cmd.Parameters.AddWithValue("@id", id);
-    cmd.Parameters.AddWithValue("@password", hashedPassword);
-    await cmd.ExecuteNonQueryAsync();
-}
+    {
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = "UPDATE users SET password = @password WHERE id = @id";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@password", hashedPassword);
+        await cmd.ExecuteNonQueryAsync();
+    }
 
     public async Task DeleteUser(int id)
     {

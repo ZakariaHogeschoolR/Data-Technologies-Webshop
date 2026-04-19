@@ -1,144 +1,144 @@
-using DataTransferObject;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Service
+using DataTransferObject;
+
+namespace Service;
+
+public class ScraperService
 {
-    public class ScraperService
+    private readonly ProductRepository _productRepository;
+    private readonly HttpClient _http;
+
+    public ScraperService(ProductRepository productRepository)
     {
-        private readonly ProductRepository _productRepository;
-        private readonly HttpClient _http;
+        _productRepository = productRepository;
+        _http = new HttpClient();
+        _http.DefaultRequestHeaders.Add("User-Agent",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+    }
 
-        public ScraperService(ProductRepository productRepository)
+    public async Task ImportFromApiAsync()
+    {
+        var json = File.ReadAllText(@"C:\Users\Public\Data-Technologies-Webshop\Backend\WebshopApi\Scraper\data\products_with_teams.json");
+        var items = JsonSerializer.Deserialize<List<FakeStoreProduct>>(json);
+
+        foreach (var item in items)
         {
-            _productRepository = productRepository;
-            _http = new HttpClient();
-            _http.DefaultRequestHeaders.Add("User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
-        }
+            var fullName = item.Name.Replace("\n", " ").Trim();
 
-        public async Task ImportFromApiAsync()
-        {
-            var json = File.ReadAllText(@"C:\Users\Public\Data-Technologies-Webshop\Backend\WebshopApi\Scraper\data\products_with_teams.json");
-            var items = JsonSerializer.Deserialize<List<FakeStoreProduct>>(json);
+            var enriched = EnrichFromName(fullName);
 
-            foreach (var item in items)
+            // 🔥 TEAM
+            var teamName = item.Team ?? enriched.Team ?? "Unknown";
+            var teamType = item.TeamType ?? "club"; // bv: national / club
+
+            var teamId = await _productRepository.GetOrCreateTeam(teamName, teamType);
+
+            // 🔥 CATEGORY
+            var categoryName = item.Category ?? "other";
+            var categoryId = await _productRepository.GetOrCreateCategory(categoryName);
+
+            // 🔥 PRODUCT
+            var product = new ProductDto
             {
-                var fullName = item.Name.Replace("\n", " ").Trim();
-
-                var enriched = EnrichFromName(fullName);
-
-                // 🔥 TEAM
-                var teamName = item.Team ?? enriched.Team ?? "Unknown";
-                var teamType = item.TeamType ?? "club"; // bv: national / club
-
-                var teamId = await _productRepository.GetOrCreateTeam(teamName, teamType);
-
-                // 🔥 CATEGORY
-                var categoryName = item.Category ?? "other";
-                var categoryId = await _productRepository.GetOrCreateCategory(categoryName);
-
-                // 🔥 PRODUCT
-                var product = new ProductDto
-                {
-                    Name         = fullName,
-                    Price        = item.Price,
-                    Description  = enriched.Description,
-                    ProductImage = item.Image,
-                    TeamId       = teamId
-                };
-
-                var productId = await _productRepository.AddProductScrape(product);
-
-                // 🔗 LINK CATEGORY
-                await _productRepository.AddProductCategory(productId, categoryId);
-            }
-        }
-
-        private (string Description, string Team, string Season, string KitType) EnrichFromName(string name)
-        {
-            // Season: "2025 2026" or "25/26"
-            var seasonMatch = System.Text.RegularExpressions.Regex.Match(name, @"(\d{4}[\s\/]\d{2,4})");
-            var season = seasonMatch.Success ? seasonMatch.Value.Replace(" ", "/") : "";
-
-            // Kit type
-            var kitType = "";
-            if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bHome\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                kitType = "Home";
-            else if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bAway\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                kitType = "Away";
-            else if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bThird\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                kitType = "Third";
-            else if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bFourth\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                kitType = "Fourth";
-
-            // Known teams
-            var teams = new[]
-            {
-                "Ajax", "Liverpool", "Jamaica", "Brazil", "USA", "Real Madrid",
-                "Barcelona", "Valencia", "Manchester City", "Manchester United",
-                "Tottenham Hotspur", "Bournemouth", "New York City"
+                Name = fullName,
+                Price = item.Price,
+                Description = enriched.Description,
+                ProductImage = item.Image,
+                TeamId = teamId
             };
-            var team = Array.Find(teams, t =>
-                System.Text.RegularExpressions.Regex.IsMatch(name, t, System.Text.RegularExpressions.RegexOptions.IgnoreCase)) ?? "";
 
-            // Build description from parts
-            var parts = new[] { team, kitType, season }.Where(p => !string.IsNullOrEmpty(p));
-            var description = string.Join(" ", parts);
-            if (string.IsNullOrEmpty(description)) description = name;
+            var productId = await _productRepository.AddProductScrape(product);
 
-            return (description, team, season, kitType);
+            // 🔗 LINK CATEGORY
+            await _productRepository.AddProductCategory(productId, categoryId);
         }
-        public class FlexiblePriceConverter : JsonConverter<decimal>
+    }
+
+    private (string Description, string Team, string Season, string KitType) EnrichFromName(string name)
+    {
+        // Season: "2025 2026" or "25/26"
+        var seasonMatch = System.Text.RegularExpressions.Regex.Match(name, @"(\d{4}[\s\/]\d{2,4})");
+        var season = seasonMatch.Success ? seasonMatch.Value.Replace(" ", "/") : "";
+
+        // Kit type
+        var kitType = "";
+        if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bHome\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            kitType = "Home";
+        else if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bAway\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            kitType = "Away";
+        else if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bThird\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            kitType = "Third";
+        else if (System.Text.RegularExpressions.Regex.IsMatch(name, @"\bFourth\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            kitType = "Fourth";
+
+        // Known teams
+        var teams = new[]
         {
-            public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            "Ajax", "Liverpool", "Jamaica", "Brazil", "USA", "Real Madrid",
+            "Barcelona", "Valencia", "Manchester City", "Manchester United",
+            "Tottenham Hotspur", "Bournemouth", "New York City"
+        };
+        var team = Array.Find(teams, t =>
+            System.Text.RegularExpressions.Regex.IsMatch(name, t, System.Text.RegularExpressions.RegexOptions.IgnoreCase)) ?? "";
+
+        // Build description from parts
+        var parts = new[] { team, kitType, season }.Where(p => !string.IsNullOrEmpty(p));
+        var description = string.Join(" ", parts);
+        if (string.IsNullOrEmpty(description)) description = name;
+
+        return (description, team, season, kitType);
+    }
+    public class FlexiblePriceConverter : JsonConverter<decimal>
+    {
+        public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.Number)
+                return reader.GetDecimal();
+
+            if (reader.TokenType == JsonTokenType.String)
             {
-                if (reader.TokenType == JsonTokenType.Number)
-                    return reader.GetDecimal();
+                var raw = reader.GetString()?
+                    .Replace("€", "")
+                    .Replace(",", ".")
+                    .Trim();
 
-                if (reader.TokenType == JsonTokenType.String)
-                {
-                    var raw = reader.GetString()?
-                        .Replace("€", "")
-                        .Replace(",", ".")
-                        .Trim();
-
-                    return decimal.TryParse(raw,
-                        System.Globalization.NumberStyles.Any,
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        out var result) ? result : 0;
-                }
-
-                throw new JsonException($"Unexpected token type for price: {reader.TokenType}");
+                return decimal.TryParse(raw,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out var result) ? result : 0;
             }
 
-            public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
-                => writer.WriteNumberValue(value);
+            throw new JsonException($"Unexpected token type for price: {reader.TokenType}");
         }
 
-        public class FakeStoreProduct
-        {
-            [JsonPropertyName("name")]
-            public string Name { get; set; }
+        public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
+            => writer.WriteNumberValue(value);
+    }
 
-            [JsonPropertyName("team")]
-            public string Team { get; set; }
+    public class FakeStoreProduct
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
 
-            [JsonPropertyName("teamType")]
-            public string TeamType { get; set; }
+        [JsonPropertyName("team")]
+        public string Team { get; set; }
 
-            [JsonPropertyName("image")]      // ✅ was "imageUrl" — wrong for this file
-            public string Image { get; set; }
+        [JsonPropertyName("teamType")]
+        public string TeamType { get; set; }
 
-            [JsonPropertyName("link")]     // ✅ was "productUrl" — wrong for this file
-            public string Detail { get; set; }
+        [JsonPropertyName("image")]      // ✅ was "imageUrl" — wrong for this file
+        public string Image { get; set; }
 
-            [JsonPropertyName("price")]
-            [JsonConverter(typeof(FlexiblePriceConverter))]
-            public decimal Price { get; set; }
+        [JsonPropertyName("link")]     // ✅ was "productUrl" — wrong for this file
+        public string Detail { get; set; }
 
-            [JsonPropertyName("category")]
-            public string Category { get; set; }
-        }
+        [JsonPropertyName("price")]
+        [JsonConverter(typeof(FlexiblePriceConverter))]
+        public decimal Price { get; set; }
+
+        [JsonPropertyName("category")]
+        public string Category { get; set; }
     }
 }
