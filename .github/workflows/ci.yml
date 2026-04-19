@@ -29,7 +29,8 @@ jobs:
 
       - name: Build and Save Log
         working-directory: Backend/WebshopApi
-        run: dotnet build WebshopApi.csproj --no-restore > build-report.txt
+        # > build-report.txt
+        run: dotnet build WebshopApi.csproj --no-restore 
 
       - name: check for vulnerable packages and save log
       # met true aan het einde, gaat de pipeline door met kwatsbaarheden
