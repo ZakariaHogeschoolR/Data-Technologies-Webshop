@@ -1,6 +1,3 @@
 namespace DataTransferObject;
 
-public class AdminResetPasswordDto
-{
-    public string NewPassword { get; set; }
-}
+public record AdminResetPasswordDto(string NewPassword);

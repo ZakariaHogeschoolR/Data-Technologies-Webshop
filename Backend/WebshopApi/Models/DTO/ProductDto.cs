@@ -2,22 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DataTransferObject;
 
-public class ProductDto
-{
-    public int Id { get; set; }
-
-    [Required]
-    public string ProductImage { get; set; }
-
-    [Required]
-    public string Name { get; set; }
-
-    [Required]
-    public string Description { get; set; }
-
-    [Range(0.01, 999999)]
-    public decimal Price { get; set; }
-
-    [Required]
-    public int TeamId { get; set; }
-}
+public record ProductDto(
+    int? Id,
+    [Required] string ProductImage,
+    [Required] string Name,
+    [Required] string Description,
+    [Range(0.01, 999999)] decimal Price,
+    [Required] int TeamId);

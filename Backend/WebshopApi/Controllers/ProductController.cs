@@ -50,10 +50,7 @@ public class ProductController : ControllerBase
     {
         var product = await _productService.GetByIdService(id);
 
-        if (product == null)
-        {
-            return NotFound($"Product with id {id} was not found.");
-        }
+        if (product == null) return NotFound($"Product with id {id} was not found.");
 
         return Ok(product);
     }
@@ -63,10 +60,7 @@ public class ProductController : ControllerBase
     {
         var product = await _productService.GetByPriceService(price);
 
-        if (product == null)
-        {
-            return NotFound($"Product with id {price} was not found.");
-        }
+        if (product == null) return NotFound($"Product with id {price} was not found.");
 
         return Ok(product);
     }
@@ -76,14 +70,11 @@ public class ProductController : ControllerBase
     {
         var product = await _productService.GetByNameService(name);
 
-        if (product == null)
-        {
-            return NotFound($"Product with id {name} was not found.");
-        }
+        if (product == null) return NotFound($"Product with id {name} was not found.");
 
         return Ok(product);
     }
-    
+
     [HttpGet("search")]
     public async Task<ActionResult<List<Products>>> SearchProducts([FromQuery] string name)
     {
@@ -94,10 +85,7 @@ public class ProductController : ControllerBase
     [HttpPost("create")]
     public async Task<ActionResult> CreateProduct([FromBody] ProductDto product)
     {
-        if (product == null)
-        {
-            return BadRequest("Product data is required.");
-        }
+        if (product == null) return BadRequest("Product data is required.");
 
         await _productService.CreateService(product);
         return Ok("Product created successfully.");
@@ -106,16 +94,10 @@ public class ProductController : ControllerBase
     [HttpPut("update")]
     public async Task<ActionResult> UpdateProduct([FromBody] ProductDto product)
     {
-        if (product == null || product.Id <= 0)
-        {
-            return BadRequest("A valid product id is required.");
-        }
+        if (product == null || product.Id <= 0) return BadRequest("A valid product id is required.");
 
-        var existingProduct = await _productService.GetByIdService(product.Id);
-        if (existingProduct == null)
-        {
-            return NotFound($"Product with id {product.Id} was not found.");
-        }
+        var existingProduct = await _productService.GetByIdService(product.Id!.Value);
+        if (existingProduct == null) return NotFound($"Product with id {product.Id} was not found.");
 
         await _productService.UpdateService(product);
         return Ok("Product updated successfully.");
@@ -125,10 +107,7 @@ public class ProductController : ControllerBase
     public async Task<ActionResult> DeleteProduct(int id)
     {
         var existingProduct = await _productService.GetByIdService(id);
-        if (existingProduct == null)
-        {
-            return NotFound($"Product with id {id} was not found.");
-        }
+        if (existingProduct == null) return NotFound($"Product with id {id} was not found.");
 
         await _productService.DeleteService(id);
         return Ok("Product deleted successfully.");

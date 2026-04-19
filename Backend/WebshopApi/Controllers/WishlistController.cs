@@ -5,17 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 using models;
 
 using Service;
+
 [ApiController]
 [Route("api/[controller]")]
 public class WishlistController : ControllerBase
 {
     private readonly WishlistService _wishlistservice;
+
     public WishlistController(WishlistService wishlistService)
     {
         _wishlistservice = wishlistService;
     }
 
-    [HttpGet()]
+    [HttpGet]
     public async Task<ActionResult<List<Wishlists>>> GetAllWishlists()
     {
         var wishlists = _wishlistservice.GetAllWishLists();
@@ -30,14 +32,14 @@ public class WishlistController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult> CreateWishlist(WishlistDTO wishlistDTO)
+    public async Task<ActionResult> CreateWishlist(WishlistDto wishlistDTO)
     {
         _wishlistservice.CreateService(wishlistDTO);
         return Ok();
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult> UpdateWishlist(WishlistDTO wishlistDTO)
+    public async Task<ActionResult> UpdateWishlist(WishlistDto wishlistDTO)
     {
         _wishlistservice.UpdateService(wishlistDTO);
         return Ok();

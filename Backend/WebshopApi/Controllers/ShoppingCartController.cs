@@ -1,9 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 using DataTransferObject;
-
-using HtmlAgilityPack;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +14,14 @@ using Service;
 public class ShoppingCartController : ControllerBase
 {
     private readonly ShoppingCartService _shoppingcartservice;
+
     public ShoppingCartController(ShoppingCartService shoppingcartService)
     {
         _shoppingcartservice = shoppingcartService;
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpGet()]
+    [HttpGet]
     public async Task<ActionResult<List<ShoppingCarts>>> GetAllShoppingCarts()
     {
         var shoppingcarts = await _shoppingcartservice.GetAllShoppingCarts();
@@ -49,25 +47,28 @@ public class ShoppingCartController : ControllerBase
         var result = await _shoppingcartservice.GetAllWinkelwagenUsers();
         return Ok(result);
     }
+
     [Authorize]
     [HttpPost("create")]
-    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDTO)
+    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts([FromBody] ShoppingCartDto shoppingCartDTO)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         // return Ok(userIdString);
         if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
         var userId = int.Parse(userIdString);
-        shoppingCartDTO.UserId = userId;
+        shoppingCartDTO = shoppingCartDTO with { UserId = userId };
         // return Ok(userId);
         var result = await _shoppingcartservice.CreateService(shoppingCartDTO);
         return CreatedAtAction(nameof(GetAllShoppingCartsById), new { id = userId }, result);
     }
+
     [HttpPut("update")]
-    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDTO)
+    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts([FromBody] ShoppingCartDto shoppingCartDTO)
     {
         _shoppingcartservice.UpdateteService(shoppingCartDTO);
         return NoContent();
     }
+
     [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult> DeleteShoppingcart(int id)
     {

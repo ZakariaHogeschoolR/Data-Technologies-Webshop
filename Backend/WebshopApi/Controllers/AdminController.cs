@@ -16,17 +16,9 @@ public class AdminController(UserService userService, ProductService productServ
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await userService.GetAllService();
-        var result = users.Select(u => new AdminUserDto
-        {
-            Id = u.Id,
-            FirstName = u.FirstName,
-            LastName = u.LastName,
-            Username = u.Username,
-            Email = u.Email,
-            Address = u.Address,
-            PostCode = u.PostCode,
-            Role = u.Role
-        });
+        var result = users.Select(u =>
+            new AdminUserDto(u.Id, u.FirstName, u.LastName, u.Username, u.Email, u.Address, u.PostCode, u.Role));
+
         return Ok(result);
     }
 
