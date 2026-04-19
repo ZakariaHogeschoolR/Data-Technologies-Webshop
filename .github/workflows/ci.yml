@@ -27,6 +27,9 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore Backend/WebshopApi/WebshopApi.csproj
 
+      - name: Lint Code (Dotnet Format)
+        run: dotnet format Backend/WebshopApi/WebshopApi.csproj --verify-no-changes --no-restore
+
       - name: Build and Save Log
         working-directory: Backend/WebshopApi
         # > build-report.txt
@@ -44,8 +47,6 @@ jobs:
             Backend/WebshopApi/build-report.txt
             vulnerability-report.txt
 
-      - name: Lint Code (Dotnet Format)
-        run: dotnet format Backend/WebshopApi/WebshopApi.csproj --verify-no-changes --no-restore
 
 
   analyze:
