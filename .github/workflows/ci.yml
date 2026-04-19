@@ -76,7 +76,7 @@ jobs:
         if: always()
         with:
           name: codeql-results
-          path: ${{ runner.temp }}/codeql_databases/csharp/results/*.sarif
+          path: ${{ github.workspace }}/../results/*.sarif
 
       - name: Send Webhook Notification
         if: always()
