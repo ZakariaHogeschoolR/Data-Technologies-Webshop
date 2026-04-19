@@ -13,14 +13,53 @@ public class ProductService
         _productRepository = productRepository;
     }
 
-    public async Task<List<Products?>> GetAllService()
+    public async Task<List<Products>> GetAllService()
     {
-        return await _productRepository.GetAllProducts();
+        Task<List<Products?>> products = _productRepository.GetAllProducts();
+        return await products;
+    }
+    
+    public async Task<List<Products>> GetAllServiceAdmin()
+    {
+        Task<List<Products?>> products = _productRepository.GetAllProductsAdmin();
+        return await products;
     }
 
-    public async Task<Products?> GetByIdService(int id)
+    public async Task<List<Products>> GetAllPrevService(int lastId)
     {
-        return await _productRepository.GetProductById(id);
+        Task<List<Products?>> products = _productRepository.GetProductsPrev(lastId);
+        return await products;
+    }
+
+    public async Task<List<Products>> GetAllNextService(int lastId)
+    {
+        Task<List<Products?>> products = _productRepository.GetProductsNext(lastId);
+        return await products;
+    }
+
+    public async Task<List<Products>> GetAllByTeamService(int id)
+    {
+        Task<List<Products?>> products = _productRepository.GetAllProductsByTeam(id);
+        return await products;
+    }
+
+
+    public async Task<Products> GetByIdService(int id)
+    {
+        Task<Products?> product = _productRepository.GetProductById(id);
+        return await product;
+    }
+
+    public async Task<List<Products>> GetByPriceService(double price)
+    {
+        Task<List<Products?>> product = _productRepository.GetProductByPrice(price);
+        return await product;
+    }
+
+    public async Task<List<Products>> GetByNameService(string name)
+    {
+        Task<List<Products?>> product = _productRepository.GetProductByName(name);
+        return await product;
     }
 
     public async Task CreateService(ProductDto product)

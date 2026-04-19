@@ -13,11 +13,19 @@ export function useFetch<T>({ url }: UseFetchProps) {
         async function getData() {
             setIsLoading(true);
             try {
+                const token = localStorage.getItem("token");
+
+                const headers: HeadersInit = {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                };
+
+                if (token) {
+                    headers["Authorization"] = `Bearer ${token}`;
+                }
+
                 const response = await fetch(url, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
+                    headers: headers,
                 });
 
                 if (!response.ok) {

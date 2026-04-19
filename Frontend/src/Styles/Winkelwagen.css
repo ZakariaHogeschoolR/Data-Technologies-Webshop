@@ -1,0 +1,18 @@
+.Winkelwagen_container{
+    background-color: beige;
+    border-radius: 0.5rem;
+    position: relative;
+    justify-self: center;
+}
+.items-lijst ul{
+    list-style: none;
+}
+.items-lijst ul li{
+    padding: 0.5rem;
+}
+.items-lijst ul li img{
+    border-radius: 0.5rem;
+}
+.totale-prijs p{
+    justify-self: center;
+}

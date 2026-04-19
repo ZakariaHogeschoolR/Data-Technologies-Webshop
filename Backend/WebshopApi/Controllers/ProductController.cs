@@ -24,6 +24,27 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
+    [HttpGet("next")]
+    public async Task<ActionResult<List<Products>>> GetNextProducts([FromQuery] int lastId)
+    {
+        var products = await _productService.GetAllNextService(lastId);
+        return Ok(products);
+    }
+
+    [HttpGet("prev")]
+    public async Task<ActionResult<List<Products>>> GetPrevProducts([FromQuery] int firstId)
+    {
+        var products = await _productService.GetAllPrevService(firstId);
+        return Ok(products);
+    }
+
+    [HttpGet("team/{id}")]
+    public async Task<ActionResult<List<Products>>> GetAllProductsByTeam(int id)
+    {
+        var products = await _productService.GetAllByTeamService(id);
+        return Ok(products);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Products>> GetProductById(int id)
     {
@@ -32,6 +53,32 @@ public class ProductController : ControllerBase
         if (product == null)
         {
             return NotFound($"Product with id {id} was not found.");
+        }
+
+        return Ok(product);
+    }
+    
+    [HttpGet("by-price/{price:double}")]
+    public async Task<ActionResult<Products>> GetProductByPrice(double price)
+    {
+        var product = await _productService.GetByPriceService(price);
+
+        if (product == null)
+        {
+            return NotFound($"Product with id {price} was not found.");
+        }
+
+        return Ok(product);
+    }
+
+    [HttpGet("by-name/{name}")]
+    public async Task<ActionResult<Products>> GetProductByName(string name)
+    {
+        var product = await _productService.GetByNameService(name);
+
+        if (product == null)
+        {
+            return NotFound($"Product with id {name} was not found.");
         }
 
         return Ok(product);
