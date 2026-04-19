@@ -90,5 +90,5 @@ jobs:
           curl -F "content=🛡️ **CodeQL Analyse Voltooid**
           **Status:** ${{ job.status }}
           **Repo:** ${{ github.repository }}
-          **Run:** https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          **Run:** https://github.com${{ github.repository }}/actions/runs/${{ github.run_id }}" \
           "${{ secrets.DISCORD_WEBHOOK }}"
