@@ -7,10 +7,9 @@ const Home = () => {
     return (<div className="home">
         <section className="hero" aria-label="Hero">
             <div className="hero-inner">
-                <p className="eyebrow">Find your fit</p>
+                <p className="eyebrow">Find your Team</p>
                 <h1 className="hero-title text-balance">
-                    Considered shirting,<br/>
-                    made to last.
+                    Find your Team
                 </h1>
                 <SearchBar/>
             </div>

@@ -21,7 +21,7 @@ const SearchBar = () => {
                 <input
                     type="search"
                     className="search-input"
-                    placeholder="Search shirts, fabrics, or collections..."
+                    placeholder="Search Teams"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     aria-label="Search"
