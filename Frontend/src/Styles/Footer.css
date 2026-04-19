@@ -1,8 +1,229 @@
-.Footer{
-    position: fixed;
+.Footer {
+    background-color: var(--white);
+    border-top: 1px solid rgba(15, 61, 46, 0.1);
+    padding: 64px 32px 32px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.Footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.Footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 2fr;
+    gap: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(15, 61, 46, 0.1);
+}
+
+/* Newsletter */
+.Footer-newsletter {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.Footer-brand {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    color: var(--dark-green);
+    letter-spacing: -0.3px;
+}
+
+.Footer-tagline {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--black);
+    opacity: 0.6;
+    max-width: 28ch;
+    line-height: 1.6;
+}
+
+.Footer-form {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 8px;
+    max-width: 360px;
+}
+
+.Footer-input {
+    flex: 1;
+    border: 1px solid rgba(15, 61, 46, 0.2);
+    border-right: none;
+    outline: none;
+    background: var(--white);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--dark-green);
+    padding: 14px 16px;
+    border-radius: 0;
+    transition: border-color 0.15s ease;
+}
+
+.Footer-input:focus {
+    border-color: var(--dark-green);
+}
+
+.Footer-input::placeholder {
+    color: var(--black);
+    opacity: 0.4;
+}
+
+.Footer-submit {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--white);
     background-color: var(--dark-green);
-    width: 100%;
-    height: 80px;
-    bottom: 0;
-    margin-top: 364px;
+    border: 1px solid var(--dark-green);
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.Footer-submit:hover {
+    background-color: transparent;
+    color: var(--dark-green);
+}
+
+/* Columns */
+.Footer-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.Footer-col-title {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.5;
+    margin-bottom: 20px;
+}
+
+.Footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.Footer-col a {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--dark-green);
+    transition: color 0.15s ease;
+}
+
+.Footer-col a:hover {
+    color: var(--mint);
+}
+
+/* Bottom bar */
+.Footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 32px;
+    flex-wrap: wrap;
+}
+
+.Footer-copy {
+    font-family: var();
+    font-size: 13px;
+    color: var(--black);
+    opacity: 0.5;
+}
+
+.Footer-socials {
+    display: flex;
+    gap: 8px;
+}
+
+.Footer-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(15, 61, 46, 0.15);
+    color: var(--dark-green);
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.Footer-social:hover {
+    background-color: var(--dark-green);
+    color: var(--white);
+    border-color: var(--dark-green);
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+    .Footer {
+        padding: 48px 24px 24px;
+    }
+
+    .Footer-top {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+
+    .Footer-columns {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+    }
+}
+
+@media (max-width: 560px) {
+    .Footer {
+        padding: 40px 20px 20px;
+    }
+
+    .Footer-columns {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .Footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .Footer-form {
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    .Footer-input {
+        width: 100%;
+        border-right: 1px solid rgba(15, 61, 46, 0.2);
+        border-bottom: none;
+    }
+
+    .Footer-submit {
+        width: 100%;
+    }
 }
