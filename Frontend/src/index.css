@@ -1,9 +1,11 @@
 :root {
     --beige: #F5F5DC;
+    --sand:  #C2B280;
     --mint: #66CDAA;
     --white: #FFFFFF;
     --black: #000000;
     --dark-green: #0F3D2E;
+    --dark-blue: #00008B;
     --beige-rgba: 242, 235, 224;
     --mint-rgba: 220, 206, 184;
     --white-rgba: 11, 43, 79;
@@ -22,4 +24,8 @@ body{
   overflow-x: hidden;
   font-family: "Alfa Slab One", serif;
   text-decoration: none;
+}
+
+a {
+    text-decoration: none;
 }

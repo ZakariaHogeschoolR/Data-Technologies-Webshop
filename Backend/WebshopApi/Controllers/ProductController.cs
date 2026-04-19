@@ -83,6 +83,13 @@ public class ProductController : ControllerBase
 
         return Ok(product);
     }
+    
+    [HttpGet("search")]
+    public async Task<ActionResult<List<Products>>> SearchProducts([FromQuery] string name)
+    {
+        var products = await _productService.SearchProductsByName(name);
+        return Ok(products);
+    }
 
     [HttpPost("create")]
     public async Task<ActionResult> CreateProduct([FromBody] ProductDto product)
