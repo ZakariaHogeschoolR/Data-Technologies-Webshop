@@ -43,7 +43,7 @@ public class ProductService
         return await products;
     }
 
-    public async Task<List<Products>>SearchProductsByName(string name)
+    public async Task<List<Products>> SearchProductsByName(string name)
     {
         Task<List<Products>> products = _productRepository.SearchProductsByName(name);
         return await products;

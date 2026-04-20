@@ -1,4 +1,4 @@
-﻿namespace DataTransferObject;
+namespace DataTransferObject;
 
 public record ProfileDto(
     int Id,
