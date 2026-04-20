@@ -31,9 +31,9 @@ public class AdminController(UserService userService, ProductService productServ
     }
 
     [HttpGet("products")]
-    public async Task<IActionResult> GetAllProductsAdmin()
+    public async Task<IActionResult> GetAllProductsAdmin([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var products = await productService.GetAllServiceAdmin();
+        var products = await productService.GetAllServiceAdminPaged(page, pageSize);
         return Ok(products);
     }
 
@@ -55,6 +55,13 @@ public class AdminController(UserService userService, ProductService productServ
     {
         await userService.ResetPasswordService(id, data.NewPassword);
         return Ok(new { message = "Password reset successful" });
+    }
+    
+    [HttpPut("users/{id}/role")]
+    public async Task<IActionResult> UpdateRole(int id, [FromBody] AdminUpdateRoleDto data)
+    {
+        await userService.UpdateRoleService(id, data.Role);
+        return Ok(new { message = "Role updated successfully" });
     }
 
     [HttpDelete("users/{id}")]
