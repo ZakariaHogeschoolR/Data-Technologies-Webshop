@@ -119,7 +119,7 @@ export default function ProfilePage() {
         clearMsg();
         setSaving(true);
         try {
-            const res = await fetch(`${API}/User/me`, {
+            const res = await fetch(`${API}/User/me/update`, {
                 method: 'PUT', headers: {
                     'Content-Type': 'application/json', Authorization: `Bearer ${token}`,
                 }, body: JSON.stringify(form),
