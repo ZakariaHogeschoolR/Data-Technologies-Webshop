@@ -1,6 +1,9 @@
 using ApplicationDbContext;
+
 using DataTransferObject;
+
 using models;
+
 using Npgsql;
 
 public class WishlistRepository
@@ -18,7 +21,7 @@ public class WishlistRepository
         var sql = "SELECT * FROM Wishlist";
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
             wishlists.Add(new Wishlists
             {
@@ -37,7 +40,7 @@ public class WishlistRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
         using var reader = await cmd.ExecuteReaderAsync();
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
             return new Wishlists
             {

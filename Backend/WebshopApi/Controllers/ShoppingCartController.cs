@@ -1,48 +1,84 @@
-using Microsoft.AspNetCore.Mvc;
-using models;
-using Service;
+using System.Security.Claims;
+
 using DataTransferObject;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+using models;
+
+using Service;
+
+namespace WebshopApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ShoppingCartController : ControllerBase
+public class ShoppingCartController(ShoppingCartService shoppingCartService) : ControllerBase
 {
-    private readonly ShoppingCartService _shoppingcartservice;
-    public ShoppingCartController(ShoppingCartService shoppingcartService)
-    {
-        _shoppingcartservice = shoppingcartService;
-    }
-
-    [HttpGet()]
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
     public async Task<ActionResult<List<ShoppingCarts>>> GetAllShoppingCarts()
     {
-        var shoppingcarts = _shoppingcartservice.GetAllShoppingCarts();
+        var shoppingcarts = await shoppingCartService.GetAllShoppingCarts();
         return Ok(shoppingcarts);
     }
-    
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ShoppingCarts>> GetAllShoppingCartsById(int id)
+
+    [Authorize]
+    [HttpGet("mine")]
+    public async Task<ActionResult<List<ShoppingCarts>>> GetAllShoppingCartsById()
     {
-        var shoppingcart = _shoppingcartservice.GetShoppingCartById(id);
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // return Ok(userIdString);
+        if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
+        var userId = int.Parse(userIdString);
+        // return Ok(userId);
+        var shoppingcart = await shoppingCartService.GetShoppingCartById(userId);
         return Ok(shoppingcart);
     }
 
+    [Authorize]
+    [HttpGet("history")]
+    public async Task<ActionResult> GetOrderHistory()
+    {
+        var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(id)) return Unauthorized();
+
+        var orders = await shoppingCartService.GetOrderHistoryService(int.Parse(id));
+        return Ok(orders);
+    }
+
+    [HttpGet("users")]
+    public async Task<ActionResult> GetAllWinkelwagenUsers()
+    {
+        var result = await shoppingCartService.GetAllWinkelwagenUsers();
+        return Ok(result);
+    }
+
+    [Authorize]
     [HttpPost("create")]
-    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts(ShoppingCartDTO shoppingCartDTO)
+    public async Task<ActionResult<ShoppingCarts>> CreateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDto)
     {
-        _shoppingcartservice.CreateService(shoppingCartDTO);
-        return Ok();
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // return Ok(userIdString);
+        if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
+        var userId = int.Parse(userIdString);
+        shoppingCartDto.UserId = userId;
+        // return Ok(userId);
+        var result = await shoppingCartService.CreateService(shoppingCartDto);
+        return CreatedAtAction(nameof(GetAllShoppingCartsById), new { id = userId }, result);
     }
+
     [HttpPut("update")]
-    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts(ProductDto productDto, int quantity)
+    public async Task<ActionResult<ShoppingCarts>> UpdateShoppingCarts([FromBody] ShoppingCartDTO shoppingCartDto)
     {
-        _shoppingcartservice.UpdateteService(productDto, quantity);
-        return Ok();
+        shoppingCartService.UpdateteService(shoppingCartDto);
+        return NoContent();
     }
+
     [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult> DeleteShoppingcart(int id)
     {
-        _shoppingcartservice.DeleteService(id);
-        return Ok();
+        shoppingCartService.DeleteService(id);
+        return NoContent();
     }
 }

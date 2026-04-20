@@ -1,0 +1,36 @@
+@WebshopApi_HostAddress = http://localhost:5261
+
+POST {{WebshopApi_HostAddress}}/api/Auth/register
+Content-Type: application/json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "username": "johndoe",
+  "email": "john.doe@gmail.com",
+  "password": "John",
+  "address": "Test",
+  "postcode": "1111AA"
+}
+###
+POST {{WebshopApi_HostAddress}}/api/Auth/register
+Content-Type: application/json
+
+{
+  "firstName": "winkelwagen",
+  "lastName": "tester",
+  "username": "winkelwagentester",
+  "email": "wwt@gmail.com",
+  "password": "password",
+  "address": "winkelwagentester",
+  "postcode": "1111AA"
+}
+###
+POST {{WebshopApi_HostAddress}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "wwt@gmail.com",
+  "password": "password"
+}
+###
+POST {{WebshopApi_HostAddress}}/api/Auth/logout

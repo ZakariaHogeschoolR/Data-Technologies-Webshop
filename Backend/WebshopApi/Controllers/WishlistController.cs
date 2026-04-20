@@ -1,24 +1,31 @@
-using Microsoft.AspNetCore.Mvc;
-using models;
-using Service;
 using DataTransferObject;
+
+using Microsoft.AspNetCore.Mvc;
+
+using models;
+
+using Service;
+
+namespace WebshopApi.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class WishlistController : ControllerBase
 {
     private readonly WishlistService _wishlistservice;
+
     public WishlistController(WishlistService wishlistService)
     {
         _wishlistservice = wishlistService;
     }
-    
-    [HttpGet()]
+
+    [HttpGet]
     public async Task<ActionResult<List<Wishlists>>> GetAllWishlists()
     {
         var wishlists = _wishlistservice.GetAllWishLists();
         return Ok(wishlists);
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Wishlists>> GetWishlistById(int id)
     {

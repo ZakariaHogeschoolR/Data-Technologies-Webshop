@@ -1,0 +1,64 @@
+﻿@WebshopApi_HostAddress = http://localhost:5261
+# @name login
+POST {{WebshopApi_HostAddress}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "wwt@gmail.com",
+  "password": "password"
+}
+###
+@token = {{login.response.body.$.token}}
+### first check to show current or no shoppingcart exists/ check if create worked
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart
+Accept: application/json
+### winkelwagen voor de ingelogde gebruiker
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart/mine
+Authorization: Bearer {{token}}
+Accept: application/json
+### check if products exist
+GET {{WebshopApi_HostAddress}}/api/Product/
+### check if users exists
+GET {{WebshopApi_HostAddress}}/api/User/
+### check if winkelwagen_users exists
+GET {{WebshopApi_HostAddress}}/api/ShoppingCart/users
+Accept: application/json
+### create product if product does not exist
+POST {{WebshopApi_HostAddress}}/api/Product/create
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "productImage": "image_url",
+  "name": "Testvoorwinkelwagen1",
+  "description": "description_test1",
+  "price": 1
+}
+### make user a shoppingcart
+POST {{WebshopApi_HostAddress}}/api/ShoppingCart/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+Accept: application/json
+
+{
+  "productId": 2,
+  "quantity": 22
+}
+### update Quantity
+PUT {{WebshopApi_HostAddress}}/api/ShoppingCart/update
+Content-Type: application/json
+Accept: application/json
+
+{
+    "id": 2,
+    "productId": 1,
+    "shoppingProducts": null,
+    "quantity": 1,
+    "createdAt": "0001-01-01",
+    "updatedAt": "0001-01-01"
+  }
+
+###Delete ShoppingCart
+DELETE {{WebshopApi_HostAddress}}/api/ShoppingCart/delete/2
+###
