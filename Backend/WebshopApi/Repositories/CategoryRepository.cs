@@ -1,7 +1,10 @@
-using Npgsql;
-using models;
 using ApplicationDbContext;
+
 using DataTransferObject;
+
+using models;
+
+using Npgsql;
 
 public class CategoryRepository
 {
@@ -111,9 +114,9 @@ public class CategoryRepository
         cmd.Parameters.AddWithValue("@price", price);
         using var reader = await cmd.ExecuteReaderAsync();
 
-        while(await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
-            categories.Add( new Categories
+            categories.Add(new Categories
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
@@ -145,7 +148,7 @@ public class CategoryRepository
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", category.Id);
         cmd.Parameters.AddWithValue("@name", category.Name);
-        
+
         await cmd.ExecuteNonQueryAsync();
     }
 

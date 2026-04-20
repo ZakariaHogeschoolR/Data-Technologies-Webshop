@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace DataTransferObject
-{
-    public class CategoryDto
-    {
-        public int Id { get; set; }
+namespace DataTransferObject;
 
-        [Required]
-        public string Name { get; set; }
-    }
+public class CategoryDto
+{
+    public int Id { get; set; }
+
+    [Required]
+    public string Name { get; set; }
 }
