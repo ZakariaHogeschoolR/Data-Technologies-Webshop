@@ -71,7 +71,7 @@ const CategoryDetail = () => {
             <section className="recent-border-line"></section>
             <div className="Products-Container">
                 {getProducts.map(prod => (
-                    <Link key={prod.id} to={`products/${prod.id}`} className="link">
+                    <Link key={prod.id} to={`/products/${prod.id}`} className="link">
                         <div className="Product-content">
                             <img src={prod.productImage} className="products-ProductImage"/>
                             <p className="products-Name">{prod.name}</p>
