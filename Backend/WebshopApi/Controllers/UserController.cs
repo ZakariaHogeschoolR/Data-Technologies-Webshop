@@ -31,7 +31,7 @@ public class UserController(UserService userService) : ControllerBase
 
     [Authorize]
     [HttpGet("me")]
-    public async Task<ActionResult<ProfileDto>> GetProfile(ProfileDto profileDto)
+    public async Task<ActionResult<ProfileDto>> GetProfile()
     {
         var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(id)) return Unauthorized();
