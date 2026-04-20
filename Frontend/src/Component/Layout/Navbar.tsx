@@ -2,7 +2,6 @@ import {Link, useNavigate} from 'react-router-dom';
 import '../../Styles/Navbar.css';
 import winkelwagenIcon from '../../assets/shopping-cart.png'
 import { useFetch } from '../../CustomHooks/GetFetchHook';
-import  { useFetchSecond } from '../../CustomHooks/GetFetchSecond';
 import { NavLink } from 'react-router-dom';
 import {useState, useEffect} from "react";
 import NotFound  from '../Pages/NotFound';
