@@ -2,7 +2,6 @@ import {Link, useNavigate} from 'react-router-dom';
 import '../../Styles/Navbar.css';
 import winkelwagenIcon from '../../assets/shopping-cart.png'
 import { useFetch } from '../../CustomHooks/GetFetchHook';
-import  { useFetchSecond } from '../../CustomHooks/GetFetchSecond';
 import { NavLink } from 'react-router-dom';
 import {useState, useEffect} from "react";
 import NotFound  from '../Pages/NotFound';
@@ -101,7 +100,9 @@ const Navbar = () => {
 
                 <div className="Navbar-auth">
                     {username ? (<>
-                        <span className="Navbar-username">{username}</span>
+                        <Link to="/profile" className="Navbar-username" title="My Account">
+                            {username}
+                        </Link>
                         <button className="Navbar-logout" onClick={handleLogout}>
                             Logout
                         </button>
