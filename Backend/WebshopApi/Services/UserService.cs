@@ -44,6 +44,11 @@ public class UserService
         await _userRepository.UpdatePassword(id, hashedPassword);
     }
 
+    public async Task UpdateRoleService(int id, string role)
+    {
+        await _userRepository.UpdateRole(id, role);
+    }
+    
     public async Task DeleteService(int id)
     {
         await _userRepository.DeleteUser(id);
