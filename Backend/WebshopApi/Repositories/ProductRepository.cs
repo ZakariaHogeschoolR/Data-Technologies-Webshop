@@ -293,22 +293,26 @@ public class ProductRepository
 
     public async Task<int> AddProductScrape(ProductDto product)
     {
-        using var conn = await _dbConnectie.GetConnection();
-        var sql = @"
-            INSERT INTO products (product_image, name, description, price, team_id)
-            VALUES (@productImage, @name, @description, @price, @teamId)
-            RETURNING id;
-        ";
+        if (!string.IsNullOrWhiteSpace(product.ProductImage))
+        {
+            using var conn = await _dbConnectie.GetConnection();
+            var sql = @"
+                INSERT INTO products (product_image, name, description, price, team_id)
+                VALUES (@productImage, @name, @description, @price, @teamId)
+                RETURNING id;
+            ";
 
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
-        cmd.Parameters.AddWithValue("@name", product.Name);
-        cmd.Parameters.AddWithValue("@description", product.Description);
-        cmd.Parameters.AddWithValue("@price", product.Price);
-        cmd.Parameters.AddWithValue("@teamId", product.TeamId);
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@productImage", product.ProductImage);
+            cmd.Parameters.AddWithValue("@name", product.Name);
+            cmd.Parameters.AddWithValue("@description", product.Description);
+            cmd.Parameters.AddWithValue("@price", product.Price);
+            cmd.Parameters.AddWithValue("@teamId", product.TeamId);
 
-        var productId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-        return productId;
+            var productId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            return productId;
+        }
+        return -1;
     }
 
     public async Task UpdateProduct(ProductDto product)

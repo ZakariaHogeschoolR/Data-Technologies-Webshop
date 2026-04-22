@@ -132,7 +132,7 @@
 .Product-Team-content{
     flex-shrink: 0;
     padding: 10px;
-    width: 405px;
+    width: 455px;
     height: 355px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -142,26 +142,97 @@
     margin-left: 80px;
     width: 200px;
     height: 200px;
+    z-index: 2;
 }
 .products-Team-Name{
+    background-color: var(--dark-blue);
     margin-top: 50px;
-    margin-left: 0px;
+    width: 455px;
+    text-align: center;
+    padding-left: 10px;
+    margin-left: -10px;
     color: var(--mint);
 }
 .products-Team-Description{
 
 }
 .products-Team-Price-p-tag{
+    text-align: center;
+    background-color: var(--dark-blue);
+    border-radius: 50px;
+    padding: 20px;
+    padding-top: 38px;
+    height: 100px;
+    widht: 80px;
     margin-top: -200px;
-    margin-left: 320px;
+    margin-left: 290px;
     color: var(--mint);
+    z-index: 1;
 }
 .Addtowinkelwagenwindow{
-    position: relative;
-    background-color: beige;
+    position: absolute;
+    margin-top: 400px;
     padding: 1rem;
     border-radius: 0.5rem;
 }
 .Addtowinkelwagenwindow{
     justify-self: center;
+}
+
+.quantity-input{
+    color: var(--mint);
+    font-family: "Alfa Slab One", serif;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: None;
+    width: 80px;
+    height: 40px;
+    margin-left: 250px;
+}
+
+.quantity-button{
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    background-color: var(--beige);
+    color: var(--dark-blue);
+    width: 150px;
+    height: 50px;
+    margin-top: -150px;
+    margin-left: 60px;
+    border: None;
+}
+
+.quantity-button:hover{
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    color: var(--mint);
+    width: 150px;
+    height: 50px;
+    margin-left: 60px;
+    background-color: var(--dark-blue);
+    border: 2px solid var(--dark-blue);
+}
+
+.name{
+    font-size: 15px;
+    position: absolute;
+    margin-left: 5px;
+    margin-top: 15px;
+    width: 340px;          /* important */
+    max-width: 340px;
+    color: var(--dark-blue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.price{
+    position: absolute;
+    font-size: 15px;
+    margin-left: 15px;
+    margin-top: 15px;
+    color: var(--dark-blue);
 }

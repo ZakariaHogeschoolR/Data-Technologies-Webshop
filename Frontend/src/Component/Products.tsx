@@ -79,7 +79,6 @@ const Products = () => {
                             <img src={prod.productImage} className="products-ProductImage"/>
                             <p className="products-Name">{prod.name}</p>
                             {/* <p className="products-Description">{prod.description}</p> */}
-                            <p className="products-Price-p-tag">{prod.price}</p>
                         </div>
                     </Link>
                 ))}

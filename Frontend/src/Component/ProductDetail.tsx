@@ -23,7 +23,7 @@ const ProductDetail = () => {
     const [productsByTeam, setProductsByTeam] = useState<product[]>([]);
     const token = localStorage.getItem(`token`)
 
-    const [quantity, setQuantity] = useState(1)
+    const [quantity, setQuantity] = useState<number>(1)
 
     async function AddToWinkelwagen(){
         // console.log(quantity)
@@ -83,17 +83,18 @@ const ProductDetail = () => {
             <p className="product-id-content">PRODUCT {id}</p>
             <section className="product-border-line"></section>
             <div className="Addtowinkelwagenwindow">
-                <p>Add quantity to Shoppingcart:</p>
-                <input id="quantity" type="number" min={1} max={11} onChange={(e) => setQuantity(parseInt(e.target.value))}/>
-                <button onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
+                <input className="quantity-input" id="quantity" type="number" min={1} max={11} onChange={(e) => setQuantity(parseInt(e.target.value) > 11 ? 11 : parseInt(e.target.value) < 1 ? 1 : parseInt(e.target.value))}/>
+                <button className="quantity-button" onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
             </div>
             <div className="product-container">
                 <div className="product-content">
                     <img src={data.productImage} className="product-img-content"/> 
                 </div>
                 <div className="Costimizing-section">
-                    <p className="Costimizing-Color">COLOR: </p>
-                    <p className="Costimizing-Size">SIZE: </p>
+                    <p className="Costimizing-Color">Description: </p>
+                    <h1 className="name">{data.name}</h1>
+                    <p className="Costimizing-Size">PRICE: </p>
+                    <h5 className="price">€ {data.price}</h5>
                     <p className="Costomizing-Quantity">QUANTITY: </p>
                 </div>
             </div>
@@ -106,7 +107,7 @@ const ProductDetail = () => {
                             <img src={prod.productImage} className="products-Team-ProductImage"/>
                             <p className="products-Team-Name">{prod.name}</p>
                             {/* <p className="products-Team-Description">{prod.description}</p> */}
-                            <p className="products-Team-Price-p-tag">{prod.price}</p>
+                            <p className="products-Team-Price-p-tag">€ {prod.price}</p>
                         </div>
                     </Link>
                 ))}
