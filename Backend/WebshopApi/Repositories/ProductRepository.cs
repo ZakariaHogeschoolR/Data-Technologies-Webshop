@@ -291,7 +291,7 @@ public class ProductRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async Task<int?> AddProductScrape(ProductDto product)
+    public async Task<int> AddProductScrape(ProductDto product)
     {
         if (!string.IsNullOrWhiteSpace(product.ProductImage))
         {
@@ -312,7 +312,7 @@ public class ProductRepository
             var productId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
             return productId;
         }
-        return null;
+        return -1;
     }
 
     public async Task UpdateProduct(ProductDto product)
