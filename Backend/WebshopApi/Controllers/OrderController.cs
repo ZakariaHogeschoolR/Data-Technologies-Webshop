@@ -68,10 +68,7 @@ public class OrderController : ControllerBase
     [HttpDelete("winkelwagen/delete/{id}")]
     public async Task<ActionResult> DeleteOrderWinkelwagen(int id)
     {
-        var existingOrder = await _orderService.GetByWinkelwagenUsersIdService(id);
-        if (existingOrder == null) return NotFound($"Order with id {id} was not found.");
-
-        await _orderService.DeleteOrderService(existingOrder.id);
+        await _orderService.DeleteOrderService(id);
         return Ok("Order deleted successfully.");
     }
 
