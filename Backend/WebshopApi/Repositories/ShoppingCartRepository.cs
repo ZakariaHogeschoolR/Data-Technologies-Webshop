@@ -181,7 +181,7 @@ public class ShoppingCartRepository
         using var transaction = await  conn.BeginTransactionAsync();
         try
         {
-            var getWWU_ID = new NpgsqlCommand("SELECT id FROM winkelwagen_users WHERE id= @U_ID", conn);
+            var getWWU_ID = new NpgsqlCommand("SELECT id FROM winkelwagen_users WHERE user_id= @U_ID", conn, transaction);
             getWWU_ID.Parameters.AddWithValue("U_ID", shoppingCartDTO.Id);
             var result = await getWWU_ID.ExecuteScalarAsync();
             if (result == null)
@@ -190,7 +190,7 @@ public class ShoppingCartRepository
             }
             int WWUID = (int)result;
             var delete = new NpgsqlCommand(@"DELETE FROM winkelwagen WHERE
-            winkelwagen_users_id = @WWUID AND product_id = @P_ID", conn);
+            winkelwagen_users_id = @WWUID AND product_id = @P_ID", conn, transaction);
             delete.Parameters.AddWithValue("@WWUID", WWUID);
             delete.Parameters.AddWithValue("@P_ID", shoppingCartDTO.ProductId);
 

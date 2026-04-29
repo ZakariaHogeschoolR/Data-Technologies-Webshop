@@ -67,7 +67,7 @@ Accept: application/json
 
 {
     "id": 33,
-    "productId": 2,
+    "productId": 31,
     "shoppingProducts": null,
     "quantity": 1,
     "createdAt": "0001-01-01",
