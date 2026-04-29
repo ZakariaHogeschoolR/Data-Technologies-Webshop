@@ -57,8 +57,20 @@ Accept: application/json
     "quantity": 1,
     "createdAt": "0001-01-01",
     "updatedAt": "0001-01-01"
-  }
+}
 
-###Delete ShoppingCart
-DELETE {{WebshopApi_HostAddress}}/api/ShoppingCart/delete/2
+###Delete Product from ShoppingCart
+DELETE {{WebshopApi_HostAddress}}/api/ShoppingCart/delete/product
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "id": 33,
+    "productId": 2,
+    "shoppingProducts": null,
+    "quantity": 1,
+    "createdAt": "0001-01-01",
+    "updatedAt": "0001-01-01"
+}
 ###

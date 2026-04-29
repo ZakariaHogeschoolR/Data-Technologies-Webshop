@@ -76,10 +76,17 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService) : C
     }
 
     [Authorize]
+    [HttpDelete("delete/product")]
+    public async Task<ActionResult> DeleteShoppingcartProduct([FromBody] ShoppingCartDTO shoppingCartDTO)
+    {
+        shoppingCartService.DeleteProductsService(shoppingCartDTO);
+        return NoContent();
+    }
+    [Authorize]
     [HttpDelete("delete")]
     public async Task<ActionResult> DeleteShoppingcart([FromBody] ShoppingCartDTO shoppingCartDTO)
     {
-        shoppingCartService.DeleteProductsService(shoppingCartDTO);
+        await shoppingCartService.DeleteService(shoppingCartDTO.UserId);
         return NoContent();
     }
 }

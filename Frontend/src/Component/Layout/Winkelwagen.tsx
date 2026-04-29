@@ -26,7 +26,9 @@ export default function Winkelwagen(){
     const [inError, setInError] = useState(false)
 
     const token = localStorage.getItem(`token`)
-
+    const DeleteProductFromWinkelwagen = () => {
+        const url = `http://localhost:5261/api/ShoppingCart/delete`
+    }
     // gebruik useMemo() voor het caching van een resultaat
     // van een calculatie tussen rerenders(pagina herladen). cool!
     // https://react.dev/reference/react/useMemo
@@ -116,6 +118,7 @@ export default function Winkelwagen(){
                                 )}
                                 <p>Name: {product ? product.name : `Error...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};</p>
                                 <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p>
+                                <button onClick={}>Delete</button>
                                 </li>
                                 );
                             }
