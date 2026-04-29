@@ -126,7 +126,7 @@ public class UserRepository
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "UPDATE users SET first_name = @firstName, last_name = lastName, username = @username, email = @email, password = @password, address = @address, postcode = @postcode WHERE id = @id";
+        var sql = "UPDATE users SET first_name = @firstName, last_name = @lastName, username = @username, email = @email, password = @password, address = @address, postcode = @postcode WHERE id = @id";
 
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@firstName", user.FirstName);

@@ -5,17 +5,21 @@ using Microsoft.AspNetCore.Mvc;
 using models;
 
 using Service;
+
+namespace WebshopApi.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class WishlistController : ControllerBase
 {
     private readonly WishlistService _wishlistservice;
+
     public WishlistController(WishlistService wishlistService)
     {
         _wishlistservice = wishlistService;
     }
 
-    [HttpGet()]
+    [HttpGet]
     public async Task<ActionResult<List<Wishlists>>> GetAllWishlists()
     {
         var wishlists = _wishlistservice.GetAllWishLists();

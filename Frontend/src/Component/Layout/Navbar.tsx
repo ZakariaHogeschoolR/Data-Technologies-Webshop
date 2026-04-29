@@ -100,7 +100,9 @@ const Navbar = () => {
 
                 <div className="Navbar-auth">
                     {username ? (<>
-                        <span className="Navbar-username">{username}</span>
+                        <Link to="/profile" className="Navbar-username" title="My Account">
+                            {username}
+                        </Link>
                         <button className="Navbar-logout" onClick={handleLogout}>
                             Logout
                         </button>

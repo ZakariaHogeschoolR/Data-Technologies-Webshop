@@ -28,8 +28,5 @@ public class AuthController(UserService service, TokenService tokenService) : Co
     }
 
     [HttpPost("logout")]
-    public IActionResult Logout()
-    {
-        return Ok(new { message = "Logged out" });
-    }
+    public IActionResult Logout() => Ok(new { message = "Logged out" });
 }

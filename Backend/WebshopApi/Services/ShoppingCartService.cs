@@ -44,4 +44,6 @@ public class ShoppingCartService
     {
         _shoppingcartRepository.DeleteProductFromShoppingcarts(shoppingCartDTO);
     }
+
+    public async Task<List<OrderHistoryDto>?> GetOrderHistoryService(int userId) => await _shoppingcartRepository.GetOrderHistoryByUserId(userId);
 }

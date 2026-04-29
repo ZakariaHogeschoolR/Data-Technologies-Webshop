@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+
 using models;
+
 using Service;
-using DataTransferObject;
+
+namespace WebshopApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -13,16 +16,13 @@ public class ProductCategoryController : ControllerBase
     {
         _productCategoryService = productcategoryService;
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Products>> GetProductsByCategoryId(int id)
     {
         var productCategory = await _productCategoryService.GetProductsByCategoryIdService(id);
 
-        if (productCategory == null)
-        {
-            return NotFound($"Product with id {id} was not found.");
-        }
+        if (productCategory == null) return NotFound($"Product with id {id} was not found.");
 
         return Ok(productCategory);
     }
