@@ -176,11 +176,7 @@ public class ShoppingCartRepository
     public async void DeleteProductFromShoppingcarts(ShoppingCartDTO shoppingCartDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE * FROM winkelwagen WHERE (product_id, winkelwagen_users_id) VALUES (@P_ID, @U_ID)";
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@P_ID", shoppingCartDTO.ProductId);
-        cmd.Parameters.AddWithValue("@U_ID", shoppingCartDTO.UserId);
-        await cmd.ExecuteNonQueryAsync();
+        
     }
 
     public async Task<List<OrderHistoryDto>?> GetOrderHistoryByUserId(int userId)

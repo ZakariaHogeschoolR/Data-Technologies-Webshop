@@ -75,7 +75,8 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService) : C
         return NoContent();
     }
 
-    [HttpDelete("delete/{id:int}")]
+    [Authorize]
+    [HttpDelete("delete")]
     public async Task<ActionResult> DeleteShoppingcart(int id)
     {
         shoppingCartService.DeleteService(id);
