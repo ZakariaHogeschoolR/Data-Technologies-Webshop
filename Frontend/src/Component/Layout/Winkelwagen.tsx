@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import '../../Styles/Winkelwagen.css';
+import Payment from './Payment';
 
 interface winkelwagen{
     id: number,
@@ -104,25 +105,28 @@ export default function Winkelwagen(){
         <>
         <div className="Winkelwagen_container">
             <div className="items-lijst">
-                <ul>
+                <ul> 
                     {winkelwagenItems.map((winkelwagen) => {
                         const product = products.find(p => p.id == winkelwagen.productId)
                         return(
-                        <li key={winkelwagen.id}>
-                            {product&& (
-                                <img src={`${product.productImage}`}
-                                alt={`${product.name}`}
-                                style={{width:`5rem`, height:`5rem`}}/>
-                                )}
-                                <p>Name: {product ? product.name : `Error...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};</p>
-                                <p>Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p>
-                                </li>
-                                );
-                            }
-                        )
-                    }
+                            <li key={winkelwagen.id}>
+                                <div className="winkelwagen-container-item">
+                                    {product && (
+                                        <img src={`${product.productImage}`}
+                                        alt={`${product.name}`}
+                                        style={{width:`5rem`, height:`5rem`}}/>
+                                        )}
+                                        <p className="winkelwagen-name" >Name: {product ? product.name : `Error...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};</p>
+                                        <p className="winkelwagen-price">Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p>
+
+                                </div>
+                            </li>
+                        );
+                    })}
                 </ul>
-                <div className={`totale-prijs`}><p>Total Price: {totalPrice}</p></div>
+                <div className="payment-winkelwagen">
+                    <Payment total={totalPrice} currentWinkelwagenId={winkelwagenItems[0].id}/>
+                </div>
             </div>
         </div>
         </>
