@@ -2,6 +2,8 @@ using ApplicationDbContext;
 
 using DataTransferObject;
 
+using HtmlAgilityPack;
+
 using models;
 
 using Npgsql;
@@ -176,7 +178,27 @@ public class ShoppingCartRepository
     public async void DeleteProductFromShoppingcarts(ShoppingCartDTO shoppingCartDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
-        
+        using var transaction = await  conn.BeginTransactionAsync();
+        try
+        {
+            var getWWU_ID = new NpgsqlCommand("SELECT id FROM winkelwagen_users WHERE id= @U_ID", conn);
+            getWWU_ID.Parameters.AddWithValue("U_ID", shoppingCartDTO.UserId);
+            var result = await getWWU_ID.ExecuteScalarAsync();
+            if (result == null)
+            {
+                return;
+            }
+            int WWUID = (int)result;
+            var delete = new NpgsqlCommand(@"DELETE FROM winkelwagen WHERE
+            winkelwagen_users_id = @WWUID AND product_id = @P_ID", conn);
+            delete.Parameters.AddWithValue("@WWUID", WWUID);
+            delete.Parameters.AddWithValue("@P_ID", shoppingCartDTO.ProductId);
+        }
+        catch(Exception ex)
+        {
+            await transaction.RollbackAsync();
+            throw new Exception("Verwijder fout by winkelwagen: " + ex.Message);
+        }
     }
 
     public async Task<List<OrderHistoryDto>?> GetOrderHistoryByUserId(int userId)

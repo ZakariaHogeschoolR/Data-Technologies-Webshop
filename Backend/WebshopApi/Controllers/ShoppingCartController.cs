@@ -77,9 +77,9 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService) : C
 
     [Authorize]
     [HttpDelete("delete")]
-    public async Task<ActionResult> DeleteShoppingcart(int id)
+    public async Task<ActionResult> DeleteShoppingcart([FromBody] ShoppingCartDTO shoppingCartDTO)
     {
-        shoppingCartService.DeleteService(id);
+        shoppingCartService.DeleteProductsService(shoppingCartDTO);
         return NoContent();
     }
 }
