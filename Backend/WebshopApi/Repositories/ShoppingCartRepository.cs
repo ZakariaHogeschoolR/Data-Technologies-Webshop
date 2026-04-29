@@ -193,6 +193,10 @@ public class ShoppingCartRepository
             winkelwagen_users_id = @WWUID AND product_id = @P_ID", conn);
             delete.Parameters.AddWithValue("@WWUID", WWUID);
             delete.Parameters.AddWithValue("@P_ID", shoppingCartDTO.ProductId);
+
+            await delete.ExecuteScalarAsync();
+
+            await transaction.CommitAsync();
         }
         catch(Exception ex)
         {
