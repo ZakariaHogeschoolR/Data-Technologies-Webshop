@@ -32,6 +32,8 @@ export default function Winkelwagen(){
             const response = await fetch(url, {
                 method: `DELETE`,
                 headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({productId: productId})
