@@ -75,6 +75,23 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService) : C
         return NoContent();
     }
 
+    [Authorize]
+    [HttpDelete("delete/product")]
+    public async Task<ActionResult> DeleteShoppingcartProduct([FromBody] ShoppingCartDTO shoppingCartDTO)
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
+
+        var userId = int.Parse(userIdString);
+
+        shoppingCartDTO.Id = userId;
+
+        await shoppingCartService.DeleteProductsService(shoppingCartDTO);
+
+        return NoContent();
+    }
+
     [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult> DeleteShoppingcart(int id)
     {

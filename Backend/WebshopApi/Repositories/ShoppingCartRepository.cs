@@ -172,17 +172,36 @@ public class ShoppingCartRepository
         cmd1.Parameters.AddWithValue("@id", id);
         await cmd1.ExecuteNonQueryAsync();
     }
-
-    public async void DeleteProductFromShoppingcarts(ShoppingCartDTO shoppingCartDTO)
+    public async Task DeleteProductFromShoppingcarts(ShoppingCartDTO shoppingCartDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE * FROM winkelwagen WHERE (product_id, winkelwagen_users_id) VALUES (@P_ID, @U_ID)";
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@P_ID", shoppingCartDTO.ProductId);
-        cmd.Parameters.AddWithValue("@U_ID", shoppingCartDTO.UserId);
-        await cmd.ExecuteNonQueryAsync();
-    }
+        using var transaction = await  conn.BeginTransactionAsync();
+        try
+        {
+            var getWWU_ID = new NpgsqlCommand("SELECT id FROM winkelwagen_users WHERE user_id= @U_ID", conn, transaction);
+            getWWU_ID.Parameters.AddWithValue("U_ID", shoppingCartDTO.Id);
+            var result = await getWWU_ID.ExecuteScalarAsync();
+            if (result == null)
+            {
+                return;
+            }
+            int WWUID = (int)result;
+            var delete = new NpgsqlCommand(@"DELETE FROM winkelwagen WHERE
+            winkelwagen_users_id = @WWUID AND product_id = @P_ID", conn, transaction);
+            delete.Parameters.AddWithValue("@WWUID", WWUID);
+            delete.Parameters.AddWithValue("@P_ID", shoppingCartDTO.ProductId);
 
+            await delete.ExecuteNonQueryAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch(Exception ex)
+        {
+            await transaction.RollbackAsync();
+            throw new Exception("Verwijder fout by winkelwagen: " + ex.Message);
+        }
+    }
+    
     public async Task<List<OrderHistoryDto>?> GetOrderHistoryByUserId(int userId)
     {
         await using var conn = await _dbconnectie.GetConnection();
