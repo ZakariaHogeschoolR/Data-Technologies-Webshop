@@ -40,7 +40,7 @@ public class OrderService
     {
         await _orderRepository.UpdateOrder(order);
     }
-    
+
     public async Task DeleteOrderService(int id)
     {
         await _orderRepository.DeleteOrderWinkelwagen(id);

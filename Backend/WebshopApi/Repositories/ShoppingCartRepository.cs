@@ -195,7 +195,7 @@ public class ShoppingCartRepository
 
             await transaction.CommitAsync();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await transaction.RollbackAsync();
             throw new Exception("Verwijder fout by winkelwagen: " + ex.Message);
