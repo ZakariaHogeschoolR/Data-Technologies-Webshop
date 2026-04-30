@@ -175,7 +175,7 @@ public class ShoppingCartRepository
     public async Task DeleteProductFromShoppingcarts(ShoppingCartDTO shoppingCartDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
-        using var transaction = await  conn.BeginTransactionAsync();
+        using var transaction = await conn.BeginTransactionAsync();
         try
         {
             var getWWU_ID = new NpgsqlCommand("SELECT id FROM winkelwagen_users WHERE user_id= @U_ID", conn, transaction);
@@ -201,7 +201,7 @@ public class ShoppingCartRepository
             throw new Exception("Verwijder fout by winkelwagen: " + ex.Message);
         }
     }
-    
+
     public async Task<List<OrderHistoryDto>?> GetOrderHistoryByUserId(int userId)
     {
         await using var conn = await _dbconnectie.GetConnection();
