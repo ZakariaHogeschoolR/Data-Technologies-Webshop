@@ -1,4 +1,5 @@
 .Winkelwagen_container{
+    position: absolute;
     background-color: beige;
     border-radius: 0.5rem;
     position: relative;
@@ -42,4 +43,25 @@
     position: absolute;
     margin-top: -635px;
     margin-left: 950px;
+}
+
+.bin-button{
+    margin-left: 100px;
+    border: None;
+    border-radius: 20px;
+}
+.bin-img{
+    height: 100px;
+    width: 100px;
+}
+.cart-layout{
+
+    display: flex;
+    align-items: flex-start; /* 🔥 KEY */
+    gap: 40px;
+}
+
+.winkelwagen-quantity{
+    margin-top: 30px;
+    margin-left: 140px;
 }

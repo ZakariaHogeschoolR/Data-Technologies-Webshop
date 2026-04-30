@@ -1,8 +1,13 @@
 .Payment-container{
+    margin-top: 505px;
     background-color: var(--beige);
     width: 400px;
     height: 390px;
     border-radius: 20px;
+    position: fixed;
+    top: -385px;
+    right: 140px;
+    z-index: 1000;
 }
 
 .sub-total-price-payment{
