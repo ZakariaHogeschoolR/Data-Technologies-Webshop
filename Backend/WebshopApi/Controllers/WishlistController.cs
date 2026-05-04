@@ -1,5 +1,9 @@
+
+using System.Security.Claims;
+
 using DataTransferObject;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using models;
@@ -32,7 +36,16 @@ public class WishlistController : ControllerBase
         var wishlist = _wishlistservice.GetWishlistsById(id);
         return Ok(wishlist);
     }
-
+    [Authorize]
+    [HttpGet("mine")]
+    public async Task<ActionResult<Wishlists>> GetWishlistById()
+    {
+        var useridstring = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
+        var userId = int.Parse(useridstring);
+        var wishlist = _wishlistservice.GetWishlistsById(userId);
+        return Ok(wishlist);
+    }
     [HttpPost("create")]
     public async Task<ActionResult> CreateWishlist(WishlistDTO wishlistDTO)
     {
@@ -48,7 +61,7 @@ public class WishlistController : ControllerBase
     }
 
     [HttpDelete("delete")]
-    public async Task<ActionResult> DeleteWishlist(int id)
+    public async Task<ActionResult> DeleteWishlist([FromBody] int id)
     {
         _wishlistservice.DeleteService(id);
         return Ok();
