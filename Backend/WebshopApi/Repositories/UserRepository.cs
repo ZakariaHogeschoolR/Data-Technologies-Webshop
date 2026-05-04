@@ -149,6 +149,16 @@ public class UserRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
+    public async Task UpdateRole(int id, string role)
+    {
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = "UPDATE users SET role = @role WHERE id = @id";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@role", role);
+        await cmd.ExecuteNonQueryAsync();
+    }
+    
     public async Task DeleteUser(int id)
     {
         using var conn = await _dbConnectie.GetConnection();
