@@ -36,9 +36,9 @@ public class WishlistRepository
     public async Task<Wishlists?> GetWishlistsById(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "SELECT * FROM Wishlist WHERE (id) VALUES (@id)";
+        var sql = "SELECT * FROM wishlist WHERE (user_id) VALUES (@id)";
         using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@user_id", id);
         using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
@@ -73,7 +73,7 @@ public class WishlistRepository
     public async void UpdateWishlist(WishlistDTO wishlistDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "UPDATE Wishlist SET (name, product_id, user_id) VALUES(@name,@productid,@userid) WHERE id= @id";
+        var sql = "UPDATE wishlist SET (name, product_id, user_id) VALUES(@name,@productid,@userid) WHERE user_id= @id";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", wishlistDTO.Id);
         cmd.Parameters.AddWithValue("@name", wishlistDTO.Name);
@@ -83,7 +83,7 @@ public class WishlistRepository
     public async void DeleteWishlist(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE * FROM Wishlist WHERE (id) VALUES(id)";
+        var sql = "DELETE * FROM wishlist WHERE (id) VALUES(id)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
     }
