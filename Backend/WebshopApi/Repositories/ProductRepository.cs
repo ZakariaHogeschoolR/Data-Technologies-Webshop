@@ -9,10 +9,12 @@ using Npgsql;
 public class ProductRepository
 {
     private readonly DatabaseConnectie _dbConnectie;
+    private readonly Neo4jService _neo4j;
 
-    public ProductRepository(DatabaseConnectie dbConnectie)
+    public ProductRepository(DatabaseConnectie dbConnectie, Neo4jService neo4j)
     {
         _dbConnectie = dbConnectie;
+        _neo4j = neo4j;
     }
 
     public async Task<List<Products>> GetAllProducts()
@@ -35,6 +37,39 @@ public class ProductRepository
                 Price = reader.GetDecimal(reader.GetOrdinal("price")),
                 TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
+        }
+        return products;
+    }
+
+    public async Task<List<Products>> GetAllProductsForGraph()
+    {
+        // this is method should only be used once everytime we delete the entity relational diagram.
+        // and even than it should still not be used cause addproduct does the same thing but just for one singular product.
+        // this method is only usefull if there are already products in the database.
+        var products = new List<Products>();
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = "SELECT * FROM products;";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        foreach(Products product in products)
+        {
+            // it takes the items for in the graph database
+            await AddProductToGraph(product);
         }
 
         return products;
@@ -61,7 +96,6 @@ public class ProductRepository
                 TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
         }
-
         return products;
     }
 
@@ -289,6 +323,59 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@price", product.Price);
         cmd.Parameters.AddWithValue("@teamId", product.TeamId);
         await cmd.ExecuteNonQueryAsync();
+        await AddProductToGraph(product);
+    }
+
+    private async Task AddProductToGraph(ProductDto product)
+    {
+        await using var session = _neo4j.CreateSession();
+
+        var query = @"
+            MERGE (p:Product {id: $id})
+            SET p.name = $name,
+                p.description = $description,
+                p.price = $price,
+                p.productImage = $image
+
+            MERGE (t:Team {id: $teamId})
+            MERGE (p)-[:BELONGS_TO]->(t)
+        ";
+
+        await session.RunAsync(query, new
+        {
+            id = product.Id,
+            name = product.Name,
+            description = product.Description,
+            price = product.Price,
+            image = product.ProductImage,
+            teamId = product.TeamId
+        });
+    }
+
+    private async Task AddProductToGraph(Products product)
+    {
+        await using var session = _neo4j.CreateSession();
+
+        var query = @"
+            MERGE (p:Product {id: $id})
+            SET p.name = $name,
+                p.description = $description,
+                p.price = $price,
+                p.productImage = $image
+
+            MERGE (t:Team {id: $teamId})
+            MERGE (p)-[:BELONGS_TO]->(t)
+        ";
+
+        await session.RunAsync(query, new
+        {
+            id = product.Id,
+            name = product.Name,
+            description = product.Description,
+            price = product.Price,
+            image = product.ProductImage,
+            teamId = product.TeamId
+        });
     }
 
     public async Task<int> AddProductScrape(ProductDto product)

@@ -20,6 +20,7 @@ type product =
     description: string;
     price: number;
 }
+
 export default function Winkelwagen(){
     // const {id} = useParams()
     const [winkelwagenItems, setWinkelwagenItems] = useState<winkelwagen[]>([])
@@ -117,7 +118,7 @@ export default function Winkelwagen(){
             <p>Je moet een account hebben en ingelogd zijn om te kunnen shoppen.</p>
         </div>)
     }
-    else if (winkelwagenItems.length === 0) return (<p>Your shoppingcart is empty. Add Products to see them here.</p>)
+    else if (winkelwagenItems.length === 0) return (<p className="None-p-tag">Your shoppingcart is empty. Add Products to see them here.</p>)
     return(
         <>
         <div className="Winkelwagen_container">
@@ -146,7 +147,7 @@ export default function Winkelwagen(){
                         }
                     </ul>
                     <div className="payment-winkelwagen">
-                        <Payment total={totalPrice} currentWinkelwagenId={winkelwagenItems[0].id}/>
+                        <Payment winkelwagenItems={winkelwagenItems} total={totalPrice} currentWinkelwagenId={winkelwagenItems[0].id}/>
                     </div>
                     <div className={`totale-prijs`}><p>Total Price: {totalPrice}</p></div>
                 </div>

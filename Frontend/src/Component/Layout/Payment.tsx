@@ -3,7 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useFetch } from '../../CustomHooks/GetFetchHook';
 import NotFound from '../Pages/NotFound';
+
+interface winkelwagen{
+    id: number,
+    productId:number,
+    shoppingProducts:[],
+    quantity:number,
+    createdAt:string,
+    updatedAt:string
+}
+
 type props = {
+    winkelwagenItems: winkelwagen[];
     total: number;
     currentWinkelwagenId:number;
 }
@@ -16,9 +27,7 @@ type Orders = {
     createdAt: Date;
 }
 
-
-
-const Payout = ({total, currentWinkelwagenId}:props) => {
+const Payout = ({winkelwagenItems, total, currentWinkelwagenId}:props) => {
     const navigate = useNavigate();
 
     const handleCheckout = async () => {
@@ -42,6 +51,18 @@ const Payout = ({total, currentWinkelwagenId}:props) => {
                     "createdAt": new Date().toISOString()
                 })
             });
+            winkelwagenItems.map(product =>
+                fetch("http://localhost:5261/api/Graph/bought", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        userId: currentWinkelwagenId,
+                        productId: product.productId
+                    })
+                })
+            )
             navigate("/checkout");
         } catch (err) 
         {

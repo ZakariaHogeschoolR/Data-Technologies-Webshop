@@ -97,4 +97,22 @@ public class UserController(UserService userService) : ControllerBase
         await userService.DeleteService(id);
         return Ok();
     }
+
+    [Authorize]
+    [HttpGet("recommended")]
+    public async Task<IActionResult> GetRecommendations()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim.Value);
+
+        var recommendations = await userService.GetRecommendation(userId);
+
+        return Ok(recommendations);
+    }
 }
