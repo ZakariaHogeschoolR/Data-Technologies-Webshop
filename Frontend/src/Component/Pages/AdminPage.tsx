@@ -88,6 +88,24 @@ const AdminPage = () => {
         }
     };
 
+    const handleDeleteProduct = async (id: number) => {
+        if (!confirm("Are you sure you want to delete this product?")) return;
+
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/products/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (res.ok) {
+            setResetMessage("Product deleted successfully!");
+        } else {
+            setResetMessage("Something went wrong.");
+        }
+    };
+
     const handleUpdateRole = async (id: number, currentRole: string) => {
         const newRole = currentRole === "admin" ? "user" : "admin";
         if (!confirm(`Change role to "${newRole}"?`)) return;
@@ -275,6 +293,7 @@ const AdminPage = () => {
                                 <th>Name</th>
                                 <th>Price</th>
                                 <th>Team ID</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -284,6 +303,15 @@ const AdminPage = () => {
                                     <td>{p.name}</td>
                                     <td>€{p.price}</td>
                                     <td>{p.teamId}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => handleDeleteProduct(p.id)}
+                                            className="admin-badge badge-admin"
+                                            style={{ cursor: "pointer", border: "none", backgroundColor: "#c0392b" }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
