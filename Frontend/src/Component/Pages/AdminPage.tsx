@@ -1,7 +1,6 @@
-import { useFetch } from "../../CustomHooks/GetFetchHook";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFetch } from "../../CustomHooks/GetFetchHook";
 import '../../Styles/AdminPage.css';
 
 type User = {
@@ -37,9 +36,12 @@ const AdminPage = () => {
             navigate("/auth");
         }
     }, []);
-    
-    const { data: users, isLoading: usersLoading, } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
-    const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: "http://localhost:5261/api/Admin/products" });
+
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+
+    const { data: users, isLoading: usersLoading } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
+    const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: `http://localhost:5261/api/Admin/products?page=${page}&pageSize=${pageSize}` });
     const { data: stats } = useFetch<Stats>({ url: "http://localhost:5261/api/Admin/stats" });
 
     const [resetUserId, setResetUserId] = useState<number | null>(null);
@@ -81,6 +83,30 @@ const AdminPage = () => {
         if (res.ok) {
             setResetMessage("User deleted successfully!");
             setUserList((prev) => (prev ?? users ?? []).filter(u => u.id !== id));
+        } else {
+            setResetMessage("Something went wrong.");
+        }
+    };
+
+    const handleUpdateRole = async (id: number, currentRole: string) => {
+        const newRole = currentRole === "admin" ? "user" : "admin";
+        if (!confirm(`Change role to "${newRole}"?`)) return;
+
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/users/${id}/role`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ role: newRole })
+        });
+
+        if (res.ok) {
+            setResetMessage(`Role updated to "${newRole}"!`);
+            setUserList((prev) => (prev ?? users ?? []).map(u =>
+                u.id === id ? { ...u, role: newRole } : u
+            ));
         } else {
             setResetMessage("Something went wrong.");
         }
@@ -160,13 +186,20 @@ const AdminPage = () => {
                                                 </button>
                                             </div>
                                         ) : (
-                                            <div style={{ display: "flex", gap: "6px" }}>
+                                            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                                                 <button
                                                     onClick={() => { setResetUserId(u.id); setResetMessage(""); }}
                                                     className="admin-badge badge-user"
                                                     style={{ cursor: "pointer", border: "none" }}
                                                 >
                                                     Reset Password
+                                                </button>
+                                                <button
+                                                    onClick={() => handleUpdateRole(u.id, u.role)}
+                                                    className="admin-badge badge-admin"
+                                                    style={{ cursor: "pointer", border: "none", backgroundColor: u.role === "admin" ? "#854F0B" : "#185FA5" }}
+                                                >
+                                                    {u.role === "admin" ? "Make User" : "Make Admin"}
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteUser(u.id)}
@@ -187,6 +220,39 @@ const AdminPage = () => {
 
             <section className="admin-section">
                 <h2 className="admin-section-title">Products</h2>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            className="admin-badge badge-user"
+                            style={{ cursor: "pointer", border: "none" }}
+                            disabled={page === 1}
+                        >
+                            Previous
+                        </button>
+                        <span style={{ fontSize: "14px", color: "var(--dark-green)", alignSelf: "center" }}>Page {page}</span>
+                        <button
+                            onClick={() => setPage(p => p + 1)}
+                            className="admin-badge badge-user"
+                            style={{ cursor: "pointer", border: "none" }}
+                            disabled={!products || products.length < pageSize}
+                        >
+                            Next
+                        </button>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <label style={{ fontSize: "14px", color: "var(--dark-green)" }}>Items per page:</label>
+                        <select
+                            value={pageSize}
+                            onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                            style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", color: "var(--dark-green)" }}
+                        >
+                            <option value={10}>10</option>
+                            <option value={25}>25</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+                </div>
                 {productsLoading ? <p>Loading...</p> : (
                     <table className="admin-table">
                         <thead>
