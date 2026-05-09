@@ -32,7 +32,7 @@ const AdminPage = () => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
-        if (!token || role !== "admin") {
+        if (!token || (role !== "admin" && role !== "hoofdadmin")) {
             navigate("/auth");
         }
     }, []);
@@ -132,7 +132,12 @@ const AdminPage = () => {
             <section className="admin-section">
                 <h2 className="admin-section-title">Users</h2>
                 {resetMessage && <p style={{ color: "var(--dark-green)", marginBottom: "1rem" }}>{resetMessage}</p>}
-                {usersLoading ? <p>Loading...</p> : (
+                    {usersLoading ? (
+                        <div className="loading-container">
+                            <div className="spinner"></div>
+                            <p className="loading-text">LOADING...</p>
+                        </div>
+                    ) : (                    
                     <table className="admin-table">
                         <thead>
                             <tr>
@@ -156,12 +161,14 @@ const AdminPage = () => {
                                     <td>{u.address}</td>
                                     <td>{u.postCode}</td>
                                     <td>
-                                        <span className={`admin-badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}`}>
+                                        <span className={`admin-badge ${u.role === 'hoofdadmin' ? 'badge-hoofdadmin' : u.role === 'admin' ? 'badge-admin' : 'badge-user'}`}>
                                             {u.role}
                                         </span>
                                     </td>
                                     <td>
-                                        {resetUserId === u.id ? (
+                                        {u.role === 'hoofdadmin' ? (
+                                            <span style={{ fontSize: "12px", color: "var(--dark-green)", fontStyle: "italic" }}>Protected</span>
+                                        ) : resetUserId === u.id ? (
                                             <div style={{ display: "flex", gap: "6px" }}>
                                                 <input
                                                     type="password"
@@ -201,6 +208,7 @@ const AdminPage = () => {
                                                 >
                                                     {u.role === "admin" ? "Make User" : "Make Admin"}
                                                 </button>
+                                                {(localStorage.getItem("role") === "hoofdadmin" || u.role === "user") && (
                                                 <button
                                                     onClick={() => handleDeleteUser(u.id)}
                                                     className="admin-badge badge-admin"
@@ -208,6 +216,7 @@ const AdminPage = () => {
                                                 >
                                                     Delete
                                                 </button>
+                                            )}
                                             </div>
                                         )}
                                     </td>
@@ -253,7 +262,12 @@ const AdminPage = () => {
                         </select>
                     </div>
                 </div>
-                {productsLoading ? <p>Loading...</p> : (
+                {productsLoading ? (
+                <div className="loading-container">
+                    <div className="spinner"></div>
+                    <p className="loading-text">LOADING...</p>
+                </div>
+            ) : (
                     <table className="admin-table">
                         <thead>
                             <tr>
