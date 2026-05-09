@@ -48,7 +48,7 @@ public class UserService
     {
         await _userRepository.UpdateRole(id, role);
     }
-    
+
     public async Task DeleteService(int id)
     {
         await _userRepository.DeleteUser(id);

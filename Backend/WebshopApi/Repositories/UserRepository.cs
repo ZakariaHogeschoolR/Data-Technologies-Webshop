@@ -158,7 +158,7 @@ public class UserRepository
         cmd.Parameters.AddWithValue("@role", role);
         await cmd.ExecuteNonQueryAsync();
     }
-    
+
     public async Task DeleteUser(int id)
     {
         using var conn = await _dbConnectie.GetConnection();
