@@ -39,6 +39,8 @@ const AdminPage = () => {
 
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<Product[] | null>(null);
 
     const { data: users, isLoading: usersLoading } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
     const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: `http://localhost:5261/api/Admin/products?page=${page}&pageSize=${pageSize}` });
@@ -103,6 +105,28 @@ const AdminPage = () => {
             setResetMessage("Product deleted successfully!");
         } else {
             setResetMessage("Something went wrong.");
+        }
+    };
+
+    const handleSearch = async (value: string) => {
+        setSearchQuery(value);
+        
+        if (value.length < 2) {
+            setSearchResults(null);
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/products/search?name=${value}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            setSearchResults(data);
+            console.log("Search results:", data);
         }
     };
 
@@ -247,6 +271,15 @@ const AdminPage = () => {
 
             <section className="admin-section">
                 <h2 className="admin-section-title">Products</h2>
+                <div style={{ marginBottom: "1rem" }}>
+                    <input
+                        type="text"
+                        placeholder="Search by name or team..."
+                        value={searchQuery}
+                        onChange={e => handleSearch(e.target.value)}
+                        style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "300px", color: "var(--dark-green)" }}
+                    />
+                </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                     <div style={{ display: "flex", gap: "8px" }}>
                         <button
@@ -297,7 +330,7 @@ const AdminPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {products?.map(p => (
+                            {(searchQuery.length >= 2 ? searchResults : products)?.map(p => (
                                 <tr key={p.id}>
                                     <td>{p.id}</td>
                                     <td>{p.name}</td>
