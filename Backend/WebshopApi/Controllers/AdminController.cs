@@ -86,4 +86,11 @@ public class AdminController(UserService userService, ProductService productServ
         await userService.DeleteService(id);
         return Ok(new { message = "User deleted successfully" });
     }
+
+    [HttpDelete("products/{id}")]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        await productService.DeleteService(id);
+        return Ok(new { message = "Product deleted successfully" });
+    }
 }
