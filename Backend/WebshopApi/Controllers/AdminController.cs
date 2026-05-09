@@ -50,6 +50,13 @@ public class AdminController(UserService userService, ProductService productServ
         });
     }
 
+    [HttpGet("products/search")]
+    public async Task<IActionResult> SearchProducts([FromQuery] string name)
+    {
+        var products = await productService.GetByNameService(name);
+        return Ok(products);
+    }
+
     [HttpPost("users/{id}/reset-password")]
     public async Task<IActionResult> ResetPassword(int id, [FromBody] AdminResetPasswordDto data)
     {
