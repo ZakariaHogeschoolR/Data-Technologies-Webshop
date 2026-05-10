@@ -66,7 +66,7 @@ public class ProductRepository
             });
         }
 
-        foreach(Products product in products)
+        foreach (Products product in products)
         {
             // it takes the items for in the graph database
             await AddProductToGraph(product);

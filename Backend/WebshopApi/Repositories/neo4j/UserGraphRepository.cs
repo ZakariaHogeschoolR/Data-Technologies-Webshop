@@ -1,9 +1,10 @@
-using Neo4j.Driver;
 using ApplicationDbContext;
 
 using DataTransferObject;
 
 using models;
+
+using Neo4j.Driver;
 
 using Npgsql;
 
