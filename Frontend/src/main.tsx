@@ -12,7 +12,7 @@ import Winkelwagen from './Component/Layout/Winkelwagen';
 import AdminPage from "../src/Component/Pages/AdminPage";
 import Authentication from "./Component/Pages/Authentication.tsx";
 import ProfilePage from "./Component/Pages/ProfilePage.tsx";
-
+import CheckoutPage from "./Component/Pages/Checkout.tsx";
 const router = createHashRouter([
   {
     path: '/',
@@ -20,13 +20,14 @@ const router = createHashRouter([
     children: [
         { index: true, element: <Home /> },
         { path: 'about', element: <About /> },
-        { path: 'products/:id', element: <ProductDetail/>},
-        { path: 'category/:id', element: <CategoryDetail/>},
-        { path: `winkelwagen/mine`, element: <Winkelwagen/>},
+        { path: 'products/:id', element: <ProductDetail />},
+        { path: 'category/:id', element: <CategoryDetail />},
+        { path: `winkelwagen/mine`, element: <Winkelwagen />},
         { path: 'admin', element: <AdminPage /> },
         { path: 'profile', element: <ProfilePage/> },
         { path: '*', element: <NotFound /> },
-        { path: 'auth', element: <Authentication/>},
+        { path: 'auth', element: <Authentication />},
+        { path: "checkout", element: <CheckoutPage /> }
     ],
   }
 ]);

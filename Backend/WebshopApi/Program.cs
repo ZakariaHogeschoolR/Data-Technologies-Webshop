@@ -15,17 +15,23 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddSingleton(new DatabaseConnectie(connectionString));
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<ProductCategoryRepository>();
 builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<GraphRepository>();
 builder.Services.AddScoped<ShoppingCartRepository>();
+builder.Services.AddSingleton<Neo4jService>();
+builder.Services.AddScoped<UserGraphRepository>();
 builder.Services.AddScoped<WishlistRepository>();
 builder.Services.AddScoped<WishlistService>();
 builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddScoped<ProductCategoryService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<GraphService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<TeamRepository>();
 builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<ScraperService>();

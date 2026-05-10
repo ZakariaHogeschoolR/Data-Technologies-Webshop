@@ -132,7 +132,7 @@
 .Product-Team-content{
     flex-shrink: 0;
     padding: 10px;
-    width: 405px;
+    width: 455px;
     height: 355px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -142,26 +142,215 @@
     margin-left: 80px;
     width: 200px;
     height: 200px;
+    z-index: 2;
 }
 .products-Team-Name{
+    background-color: var(--dark-blue);
     margin-top: 50px;
-    margin-left: 0px;
+    width: 455px;
+    text-align: center;
+    padding-left: 10px;
+    margin-left: -10px;
     color: var(--mint);
 }
 .products-Team-Description{
 
 }
 .products-Team-Price-p-tag{
+    text-align: center;
+    background-color: var(--dark-blue);
+    border-radius: 50px;
+    padding: 20px;
+    padding-top: 38px;
+    height: 100px;
+    widht: 80px;
     margin-top: -200px;
-    margin-left: 320px;
+    margin-left: 290px;
     color: var(--mint);
+    z-index: 1;
 }
 .Addtowinkelwagenwindow{
-    position: relative;
-    background-color: beige;
+    position: absolute;
+    margin-top: 400px;
     padding: 1rem;
     border-radius: 0.5rem;
 }
 .Addtowinkelwagenwindow{
     justify-self: center;
+}
+
+.quantity-input{
+    color: var(--mint);
+    font-family: "Alfa Slab One", serif;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: None;
+    width: 80px;
+    height: 40px;
+    margin-left: 250px;
+}
+
+.quantity-button{
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    background-color: var(--beige);
+    color: var(--dark-blue);
+    width: 150px;
+    height: 50px;
+    margin-top: -150px;
+    margin-left: 60px;
+    border: None;
+}
+
+.quantity-button:hover{
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    color: var(--mint);
+    width: 150px;
+    height: 50px;
+    margin-left: 60px;
+    background-color: var(--dark-blue);
+    border: 2px solid var(--dark-blue);
+}
+
+.name{
+    font-size: 15px;
+    position: absolute;
+    margin-left: 5px;
+    margin-top: 15px;
+    width: 340px;          /* important */
+    max-width: 340px;
+    color: var(--dark-blue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.price{
+    position: absolute;
+    font-size: 15px;
+    margin-left: 15px;
+    margin-top: 15px;
+    color: var(--dark-blue);
+}
+
+.rec-container {
+    display: flex;
+    position: fixed;
+    padding: 75px;
+    bottom: 150px;
+    right: 400px;
+    border-radius: 20px;
+    background-color: var(--mint);
+    border: 5px solid var(--dark-blue);
+    box-shadow: 5px 5px 9px 1px;
+    overflow-y: auto;
+    overflow-x: hidden;
+     scrollbar-width: none;
+
+    /* IE / Edge legacy */
+    -ms-overflow-style: none;
+    width: 1200px;
+    height: 625px;
+    z-index: 999;
+    flex-direction: column; /* 👈 THIS is the key */
+    gap: 20px; /* optional spacing */
+}
+
+.products-Team-Name-rec{
+    margin-left: 50px;
+    margin-top: 5px;
+    width: 340px;          /* important */
+    max-width: 340px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.products-Team-Price-p-tag-rec{
+    position: absolute;
+    margin-left: 229px;
+    margin-top: 250px;
+    rotate: -45deg;
+    border-radius: 10px;
+    color: var(--beige);
+    background-color: var(--dark-blue);
+}
+
+.Addtowinkelwagenwindow-rec{
+    position: absolute;
+    margin-top: -55px;
+    margin-left: 600px;
+    padding: 0.1rem;
+    border-radius: 0.5rem;
+}
+.Addtowinkelwagenwindow-rec{
+    justify-self: center;
+}
+.quantity-input-rec{
+    color: var(--mint);
+    font-family: "Alfa Slab One", serif;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: None;
+    width: 80px;
+    height: 40px;
+    margin-left: 250px;
+}
+.quantity-button-rec{
+    position: absolute;
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    background-color: var(--beige);
+    color: var(--dark-blue);
+    width: 150px;
+    height: 50px;
+    margin-top: -5px;
+    margin-left: 60px;
+    border: None;
+}
+
+.quantity-button-rec:hover{
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    color: var(--mint);
+    width: 150px;
+    height: 50px;
+   margin-top: -5px;
+    margin-left: 60px;
+    background-color: var(--dark-blue);
+    border: 2px solid var(--dark-blue);
+}
+.cross-button{
+    position: fixed;
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    background-color: var(--beige);
+    color: var(--dark-blue);
+    width: 60px;
+    height: 50px;
+    margin-top: -70px;
+    margin-left: 1050px;
+    border: None;
+}
+
+.cross-button-rec:hover{
+    position: fixed;
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
+    border-radius: 10px;
+    background-color: var(--beige);
+    color: var(--dark-blue);
+    width: 150px;
+    height: 50px;
+    margin-top: -70px;
+    margin-left: 1050px;
+    background-color: var(--dark-blue);
+    border: 2px solid var(--dark-blue);
 }

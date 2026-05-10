@@ -9,10 +9,12 @@ namespace Service;
 public class UserService
 {
     private readonly UserRepository _userRepository;
+    private readonly UserGraphRepository _graphRepo;
 
-    public UserService(UserRepository userRepository)
+    public UserService(UserRepository userRepository, UserGraphRepository graphRepo)
     {
         _userRepository = userRepository;
+        _graphRepo = graphRepo;
     }
 
     public async Task<List<Users>> GetAllService()
@@ -44,6 +46,11 @@ public class UserService
         await _userRepository.UpdatePassword(id, hashedPassword);
     }
 
+    public async Task UpdateRoleService(int id, string role)
+    {
+        await _userRepository.UpdateRole(id, role);
+    }
+
     public async Task DeleteService(int id)
     {
         await _userRepository.DeleteUser(id);
@@ -61,5 +68,19 @@ public class UserService
         if (user == null) return null;
 
         return BCrypt.Net.BCrypt.Verify(data.Password, user.Password) ? user : null;
+    }
+
+    public async Task FollowUser(string userId, string targetUserId)
+    {
+        // 1. Save business data (if needed)
+        // await _userRepo.UpdateSomething(...);
+
+        // 2. Save relationship in graph
+        await _graphRepo.FollowUser(userId, targetUserId);
+    }
+
+    public async Task<List<Products>> GetRecommendation(int userId)
+    {
+        return await _graphRepo.GetRecommendation(userId);
     }
 }

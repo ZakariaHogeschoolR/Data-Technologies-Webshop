@@ -40,9 +40,9 @@ public class ShoppingCartService
     {
         await _shoppingcartRepository.DeleteShoppingCarts(id);
     }
-    public async void DeleteProductsService(ShoppingCartDTO shoppingCartDTO)
+    public async Task DeleteProductsService(ShoppingCartDTO shoppingCartDTO)
     {
-        _shoppingcartRepository.DeleteProductFromShoppingcarts(shoppingCartDTO);
+        await _shoppingcartRepository.DeleteProductFromShoppingcarts(shoppingCartDTO);
     }
 
     public async Task<List<OrderHistoryDto>?> GetOrderHistoryService(int userId) => await _shoppingcartRepository.GetOrderHistoryByUserId(userId);

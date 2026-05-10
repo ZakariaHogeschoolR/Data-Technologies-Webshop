@@ -146,6 +146,8 @@
 }
 
 .SearchBar{
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     padding: 20px;
     border-radius: 20px;
@@ -186,5 +188,7 @@
 }
 
 .Searched-Product-Name {
+    font-size: 20px;
+    font-family: "Alfa Slab One", serif;
     color: var(--dark-blue);
 }
