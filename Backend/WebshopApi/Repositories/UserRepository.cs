@@ -46,6 +46,8 @@ public class UserRepository
                 Role = reader.GetString(reader.GetOrdinal("role")),
             });
         }
+        // only activate when there is already items in the database
+        //await GetAllUsersForGraph();
         return users;
     }
 

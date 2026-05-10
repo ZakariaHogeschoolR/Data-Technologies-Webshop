@@ -34,6 +34,8 @@ public class CategoryRepository
                 Name = reader.GetString(reader.GetOrdinal("name")),
             });
         }
+        // only activate when there is already items in the database
+        //await GetAllCategoriesForGraph();
         return categories;
     }
 

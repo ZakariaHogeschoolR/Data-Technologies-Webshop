@@ -38,6 +38,8 @@ public class ProductRepository
                 TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
         }
+        // only activate when there is already items in the database
+        //await GetAllProductsForGraph();
         return products;
     }
 
