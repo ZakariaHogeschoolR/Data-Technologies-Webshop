@@ -1,0 +1,27 @@
+@WebshopApi_HostAddress = http://localhost:5261
+# @name login
+POST {{WebshopApi_HostAddress}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "wwt@gmail.com",
+  "password": "password"
+}
+### get wishlist by user token
+@token = {{login.response.body.$.token}}
+###
+GET {{WebshopApi_HostAddress}}/api/Wishlist/mine
+Authorization: Bearer {{token}}
+Accept: application/json
+### make wishlist by user token
+POST {{WebshopApi_HostAddress}}/api/Wishlist/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    # "id": 1,
+    "name": "test wishlist 3",
+    "productId" : 3,
+    "userId": 0
+}

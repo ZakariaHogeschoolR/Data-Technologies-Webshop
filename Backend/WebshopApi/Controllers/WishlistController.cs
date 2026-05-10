@@ -41,14 +41,21 @@ public class WishlistController : ControllerBase
     public async Task<ActionResult<Wishlists>> GetWishlistById()
     {
         var useridstring = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // return Ok(useridstring);
         if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
         var userId = int.Parse(useridstring);
-        var wishlist = _wishlistservice.GetWishlistsById(userId);
-        return Ok(wishlist);
+        var wishlists = await _wishlistservice.GetAllWishLists();
+        return Ok(wishlists);
     }
+    [Authorize]
     [HttpPost("create")]
     public async Task<ActionResult> CreateWishlist(WishlistDTO wishlistDTO)
     {
+        var useridstring = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // return Ok(useridstring);
+        if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
+        int userid = int.Parse(useridstring);
+        wishlistDTO.UserId = userid;
         _wishlistservice.CreateService(wishlistDTO);
         return Ok();
     }
