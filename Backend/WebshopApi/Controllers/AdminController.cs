@@ -1,5 +1,7 @@
-using DataTransferObject;
 using System.Security.Claims;
+
+using DataTransferObject;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -82,10 +84,10 @@ public class AdminController(UserService userService, ProductService productServ
     public async Task<IActionResult> DeleteUser(int id)
     {
         var targetUser = await userService.GetByIdService(id);
-        
+
         if (targetUser.Role == "hoofdadmin")
             return Forbid();
-        
+
         var currentRole = User.FindFirst(ClaimTypes.Role)?.Value;
         if (targetUser.Role == "admin" && currentRole != "hoofdadmin")
             return Forbid();
