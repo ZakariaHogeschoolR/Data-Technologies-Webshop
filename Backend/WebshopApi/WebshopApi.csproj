@@ -11,6 +11,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
+    <PackageReference Include="Neo4j.Driver" Version="6.0.0" />
     <PackageReference Include="Npgsql" Version="10.0.1" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.*" />
   </ItemGroup>
