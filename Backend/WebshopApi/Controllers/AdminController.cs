@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using DataTransferObject;
 
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +11,7 @@ namespace WebshopApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "admin")]
+[Authorize(Roles = "admin,hoofdadmin")]
 public class AdminController(UserService userService, ProductService productService) : ControllerBase
 {
     [HttpGet("users")]
@@ -50,6 +52,13 @@ public class AdminController(UserService userService, ProductService productServ
         });
     }
 
+    [HttpGet("products/search")]
+    public async Task<IActionResult> SearchProducts([FromQuery] string name)
+    {
+        var products = await productService.GetByNameService(name);
+        return Ok(products);
+    }
+
     [HttpPost("users/{id}/reset-password")]
     public async Task<IActionResult> ResetPassword(int id, [FromBody] AdminResetPasswordDto data)
     {
@@ -60,6 +69,13 @@ public class AdminController(UserService userService, ProductService productServ
     [HttpPut("users/{id}/role")]
     public async Task<IActionResult> UpdateRole(int id, [FromBody] AdminUpdateRoleDto data)
     {
+        var targetUser = await userService.GetByIdService(id);
+        if (targetUser.Role == "hoofdadmin")
+            return Forbid();
+
+        if (data.Role == "hoofdadmin")
+            return BadRequest(new { message = "Cannot assign hoofdadmin role." });
+
         await userService.UpdateRoleService(id, data.Role);
         return Ok(new { message = "Role updated successfully" });
     }
@@ -67,7 +83,23 @@ public class AdminController(UserService userService, ProductService productServ
     [HttpDelete("users/{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
+        var targetUser = await userService.GetByIdService(id);
+
+        if (targetUser.Role == "hoofdadmin")
+            return Forbid();
+
+        var currentRole = User.FindFirst(ClaimTypes.Role)?.Value;
+        if (targetUser.Role == "admin" && currentRole != "hoofdadmin")
+            return Forbid();
+
         await userService.DeleteService(id);
         return Ok(new { message = "User deleted successfully" });
+    }
+
+    [HttpDelete("products/{id}")]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        await productService.DeleteService(id);
+        return Ok(new { message = "Product deleted successfully" });
     }
 }

@@ -293,10 +293,10 @@ public class ProductRepository
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "SELECT * FROM products WHERE products.Name = @name";
+        var sql = "SELECT * FROM products WHERE LOWER(name) LIKE LOWER(@name)";
 
         using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@name", $"%{name}%");
 
         using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -307,7 +307,8 @@ public class ProductRepository
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Description = reader.GetString(reader.GetOrdinal("description")),
-                Price = reader.GetDecimal(reader.GetOrdinal("price"))
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
         }
 

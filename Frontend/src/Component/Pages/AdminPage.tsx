@@ -32,13 +32,15 @@ const AdminPage = () => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
-        if (!token || role !== "admin") {
+        if (!token || (role !== "admin" && role !== "hoofdadmin")) {
             navigate("/auth");
         }
     }, []);
 
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<Product[] | null>(null);
 
     const { data: users, isLoading: usersLoading } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
     const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: `http://localhost:5261/api/Admin/products?page=${page}&pageSize=${pageSize}` });
@@ -88,6 +90,46 @@ const AdminPage = () => {
         }
     };
 
+    const handleDeleteProduct = async (id: number) => {
+        if (!confirm("Are you sure you want to delete this product?")) return;
+
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/products/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (res.ok) {
+            setResetMessage("Product deleted successfully!");
+        } else {
+            setResetMessage("Something went wrong.");
+        }
+    };
+
+    const handleSearch = async (value: string) => {
+        setSearchQuery(value);
+        
+        if (value.length < 2) {
+            setSearchResults(null);
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/products/search?name=${value}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            setSearchResults(data);
+            console.log("Search results:", data);
+        }
+    };
+
     const handleUpdateRole = async (id: number, currentRole: string) => {
         const newRole = currentRole === "admin" ? "user" : "admin";
         if (!confirm(`Change role to "${newRole}"?`)) return;
@@ -132,7 +174,12 @@ const AdminPage = () => {
             <section className="admin-section">
                 <h2 className="admin-section-title">Users</h2>
                 {resetMessage && <p style={{ color: "var(--dark-green)", marginBottom: "1rem" }}>{resetMessage}</p>}
-                {usersLoading ? <p>Loading...</p> : (
+                    {usersLoading ? (
+                        <div className="loading-container">
+                            <div className="spinner"></div>
+                            <p className="loading-text">LOADING...</p>
+                        </div>
+                    ) : (                    
                     <table className="admin-table">
                         <thead>
                             <tr>
@@ -156,12 +203,14 @@ const AdminPage = () => {
                                     <td>{u.address}</td>
                                     <td>{u.postCode}</td>
                                     <td>
-                                        <span className={`admin-badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}`}>
+                                        <span className={`admin-badge ${u.role === 'hoofdadmin' ? 'badge-hoofdadmin' : u.role === 'admin' ? 'badge-admin' : 'badge-user'}`}>
                                             {u.role}
                                         </span>
                                     </td>
                                     <td>
-                                        {resetUserId === u.id ? (
+                                        {u.role === 'hoofdadmin' ? (
+                                            <span style={{ fontSize: "12px", color: "var(--dark-green)", fontStyle: "italic" }}>Protected</span>
+                                        ) : resetUserId === u.id ? (
                                             <div style={{ display: "flex", gap: "6px" }}>
                                                 <input
                                                     type="password"
@@ -201,6 +250,7 @@ const AdminPage = () => {
                                                 >
                                                     {u.role === "admin" ? "Make User" : "Make Admin"}
                                                 </button>
+                                                {(localStorage.getItem("role") === "hoofdadmin" || u.role === "user") && (
                                                 <button
                                                     onClick={() => handleDeleteUser(u.id)}
                                                     className="admin-badge badge-admin"
@@ -208,6 +258,7 @@ const AdminPage = () => {
                                                 >
                                                     Delete
                                                 </button>
+                                            )}
                                             </div>
                                         )}
                                     </td>
@@ -220,6 +271,15 @@ const AdminPage = () => {
 
             <section className="admin-section">
                 <h2 className="admin-section-title">Products</h2>
+                <div style={{ marginBottom: "1rem" }}>
+                    <input
+                        type="text"
+                        placeholder="Search by name or team..."
+                        value={searchQuery}
+                        onChange={e => handleSearch(e.target.value)}
+                        style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "300px", color: "var(--dark-green)" }}
+                    />
+                </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                     <div style={{ display: "flex", gap: "8px" }}>
                         <button
@@ -253,7 +313,12 @@ const AdminPage = () => {
                         </select>
                     </div>
                 </div>
-                {productsLoading ? <p>Loading...</p> : (
+                {productsLoading ? (
+                <div className="loading-container">
+                    <div className="spinner"></div>
+                    <p className="loading-text">LOADING...</p>
+                </div>
+            ) : (
                     <table className="admin-table">
                         <thead>
                             <tr>
@@ -261,15 +326,25 @@ const AdminPage = () => {
                                 <th>Name</th>
                                 <th>Price</th>
                                 <th>Team ID</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {products?.map(p => (
+                            {(searchQuery.length >= 2 ? searchResults : products)?.map(p => (
                                 <tr key={p.id}>
                                     <td>{p.id}</td>
                                     <td>{p.name}</td>
                                     <td>€{p.price}</td>
                                     <td>{p.teamId}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => handleDeleteProduct(p.id)}
+                                            className="admin-badge badge-admin"
+                                            style={{ cursor: "pointer", border: "none", backgroundColor: "#c0392b" }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

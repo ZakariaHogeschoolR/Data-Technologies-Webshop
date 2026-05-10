@@ -100,6 +100,11 @@ const Navbar = () => {
 
                 <div className="Navbar-auth">
                     {username ? (<>
+                        {(localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "hoofdadmin") && (
+                            <Link to="/admin" className="Navbar-login" style={{ backgroundColor: "var(--dark-green)" }}>
+                                Admin
+                            </Link>
+                        )}
                         <Link to="/profile" className="Navbar-username" title="My Account">
                             {username}
                         </Link>
