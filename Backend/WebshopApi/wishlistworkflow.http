@@ -13,15 +13,13 @@ Content-Type: application/json
 GET {{WebshopApi_HostAddress}}/api/Wishlist/mine
 Authorization: Bearer {{token}}
 Accept: application/json
-### make wishlist by user token
+### make wishlist by user token, must have productId
 POST {{WebshopApi_HostAddress}}/api/Wishlist/create
 Authorization: Bearer {{token}}
 Content-Type: application/json
 Accept: application/json
 
 {
-    # "id": 1,
-    "name": "test wishlist 3",
-    "productId" : 3,
-    "userId": 0
+    "name": "test wishlist 4",
+    "productId" : 4
 }
