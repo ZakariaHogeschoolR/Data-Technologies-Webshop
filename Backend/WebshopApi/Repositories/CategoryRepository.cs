@@ -57,9 +57,8 @@ public class CategoryRepository
                 Name = reader.GetString(reader.GetOrdinal("name")),
             });
         }
-        
-        
-        foreach(Categories category in categories)
+
+        foreach (Categories category in categories)
         {
             // it takes the items for in the graph database
             await AddCategoryToGraph(category);

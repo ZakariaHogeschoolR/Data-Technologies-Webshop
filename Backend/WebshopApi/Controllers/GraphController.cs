@@ -1,12 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Neo4j.Driver;
 using DataTransferObject;
-
-using Microsoft.AspNetCore.Mvc;
-
 using models;
-
+using Neo4j.Driver;
 using Service;
+
 [ApiController]
 [Route("api/[controller]")]
 public class GraphController : ControllerBase
@@ -22,7 +19,6 @@ public class GraphController : ControllerBase
     public async Task<IActionResult> AddBought([FromBody] BoughtDto dto)
     {
         await _graphService.AddBoughtService(dto);
-
         return Ok(new { message = "BOUGHT relation updated" });
     }
 }
