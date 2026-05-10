@@ -76,7 +76,7 @@ public class UserRepository
                 Role = reader.GetString(reader.GetOrdinal("role")),
             });
         }
-        
+
         foreach (Users user in users)
         {
             await AddUserToGraph(user);
