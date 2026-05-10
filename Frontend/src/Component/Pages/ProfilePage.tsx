@@ -62,13 +62,14 @@ export default function ProfilePage() {
     const [wishlists, setWislists] = useState<Wishlist[]>([]);
     useEffect(() => {
         if(!token) return;
-        
+
         async function GetWishLists(){
             try {
                 const query = API + `/Wishlist/mine`
                 const reponse = await fetch(query, {headers: {Authorization: `Bearer ${token}`}})
                 if (!reponse.ok) throw new Error(`failed to load wishlists`)
                 const data : Wishlist[] = await reponse.json()
+                console.log(data)
                 setWislists(data)
             }
             catch{
