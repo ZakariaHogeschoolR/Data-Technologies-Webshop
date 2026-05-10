@@ -6,6 +6,9 @@ import NotFound from '../Component/Pages/NotFound';
 import '../Styles/ProductDetail.css';
 import { AddRecentProducts } from "./storage/recentProducts";
 import { useEffect } from "react";
+import App from "../App";
+
+const API = 'http://localhost:5261/api';
 
 type product =
 {
@@ -27,6 +30,38 @@ const ProductDetail = () => {
     
     const [quantity, setQuantity] = useState<number>(1)
 
+    async function CreateWishlist(){
+        if(!token){
+            alert(`Log in eerst om producten toe te voegen`)
+            return;
+        }
+        try{
+            const query = `${API}/Wishlist/create`
+            const response = await fetch(query, {
+                headers:{
+                    "Content-Type": `application/json`,
+                    Authorization: `Bearer ${token}`
+                }, method: `POST`,
+                body: JSON.stringify({
+                    name: `wishlist of productId: ${id}`,
+                    productId: id
+                })})
+
+                if(response.ok) {
+                    alert(`wishlist made`)
+                    // const json = await response.json()
+                    // console.log(json)
+                }
+                else {
+                    const errorText = await response.text()
+                    alert(`Fout bij aanmaken: ${response.status} ${errorText}`)
+                }
+        }
+        catch(e){
+            alert("Er is iets misgegaan met de verbinding.");
+            console.error(e)
+        }
+    }
     async function AddToWinkelwagen(){
         // console.log(quantity)
         // const { id } = useParams();
@@ -140,12 +175,14 @@ const ProductDetail = () => {
             <p className="product-id-content">PRODUCT {id}</p>
             <section className="product-border-line"></section>
             <div className="Addtowinkelwagenwindow">
+                <p>add to wishlist?</p><button onClick={CreateWishlist}>+</button>
+                <p>Add quantity to Shoppingcart:</p>
                 <input className="quantity-input" id="quantity" type="number" min={1} max={11} onChange={(e) => setQuantity(parseInt(e.target.value) > 11 ? 11 : parseInt(e.target.value) < 1 ? 1 : parseInt(e.target.value))}/>
                 <button className="quantity-button" onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
             </div>
             <div className="product-container">
                 <div className="product-content">
-                    <img src={data.productImage} className="product-img-content"/> 
+                    <img src={data.productImage} className="product-img-content"/>
                 </div>
                 <div className="Costimizing-section">
                     <p className="Costimizing-Color">Description: </p>

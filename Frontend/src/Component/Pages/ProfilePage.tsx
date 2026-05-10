@@ -27,7 +27,14 @@ type ProductInfo = {
     id: number; name: string; productImage: string; price: number;
 };
 
-type Tab = 'profile' | 'password' | 'orders';
+type Wishlist = {
+    id: number,
+    name: string;
+    user_id: number;
+    product_id: number;
+}
+
+type Tab = 'profile' | 'password' | 'orders' | `wishlists`;
 
 export default function ProfilePage() {
     const navigate = useNavigate();
@@ -51,6 +58,27 @@ export default function ProfilePage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [productMap, setProductMap] = useState<Record<number, ProductInfo>>({});
     const [ordersLoading, setOrdersLoading] = useState(false);
+
+    const [wishlists, setWislists] = useState<Wishlist[]>([]);
+    useEffect(() => {
+        if(!token) return;
+
+        async function GetWishLists(){
+            try {
+                const query = API + `/Wishlist/mine`
+                const reponse = await fetch(query, {headers: {Authorization: `Bearer ${token}`}})
+                if (!reponse.ok) throw new Error(`failed to load wishlists`)
+                const data : Wishlist[] = await reponse.json()
+                console.log(data)
+                setWislists(data)
+            }
+            catch{
+                setMsg({type: `error`, text: `could not load wishlists`})
+            }
+        }
+        GetWishLists()
+    }, [token])
+
 
     useEffect(() => {
         if (!token) navigate('/auth');
@@ -182,12 +210,12 @@ export default function ProfilePage() {
         <h1 className="profile-heading">My Account</h1>
 
         <div className="profile-tabs">
-            {(['profile', 'password', 'orders'] as Tab[]).map(t => (<button
+            {(['profile', 'password', 'orders', `wishlists`] as Tab[]).map(t => (<button
                 key={t}
                 className={`profile-tab ${tab === t ? 'active' : ''}`}
                 onClick={() => handleTabSwitch(t)}
             >
-                {t === 'profile' ? 'Profile' : t === 'password' ? 'Password' : 'Order History'}
+                {t === 'profile' ? 'Profile' : t === 'password' ? 'Password' : t === `wishlists` ? `Wishlists`: 'Order History'}
             </button>))}
         </div>
 
@@ -385,6 +413,11 @@ export default function ProfilePage() {
                     </div>);
                 })}
             </div>)}
+        </div>)}
+        {tab === `wishlists` && (<div className={`profile-card`}>
+            <p className={`profile-section-title`}>Wishlists:</p>
+            {wishlists.length === 0 ? `no wishlist made. make a wishlist to find it here`:
+            wishlists.map((wishlist) => (<div key={wishlist.id}>{wishlist.name}</div>))}
         </div>)}
     </div>);
 }

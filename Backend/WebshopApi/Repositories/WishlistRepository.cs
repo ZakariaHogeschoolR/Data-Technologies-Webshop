@@ -18,7 +18,7 @@ public class WishlistRepository
     {
         List<Wishlists?> wishlists = new List<Wishlists?>();
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "SELECT * FROM Wishlist";
+        var sql = "SELECT * FROM wishlist";
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -28,29 +28,32 @@ public class WishlistRepository
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Userid = reader.GetInt32(reader.GetOrdinal("user_id")),
-                Productid = reader.GetInt32(reader.GetOrdinal("user_id"))
+                Productid = reader.GetInt32(reader.GetOrdinal("product_id"))
             });
         }
         return wishlists;
     }
-    public async Task<Wishlists?> GetWishlistsById(int id)
+    public async Task<List<Wishlists?>> GetWishlistsById(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "SELECT * FROM Wishlist WHERE (id) VALUES (@id)";
+        var listofwishlists = new List<Wishlists>();
+        var sql = "SELECT * FROM wishlist WHERE (user_id) VALUES (@user_id)";
         using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@user_id", id);
         using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
-            return new Wishlists
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
-                Name = reader.GetString(reader.GetOrdinal("name")),
-                Productid = reader.GetInt32(reader.GetOrdinal("product_id")),
-                Userid = reader.GetInt32(reader.GetOrdinal("user_id"))
-            };
+            listofwishlists.Add(
+                new Wishlists
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Name = reader.GetString(reader.GetOrdinal("name")),
+                    Productid = reader.GetInt32(reader.GetOrdinal("product_id")),
+                    Userid = reader.GetInt32(reader.GetOrdinal("user_id"))
+                }
+            );
         }
-        return null;
+        return listofwishlists;
     }
     public async Task<List<Products?>> GetAllProducts()
     {
@@ -60,7 +63,7 @@ public class WishlistRepository
     {
         throw new NotImplementedException();
     }
-    public async void AddWishlist(WishlistDTO wishlistDTO)
+    public async Task<Wishlists?> AddWishlist(WishlistDTO wishlistDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
         var sql = "INSERT INTO wishlist (name, product_id, user_id) VALUES(@name,@productid,@userid)";
@@ -69,11 +72,17 @@ public class WishlistRepository
         cmd.Parameters.AddWithValue("@productid", wishlistDTO.ProductId);
         cmd.Parameters.AddWithValue("@userid", wishlistDTO.UserId);
         using var reader = cmd.ExecuteNonQueryAsync();
+        return new Wishlists()
+        {
+            Userid = wishlistDTO.UserId,
+            Name = wishlistDTO.Name,
+            Productid = wishlistDTO.ProductId
+        };
     }
     public async void UpdateWishlist(WishlistDTO wishlistDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "UPDATE Wishlist SET (name, product_id, user_id) VALUES(@name,@productid,@userid) WHERE id= @id";
+        var sql = "UPDATE wishlist SET (name, product_id, user_id) VALUES(@name,@productid,@userid) WHERE user_id= @id";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", wishlistDTO.Id);
         cmd.Parameters.AddWithValue("@name", wishlistDTO.Name);
@@ -83,7 +92,7 @@ public class WishlistRepository
     public async void DeleteWishlist(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE * FROM Wishlist WHERE (id) VALUES(id)";
+        var sql = "DELETE * FROM wishlist WHERE (id) VALUES(id)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
     }

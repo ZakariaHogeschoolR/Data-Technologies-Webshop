@@ -16,10 +16,10 @@ public class WishlistService
         Task<List<Wishlists?>> wishlists = _wishlistRepository.GetAllWishLists();
         return await wishlists;
     }
-    public async Task<Wishlists?> GetWishlistsById(int id)
+    public async Task<List<Wishlists?>> GetWishlistsById(int id)
     {
         // throw new NotImplementedException();
-        Task<Wishlists?> wishlist = _wishlistRepository.GetWishlistsById(id);
+        Task<List<Wishlists?>> wishlist = _wishlistRepository.GetWishlistsById(id);
         return await wishlist;
     }
     public async Task<List<Products?>> GetAllProducts()
@@ -30,9 +30,9 @@ public class WishlistService
     {
         throw new NotImplementedException();
     }
-    public async void CreateService(WishlistDTO wishlistDTO)
+    public async Task<Wishlists> CreateService(WishlistDTO wishlistDTO)
     {
-        _wishlistRepository.AddWishlist(wishlistDTO);
+        return await _wishlistRepository.AddWishlist(wishlistDTO);
     }
     public async void UpdateService(WishlistDTO wishlistDTO)
     {
