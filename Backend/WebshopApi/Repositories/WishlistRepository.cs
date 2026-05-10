@@ -37,7 +37,7 @@ public class WishlistRepository
     {
         using var conn = await _dbconnectie.GetConnection();
         var listofwishlists = new List<Wishlists>();
-        var sql = "SELECT * FROM wishlist WHERE (user_id) VALUES (@user_id)";
+        var sql = "SELECT * FROM wishlist WHERE user_id= @user_id";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@user_id", id);
         using var reader = await cmd.ExecuteReaderAsync();

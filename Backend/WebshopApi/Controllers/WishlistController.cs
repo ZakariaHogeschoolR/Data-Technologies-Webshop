@@ -44,7 +44,7 @@ public class WishlistController : ControllerBase
         // return Ok(useridstring);
         if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
         var userId = int.Parse(useridstring);
-        var wishlists = await _wishlistservice.GetAllWishLists();
+        var wishlists = await _wishlistservice.GetWishlistsById(userId);
         return Ok(wishlists);
     }
     [Authorize]
