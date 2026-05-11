@@ -39,11 +39,31 @@ const AdminPage = () => {
 
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+    const categories = [
+        { id: 41, name: "Training" },
+        { id: 1, name: "Shirt" },
+        { id: 400, name: "Socks" },
+        { id: 397, name: "Balls" },
+        { id: 399, name: "Shorts" },
+        { id: 398, name: "Gloves" },
+    ];
+
+    const toggleCategory = (id: number) => {
+        setSelectedCategories(prev =>
+            prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+        );
+        setPage(1);
+    };
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<Product[] | null>(null);
 
     const { data: users, isLoading: usersLoading } = useFetch<User[]>({ url: "http://localhost:5261/api/Admin/users" });
-    const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: `http://localhost:5261/api/Admin/products?page=${page}&pageSize=${pageSize}` });
+    const productUrl = selectedCategories.length > 0
+        ? `http://localhost:5261/api/Admin/products/filter?${selectedCategories.map(id => `categoryIds=${id}`).join("&")}&page=${page}&pageSize=${pageSize}`
+        : `http://localhost:5261/api/Admin/products?page=${page}&pageSize=${pageSize}`;
+
+    const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: productUrl });
     const { data: stats } = useFetch<Stats>({ url: "http://localhost:5261/api/Admin/stats" });
 
     const [resetUserId, setResetUserId] = useState<number | null>(null);
@@ -279,6 +299,27 @@ const AdminPage = () => {
                         onChange={e => handleSearch(e.target.value)}
                         style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "300px", color: "var(--dark-green)" }}
                     />
+                </div>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "1rem", flexWrap: "wrap" }}>
+                    {categories.map(cat => (
+                        <button
+                            key={cat.id}
+                            onClick={() => toggleCategory(cat.id)}
+                            className={`admin-badge ${selectedCategories.includes(cat.id) ? 'badge-admin' : 'badge-user'}`}
+                            style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "6px 14px" }}
+                        >
+                            {cat.name}
+                        </button>
+                    ))}
+                    {selectedCategories.length > 0 && (
+                        <button
+                            onClick={() => { setSelectedCategories([]); setPage(1); }}
+                            className="admin-badge"
+                            style={{ cursor: "pointer", border: "none", backgroundColor: "#c0392b", color: "white", fontSize: "13px", padding: "6px 14px" }}
+                        >
+                            Clear
+                        </button>
+                    )}
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                     <div style={{ display: "flex", gap: "8px" }}>
