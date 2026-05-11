@@ -59,6 +59,13 @@ public class AdminController(UserService userService, ProductService productServ
         return Ok(products);
     }
 
+    [HttpGet("products/filter")]
+    public async Task<IActionResult> FilterByCategories([FromQuery] List<int> categoryIds, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var products = await productService.GetProductsByCategoriesService(categoryIds, page, pageSize);
+        return Ok(products);
+    }
+
     [HttpPost("users/{id}/reset-password")]
     public async Task<IActionResult> ResetPassword(int id, [FromBody] AdminResetPasswordDto data)
     {
