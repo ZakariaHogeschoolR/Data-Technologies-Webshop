@@ -56,8 +56,8 @@ public class WishlistController : ControllerBase
         if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
         int userid = int.Parse(useridstring);
         wishlistDTO.UserId = userid;
-        await _wishlistservice.CreateService(wishlistDTO);
-        return Ok();
+        var result = await _wishlistservice.CreateService(wishlistDTO);
+        return Ok(result);
     }
 
     [HttpPut("update")]

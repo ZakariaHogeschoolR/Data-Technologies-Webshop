@@ -27,7 +27,7 @@ const ProductDetail = () => {
     const [recommendationResponse, setRecommendedProducts] = useState<product[]>([]);
     const [recommandedVisible, setRecommandedVisible] = useState<boolean>(true);
     const token = localStorage.getItem(`token`)
-    
+
     const [quantity, setQuantity] = useState<number>(1)
 
     async function CreateWishlist(){
@@ -46,16 +46,13 @@ const ProductDetail = () => {
                     name: `wishlist of productId: ${id}`,
                     productId: id
                 })})
-
-                if(response.ok) {
-                    alert(`wishlist made`)
-                    // const json = await response.json()
-                    // console.log(json)
-                }
-                else {
-                    const errorText = await response.text()
-                    alert(`Fout bij aanmaken: ${response.status} ${errorText}`)
-                }
+            if(!response.ok) {
+                const errorText = await response.text()
+                alert(`Fout bij aanmaken: ${response.status} ${errorText}`)
+            }
+            const json = await response.json()
+            console.log(json)
+            alert(`wishlist made`)
         }
         catch(e){
             alert("Er is iets misgegaan met de verbinding.");

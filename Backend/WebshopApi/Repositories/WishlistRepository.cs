@@ -66,14 +66,15 @@ public class WishlistRepository
     public async Task<Wishlists?> AddWishlist(WishlistDTO wishlistDTO)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "INSERT INTO wishlist (name, product_id, user_id) VALUES(@name,@productid,@userid)";
+        var sql = "INSERT INTO wishlist (name, product_id, user_id) VALUES(@name,@productid,@userid) RETURNING id";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@name", wishlistDTO.Name);
         cmd.Parameters.AddWithValue("@productid", wishlistDTO.ProductId);
         cmd.Parameters.AddWithValue("@userid", wishlistDTO.UserId);
-        using var reader = cmd.ExecuteNonQueryAsync();
+        var id = (int)await cmd.ExecuteScalarAsync();
         return new Wishlists()
         {
+            Id = id,
             Userid = wishlistDTO.UserId,
             Name = wishlistDTO.Name,
             Productid = wishlistDTO.ProductId
