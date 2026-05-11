@@ -22,6 +22,7 @@
 .product-img-content{
     width: 370px;
     height: 370px;
+    object-fit: contain;
     margin-left: 70px;
     margin-top: 60px;
 }
