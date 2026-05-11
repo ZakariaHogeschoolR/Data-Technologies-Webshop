@@ -31,7 +31,7 @@ type Wishlist = {
     id: number,
     name: string;
     user_id: number;
-    product_id: number;
+    productid: number;
 }
 
 type Tab = 'profile' | 'password' | 'orders' | `wishlists`;
@@ -417,7 +417,7 @@ export default function ProfilePage() {
         {tab === `wishlists` && (<div className={`profile-card`}>
             <p className={`profile-section-title`}>Wishlists:</p>
             {wishlists.length === 0 ? `no wishlist made. make a wishlist to find it here`:
-            wishlists.map((wishlist) => (<div key={wishlist.id}>{wishlist.name}</div>))}
+            wishlists.map((wishlist) => (<div key={wishlist.id}>name={wishlist.name}; product id= {wishlist.productid};</div>))}
         </div>)}
     </div>);
 }
