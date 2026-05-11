@@ -37,7 +37,7 @@ const ProductDetail = () => {
         }
         try{
             const date = new Date().toISOString().split('T')[0]
-            console.log(date)
+            // console.log(date)
             const query = `${API}/Wishlist/create`
             const response = await fetch(query, {
                 headers:{
