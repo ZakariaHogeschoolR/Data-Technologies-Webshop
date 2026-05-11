@@ -97,6 +97,11 @@ public class ProductService
         await _productRepository.UpdateProduct(product);
     }
 
+    public async Task UpdatePriceService(int id, decimal price)
+    {
+        await _productRepository.UpdatePrice(id, price);
+    }
+
     public async Task DeleteService(int id)
     {
         await _productRepository.DeleteProduct(id);
