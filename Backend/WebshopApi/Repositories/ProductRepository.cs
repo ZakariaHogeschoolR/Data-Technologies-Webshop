@@ -340,6 +340,41 @@ public class ProductRepository
         return products;
     }
 
+    public async Task<List<Products>> GetProductsByCategories(List<int> categoryIds, int page, int pageSize)
+    {
+        var products = new List<Products>();
+        using var conn = await _dbConnectie.GetConnection();
+
+        var sql = @"SELECT p.* FROM products p
+                    INNER JOIN product_categories pc ON p.id = pc.product_id
+                    WHERE pc.category_id = ANY(@categoryIds)
+                    ORDER BY p.id
+                    LIMIT @pageSize OFFSET @offset";
+
+        var offset = (page - 1) * pageSize;
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@categoryIds", categoryIds.ToArray());
+        cmd.Parameters.AddWithValue("@pageSize", pageSize);
+        cmd.Parameters.AddWithValue("@offset", offset);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        return products;
+    }
+
     public async Task AddProduct(ProductDto product)
     {
         using var conn = await _dbConnectie.GetConnection();

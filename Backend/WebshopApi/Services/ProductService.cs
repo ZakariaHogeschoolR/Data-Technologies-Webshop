@@ -72,6 +72,11 @@ public class ProductService
         return await product;
     }
 
+    public async Task<List<Products>> GetProductsByCategoriesService(List<int> categoryIds, int page, int pageSize)
+    {
+        return await _productRepository.GetProductsByCategories(categoryIds, page, pageSize);
+    }
+
     public async Task CreateService(ProductDto product)
     {
         await _productRepository.AddProduct(product);
