@@ -101,6 +101,13 @@ public class AdminController(UserService userService, ProductService productServ
         return Ok(new { message = "Role updated successfully" });
     }
 
+    [HttpPut("products/{id}/price")]
+    public async Task<IActionResult> UpdateProductPrice(int id, [FromBody] UpdatePriceDto data)
+    {
+        await productService.UpdatePriceService(id, data.Price);
+        return Ok(new { message = "Price updated successfully" });
+    }
+
     [HttpDelete("users/{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
