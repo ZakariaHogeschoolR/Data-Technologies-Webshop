@@ -344,7 +344,7 @@ public class ProductRepository
     {
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
-        
+
         var sql = @"SELECT p.* FROM products p
                     INNER JOIN product_categories pc ON p.id = pc.product_id
                     WHERE pc.category_id = ANY(@categoryIds)
