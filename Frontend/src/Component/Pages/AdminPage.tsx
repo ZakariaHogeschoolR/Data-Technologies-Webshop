@@ -128,6 +128,59 @@ const AdminPage = () => {
         }
     };
 
+    const [showAddProduct, setShowAddProduct] = useState(false);
+    const [newProduct, setNewProduct] = useState({
+        productImage: "",
+        name: "",
+        description: "",
+        price: 0,
+        teamId: 0,
+        categoryId: 0
+    });
+
+    const handleAddProduct = async () => {
+    const token = localStorage.getItem("token");
+    
+    const res = await fetch(`http://localhost:5261/api/Admin/products/create`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            productImage: newProduct.productImage,
+            name: newProduct.name,
+            description: newProduct.description,
+            price: newProduct.price,
+            teamId: newProduct.teamId
+        })
+    });
+
+    if (res.ok) {
+        const createdProduct = await res.json();
+        
+        if (newProduct.categoryId > 0) {
+            await fetch(`http://localhost:5261/api/Admin/products/category`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    productId: createdProduct.id,
+                    categoryId: newProduct.categoryId
+                })
+            });
+        }
+
+        setResetMessage("Product added successfully!");
+        setShowAddProduct(false);
+        setNewProduct({ productImage: "", name: "", description: "", price: 0, teamId: 0, categoryId: 0 });
+    } else {
+        setResetMessage("Something went wrong.");
+    }
+};
+
     const handleSearch = async (value: string) => {
         setSearchQuery(value);
         
@@ -291,6 +344,45 @@ const AdminPage = () => {
 
             <section className="admin-section">
                 <h2 className="admin-section-title">Products</h2>
+                <div style={{ marginBottom: "1rem" }}>
+                <button
+                    onClick={() => setShowAddProduct(!showAddProduct)}
+                    className="admin-badge badge-admin"
+                    style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "6px 14px" }}
+                >
+                    {showAddProduct ? "Cancel" : "+ Add Product"}
+                </button>
+            </div>
+
+            {showAddProduct && (
+                <div style={{ background: "var(--white)", borderRadius: "10px", padding: "1.5rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "10px", maxWidth: "500px" }}>
+                    <input placeholder="Product Image URL" value={newProduct.productImage} onChange={e => setNewProduct({...newProduct, productImage: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
+                    <input placeholder="Name" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
+                    <input placeholder="Description" value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
+                    <input placeholder="Price" type="number" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
+                    <input placeholder="Team ID" type="number" value={newProduct.teamId} onChange={e => setNewProduct({...newProduct, teamId: parseInt(e.target.value)})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
+                    <select
+                        value={newProduct.categoryId}
+                        onChange={e => setNewProduct({...newProduct, categoryId: parseInt(e.target.value)})}
+                        style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }}
+                    >
+                        <option value={0}>Select Category</option>
+                        <option value={1}>Shirt</option>
+                        <option value={41}>Training</option>
+                        <option value={400}>Socks</option>
+                        <option value={397}>Balls</option>
+                        <option value={399}>Shorts</option>
+                        <option value={398}>Gloves</option>
+                    </select>
+                    <button
+                        onClick={handleAddProduct}
+                        className="admin-badge badge-admin"
+                        style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "8px 14px" }}
+                    >
+                        Save Product
+                    </button>
+                </div>
+            )}
                 <div style={{ marginBottom: "1rem" }}>
                     <input
                         type="text"
