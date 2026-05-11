@@ -180,7 +180,6 @@ const Checkout = () => {
                         <label>CVV</label>
                         <input
                             name="cvv"
-                            type="password"
                             placeholder="•••"
                             value={form.cvv}
                             onChange={handleChange}

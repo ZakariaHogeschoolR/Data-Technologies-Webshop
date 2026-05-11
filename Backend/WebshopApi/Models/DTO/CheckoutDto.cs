@@ -1,4 +1,4 @@
-﻿namespace DataTransferObject;
+namespace DataTransferObject;
 
 public record CheckoutResultDto(int OrderId, decimal Total, DateTime CreatedAt, List<CheckoutItemDto> Items);
 
