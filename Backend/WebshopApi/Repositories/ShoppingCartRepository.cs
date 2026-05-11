@@ -235,4 +235,91 @@ public class ShoppingCartRepository
 
         return orderMap.Values.ToList();
     }
+
+    public async Task<CheckoutResultDto> Checkout(int userId)
+    {
+        await using var conn = await _dbconnectie.GetConnection();
+        await using var transaction = await conn.BeginTransactionAsync();
+
+        try
+        {
+            const string fetchSql = """
+                                    SELECT wu.id AS wuid, w.product_id, w.quantity, p.name, p.product_image, p.price
+                                    FROM winkelwagen_users wu
+                                    JOIN winkelwagen w ON w.winkelwagen_users_id = wu.id
+                                    JOIN products p ON p.id = w.product_id
+                                    WHERE wu.user_id = @userId
+                                    """;
+
+            await using var fetchCmd = new NpgsqlCommand(fetchSql, conn, transaction);
+            fetchCmd.Parameters.AddWithValue("@userId", userId);
+
+            await using var reader = await fetchCmd.ExecuteReaderAsync();
+
+            var items = new List<CheckoutItemDto>();
+            var winkelwagenUsersId = 0;
+
+            while (await reader.ReadAsync())
+            {
+                winkelwagenUsersId = reader.GetInt32(reader.GetOrdinal("wuid"));
+                var price = reader.GetDecimal(reader.GetOrdinal("price"));
+                var quantity = reader.GetInt32(reader.GetOrdinal("quantity"));
+
+                items.Add(new CheckoutItemDto(
+                    reader.GetInt32(reader.GetOrdinal("product_id")),
+                    reader.GetString(reader.GetOrdinal("name")),
+                    reader.GetString(reader.GetOrdinal("product_image")),
+                    price,
+                    quantity,
+                    price * quantity
+                ));
+            }
+
+            await reader.CloseAsync();
+
+            if (items.Count == 0)
+                throw new InvalidOperationException("Cart is empty — nothing to checkout.");
+
+            var total = items.Sum(i => i.SubTotal);
+
+            const string deleteOrderSql = "DELETE FROM orders WHERE winkelwagen_users_id = @wuid";
+
+            await using var deleteCmd = new NpgsqlCommand(deleteOrderSql, conn, transaction);
+            deleteCmd.Parameters.AddWithValue("@wuid", winkelwagenUsersId);
+            await deleteCmd.ExecuteNonQueryAsync();
+
+            const string insertOrderSql = """
+                                          INSERT INTO orders (winkelwagen_users_id, total, payment_status, created_at)
+                                          VALUES (@wuid, @total, TRUE, NOW())
+                                          RETURNING id, created_at
+                                          """;
+
+            await using var insertCmd = new NpgsqlCommand(insertOrderSql, conn, transaction);
+            insertCmd.Parameters.AddWithValue("@wuid", winkelwagenUsersId);
+            insertCmd.Parameters.AddWithValue("@total", total);
+
+            await using var orderReader = await insertCmd.ExecuteReaderAsync();
+            if (!await orderReader.ReadAsync())
+                throw new Exception("Order row was not returned.");
+
+            var orderId = orderReader.GetInt32(orderReader.GetOrdinal("id"));
+            var orderedAt = orderReader.GetDateTime(orderReader.GetOrdinal("created_at"));
+            await orderReader.CloseAsync();
+
+            const string clearCartSql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id = @wuid";
+
+            await using var clearCmd = new NpgsqlCommand(clearCartSql, conn, transaction);
+            clearCmd.Parameters.AddWithValue("@wuid", winkelwagenUsersId);
+            await clearCmd.ExecuteNonQueryAsync();
+
+            await transaction.CommitAsync();
+
+            return new CheckoutResultDto(orderId, total, orderedAt, items);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            throw new Exception("Checkout failed. The transaction was rolled back safely.", ex);
+        }
+    }
 }

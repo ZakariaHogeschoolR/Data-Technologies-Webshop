@@ -13,7 +13,8 @@ namespace WebshopApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ShoppingCartController(ShoppingCartService shoppingCartService) : ControllerBase
+public class ShoppingCartController(ShoppingCartService shoppingCartService, IHttpClientFactory httpClientFactory)
+    : ControllerBase
 {
     [Authorize(Roles = "Admin")]
     [HttpGet]
@@ -97,5 +98,35 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService) : C
     {
         shoppingCartService.DeleteService(id);
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost("checkout")]
+    public async Task<ActionResult<CheckoutResultDto>> Checkout()
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
+
+        var userId = int.Parse(userIdString);
+
+        try
+        {
+            var result = await shoppingCartService.Checkout(userId);
+
+            _ = Task.Run(async () =>
+            {
+                var client = httpClientFactory.CreateClient();
+                var productIds = result.Items.Select(i => i.ProductId).ToList();
+
+                await client.PostAsJsonAsync("http://localhost:5261/api/Graph/bought-bulk",
+                    new { userId, productIds });
+            });
+
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { messge = ex.Message });
+        }
     }
 }

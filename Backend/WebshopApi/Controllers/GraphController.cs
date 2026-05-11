@@ -25,4 +25,11 @@ public class GraphController : ControllerBase
         await _graphService.AddBoughtService(dto);
         return Ok(new { message = "BOUGHT relation updated" });
     }
+
+    [HttpPost("bought-bulk")]
+    public async Task<IActionResult> AddBulkBought([FromBody] BulkBoughtDto dto)
+    {
+        await _graphService.AddBulkBoughtService(dto);
+        return Ok(new { message = "Bulk BOUGHT relations updated" });
+    }
 }
