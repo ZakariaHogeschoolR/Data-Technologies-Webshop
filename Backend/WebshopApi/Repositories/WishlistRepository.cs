@@ -77,7 +77,9 @@ public class WishlistRepository
             Id = id,
             Userid = wishlistDTO.UserId,
             Name = wishlistDTO.Name,
-            Productid = wishlistDTO.ProductId
+            Productid = wishlistDTO.ProductId,
+            CreatedAt = wishlistDTO.CreatedAt,
+            UpdatedAt = wishlistDTO.UpdatedAt
         };
     }
     public async void UpdateWishlist(WishlistDTO wishlistDTO)
