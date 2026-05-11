@@ -73,6 +73,20 @@ public class AdminController(UserService userService, ProductService productServ
         return Ok(new { message = "Password reset successful" });
     }
 
+    [HttpPost("products/create")]
+    public async Task<IActionResult> CreateProduct([FromBody] ProductDto data)
+    {
+        var id = await productService.CreateServiceReturnId(data);
+        return Ok(new { message = "Product created successfully", id });
+    }
+
+    [HttpPost("products/category")]
+    public async Task<IActionResult> AddProductCategory([FromBody] ProductCategoryDto data)
+    {
+        await productService.AddProductCategoryService(data.ProductId, data.CategoryId);
+        return Ok(new { message = "Category added successfully" });
+    }
+
     [HttpPut("users/{id}/role")]
     public async Task<IActionResult> UpdateRole(int id, [FromBody] AdminUpdateRoleDto data)
     {
