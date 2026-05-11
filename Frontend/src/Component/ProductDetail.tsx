@@ -36,6 +36,8 @@ const ProductDetail = () => {
             return;
         }
         try{
+            const date = new Date().toISOString().split('T')[0]
+            console.log(date)
             const query = `${API}/Wishlist/create`
             const response = await fetch(query, {
                 headers:{
@@ -44,7 +46,9 @@ const ProductDetail = () => {
                 }, method: `POST`,
                 body: JSON.stringify({
                     name: `wishlist of productId: ${id}`,
-                    productId: id
+                    productId: id,
+                    createdAt: date,
+                    updatedAt: date
                 })})
             if(!response.ok) {
                 const errorText = await response.text()
