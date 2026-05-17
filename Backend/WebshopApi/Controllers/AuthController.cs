@@ -1,4 +1,4 @@
-using DataTransferObject;
+﻿using DataTransferObject;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +8,7 @@ namespace WebshopApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(UserService service, TokenService tokenService) : ControllerBase
+public class AuthController(UserService service, TokenService tokenService, PasswordResetService passwordResetService) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register(Register data)
@@ -29,4 +29,19 @@ public class AuthController(UserService service, TokenService tokenService) : Co
 
     [HttpPost("logout")]
     public IActionResult Logout() => Ok(new { message = "Logged out" });
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto data)
+    {
+        await passwordResetService.SendResetEmail(data.Email);
+        return Ok(new { message = "If this email exists, a reset link has been sent." });
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPassword data)
+    {
+        var success = await passwordResetService.ResetPassword(data.Token, data.Password);
+        if (!success) return BadRequest(new { message = "Invalid or expired token." });
+        return Ok(new { message = "Password reset successful." });
+    }
 }
