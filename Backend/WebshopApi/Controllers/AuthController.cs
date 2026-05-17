@@ -1,4 +1,4 @@
-﻿using DataTransferObject;
+using DataTransferObject;
 
 using Microsoft.AspNetCore.Mvc;
 
