@@ -89,20 +89,18 @@ const AdminPage = () => {
     const [editPrice, setEditPrice] = useState<number>(0);
 
     const handleResetPassword = async (id: number) => {
+        if (!confirm("Send password reset email to this user?")) return;
+        
         const token = localStorage.getItem("token");
         const res = await fetch(`http://localhost:5261/api/Admin/users/${id}/reset-password`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ newPassword })
+            }
         });
 
         if (res.ok) {
-            setResetMessage("Password reset successful!");
-            setResetUserId(null);
-            setNewPassword("");
+            setResetMessage("Password reset email sent!");
         } else {
             setResetMessage("Something went wrong.");
         }
@@ -312,22 +310,9 @@ const AdminPage = () => {
                                     <td>
                                         {u.role === 'hoofdadmin' ? (
                                             <span style={{ fontSize: "12px", color: "var(--dark-green)", fontStyle: "italic" }}>Protected</span>
-                                        ) : resetUserId === u.id ? (
-                                            <div style={{ display: "flex", gap: "6px" }}>
-                                                <input
-                                                    type="password"
-                                                    placeholder="New password"
-                                                    value={newPassword}
-                                                    onChange={e => setNewPassword(e.target.value)}
-                                                    style={{ padding: "4px 8px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "12px" }}
-                                                />
-                                                <button onClick={() => handleResetPassword(u.id)} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none" }}>Save</button>
-                                                <button onClick={() => setResetUserId(null)} className="admin-badge badge-user" style={{ cursor: "pointer", border: "none" }}>Cancel</button>
-                                            </div>
                                         ) : (
                                             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                                                <button onClick={() => { setResetUserId(u.id); setResetMessage(""); }} className="admin-badge badge-user" style={{ cursor: "pointer", border: "none" }}>Reset Password</button>
-                                                <button onClick={() => handleUpdateRole(u.id, u.role)} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", backgroundColor: u.role === "admin" ? "#854F0B" : "#185FA5" }}>
+                                            <button onClick={() => handleResetPassword(u.id)} className="admin-badge badge-user" style={{ cursor: "pointer", border: "none" }}>Reset Password</button>                                                <button onClick={() => handleUpdateRole(u.id, u.role)} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", backgroundColor: u.role === "admin" ? "#854F0B" : "#185FA5" }}>
                                                     {u.role === "admin" ? "Make User" : "Make Admin"}
                                                 </button>
                                                 {(localStorage.getItem("role") === "hoofdadmin" || u.role === "user") && (
