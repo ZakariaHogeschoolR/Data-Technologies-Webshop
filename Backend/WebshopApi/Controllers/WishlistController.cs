@@ -26,25 +26,25 @@ public class WishlistController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Wishlists>>> GetAllWishlists()
     {
-        var wishlists = _wishlistservice.GetAllWishLists();
+        var wishlists = await _wishlistservice.GetAllWishLists();
         return Ok(wishlists);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Wishlists>> GetWishlistById(int id)
+    public async Task<ActionResult<List<Wishlists>>> GetWishlistById(int id)
     {
-        var wishlist = _wishlistservice.GetWishlistsById(id);
+        var wishlist = await _wishlistservice.GetWishlistsById(id);
         return Ok(wishlist);
     }
     [Authorize]
     [HttpGet("mine")]
-    public async Task<ActionResult<Wishlists>> GetWishlistById()
+    public async Task<ActionResult<Wishlists>> GetMyWishlist()
     {
         var useridstring = User.FindFirstValue(ClaimTypes.NameIdentifier);
         // return Ok(useridstring);
         if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
         var userId = int.Parse(useridstring);
-        var wishlists = await _wishlistservice.GetWishlistsById(userId);
+        var wishlists = await _wishlistservice.GetWishlistsByUserId(userId);
         return Ok(wishlists);
     }
     [Authorize]
@@ -63,14 +63,19 @@ public class WishlistController : ControllerBase
     [HttpPut("update")]
     public async Task<ActionResult> UpdateWishlist(WishlistDTO wishlistDTO)
     {
-        _wishlistservice.UpdateService(wishlistDTO);
+        await _wishlistservice.UpdateService(wishlistDTO);
         return Ok();
     }
 
-    [HttpDelete("delete")]
-    public async Task<ActionResult> DeleteWishlist([FromBody] int id)
+    [Authorize]
+    [HttpDelete("delete/{id:int}")]
+    public async Task<ActionResult> DeleteWishlist([FromRoute] int id)
     {
-        _wishlistservice.DeleteService(id);
+        var useridstring = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // return Ok(useridstring);
+        if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
+        int userid = int.Parse(useridstring);
+        await _wishlistservice.DeleteService(id);
         return Ok();
     }
 }
