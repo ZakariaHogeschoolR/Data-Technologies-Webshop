@@ -122,4 +122,13 @@ public class WishlistRepository
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
     }
+    public async Task DeleteProduct(int id, string name)
+    {
+        using var conn = await _dbconnectie.GetConnection();
+        var sql = "DELETE FROM wishlist WHERE product_id= @pid AND name= @name";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@pid", id);
+        cmd.Parameters.AddWithValue("@name", name);
+        await cmd.ExecuteNonQueryAsync();
+    }
 }

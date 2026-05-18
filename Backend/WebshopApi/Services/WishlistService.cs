@@ -44,4 +44,8 @@ public class WishlistService
     {
         await _wishlistRepository.DeleteWishlist(id);
     }
+    public async Task DeleteProduct(int id, string name)
+    {
+        await _wishlistRepository.DeleteProduct(id, name);
+    }
 }
