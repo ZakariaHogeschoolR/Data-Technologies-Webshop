@@ -13,6 +13,7 @@ import AdminPage from "../src/Component/Pages/AdminPage";
 import Authentication from "./Component/Pages/Authentication.tsx";
 import ProfilePage from "./Component/Pages/ProfilePage.tsx";
 import CheckoutPage from "./Component/Pages/Checkout.tsx";
+import WishlistDetail from './Component/Pages/WishlistDetail.tsx';
 const router = createHashRouter([
   {
     path: '/',
@@ -23,6 +24,7 @@ const router = createHashRouter([
         { path: 'products/:id', element: <ProductDetail />},
         { path: 'category/:id', element: <CategoryDetail />},
         { path: `winkelwagen/mine`, element: <Winkelwagen />},
+        { path: `wishlist/:id`, element: <WishlistDetail />},
         { path: 'admin', element: <AdminPage /> },
         { path: 'profile', element: <ProfilePage/> },
         { path: '*', element: <NotFound /> },
