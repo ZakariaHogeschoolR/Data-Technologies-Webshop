@@ -80,13 +80,13 @@ public class WishlistController : ControllerBase
     }
     [Authorize]
     [HttpDelete("delete/product")]
-    public async Task<ActionResult> DeleteProductFromWishlist([FromBody] int id, [FromBody] string name)
+    public async Task<ActionResult> DeleteProductFromWishlist([FromBody]DeleteProductDto deleteProductDto)
     {
         var useridstring = User.FindFirstValue(ClaimTypes.NameIdentifier);
         // return Ok(useridstring);
         if (string.IsNullOrEmpty(useridstring)) return Unauthorized();
         int userid = int.Parse(useridstring);
-        await _wishlistservice.DeleteProduct(id, name);
+        await _wishlistservice.DeleteProduct(deleteProductDto.Id, deleteProductDto.WishlistName);
         return Ok();
     }
 }

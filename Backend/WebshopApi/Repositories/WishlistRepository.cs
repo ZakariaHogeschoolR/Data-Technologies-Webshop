@@ -125,7 +125,8 @@ public class WishlistRepository
     public async Task DeleteProduct(int id, string name)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE FROM wishlist WHERE product_id= @pid AND name= @name";
+        var sql = @"UPDATE wishlist SET product_id= NULL
+        WHERE product_id= @pid AND name= @name";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@pid", id);
         cmd.Parameters.AddWithValue("@name", name);
