@@ -60,7 +60,7 @@ public class WishlistRepository
         }
         return listofwishlists;
     }
-     public async Task<List<Wishlists?>> GetWishlistsByUserId(int id)
+    public async Task<List<Wishlists?>> GetWishlistsByUserId(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
         var listofwishlists = new List<Wishlists?>();

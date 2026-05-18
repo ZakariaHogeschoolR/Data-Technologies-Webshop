@@ -74,9 +74,10 @@ export default function WishlistDetail(/*{ wishlists }: WishlistDetailProps*/){
                         setWishlistName(wishlistData[0].name)
                         items = wishlistData
                     }
-                    else if(wishlistData && !Array.isArray(wishlistData)){
-                        setWishlistName(wishlistData.name || wishlistData.Name)
-                        items = [wishlistData]
+                    else if(!Array.isArray(wishlistData)){
+                        throw new Error(`not behaving as expected`)
+                        // setWishlistName(wishlistData.name || wishlistData.Name)
+                        // items = [wishlistData]
                     }
                     // const singleWishlist: Wishlist = await wishlistResponse.json()
                     // setWislistName(singleWishlist.name)
