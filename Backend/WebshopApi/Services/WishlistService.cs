@@ -22,9 +22,11 @@ public class WishlistService
         Task<List<Wishlists?>> wishlist = _wishlistRepository.GetWishlistsById(id);
         return await wishlist;
     }
-    public async Task<List<Products?>> GetAllProducts()
+    public async Task<List<Wishlists?>> GetWishlistsByUserId(int id)
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        Task<List<Wishlists?>> wishlist = _wishlistRepository.GetWishlistsByUserId(id);
+        return await wishlist;
     }
     public async Task<Products?> GetProductsById()
     {
@@ -34,12 +36,16 @@ public class WishlistService
     {
         return await _wishlistRepository.AddWishlist(wishlistDTO);
     }
-    public async void UpdateService(WishlistDTO wishlistDTO)
+    public async Task UpdateService(WishlistDTO wishlistDTO)
     {
-        _wishlistRepository.UpdateWishlist(wishlistDTO);
+        await _wishlistRepository.UpdateWishlist(wishlistDTO);
     }
-    public async void DeleteService(int id)
+    public async Task DeleteService(int id)
     {
-        _wishlistRepository.DeleteWishlist(id);
+        await _wishlistRepository.DeleteWishlist(id);
+    }
+    public async Task DeleteProduct(int id, string name)
+    {
+        await _wishlistRepository.DeleteProduct(id, name);
     }
 }

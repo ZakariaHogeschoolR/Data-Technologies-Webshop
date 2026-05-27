@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import '../../Styles/Profile.css';
+import WishlistDetail from './WishlistDetail';
 
 const API = 'http://localhost:5261/api';
 
@@ -23,15 +24,15 @@ type Order = {
     orderId: number; date: string; items: OrderItem[];
 };
 
-type ProductInfo = {
+export type ProductInfo = {
     id: number; name: string; productImage: string; price: number;
 };
 
-type Wishlist = {
+export type Wishlist = {
     id: number,
     name: string;
-    user_id: number;
-    product_id: number;
+    userid: number;
+    productid: number;
 }
 
 type Tab = 'profile' | 'password' | 'orders' | `wishlists`;
@@ -60,6 +61,51 @@ export default function ProfilePage() {
     const [ordersLoading, setOrdersLoading] = useState(false);
 
     const [wishlists, setWislists] = useState<Wishlist[]>([]);
+    const [newWishlistName, setNewWishlistName] = useState(``)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [formError, setFormError] = useState(``)
+
+    async function handleCreateEmptyWishlist(e: React.FormEvent) {
+        e.preventDefault()
+        setFormError(``)
+
+        if(!newWishlistName.trim()){
+            setFormError(`naam is verplicht`)
+            return;
+        }
+        try{
+            setIsSubmitting(true)
+
+            const token = localStorage.getItem(`token`)
+
+            const response = await fetch(`${API}/Wishlist/create`, {
+                method: `POST`,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization" : `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: newWishlistName.trim(),
+                    productId: null
+                })
+            })
+            if(!response.ok){
+                if(response.status == 401) throw new Error(`je ben niet ingelogd`)
+                throw new Error(`wishlist creation failure`)
+            }
+            const CreatedWishlist = await response.json()
+
+            setWislists([...wishlists, CreatedWishlist])
+            setNewWishlistName(``)
+        }
+        catch(e: any){
+            setFormError(e.message || `err ging iets mis`)
+        }
+        finally{
+            setIsSubmitting(false)
+        }
+}
+
     useEffect(() => {
         if(!token) return;
 
@@ -416,8 +462,33 @@ export default function ProfilePage() {
         </div>)}
         {tab === `wishlists` && (<div className={`profile-card`}>
             <p className={`profile-section-title`}>Wishlists:</p>
-            {wishlists.length === 0 ? `no wishlist made. make a wishlist to find it here`:
-            wishlists.map((wishlist) => (<div key={wishlist.id}>{wishlist.name}</div>))}
+            <form onSubmit={handleCreateEmptyWishlist}>
+                <div>
+                    <input type={`text`} placeholder={`Make a new wishlist`}
+                    value={newWishlistName}
+                    onChange={(e) => setNewWishlistName(e.target.value)}
+                    disabled={isSubmitting}/>
+                    <button type={`submit`}
+                    disabled={isSubmitting}>{isSubmitting ? `Create...`:`Create`}</button>
+                </div>
+                {formError && <p>{formError}</p>}
+            </form>
+            {wishlists.length === 0 ? (
+                `no wishlist made. make a wishlist to find it here`
+            ) : (
+                <ul style={{listStyle: `none`}}>
+                    {wishlists.filter((wishlists, index, self) =>
+                    self.findIndex(w => w.name === wishlists.name) === index)
+                    .map((wishlist) => (
+                    <li id={`${wishlist.id}`}><Link
+                    key={wishlist.id}
+                    to={`/wishlist/${wishlist.id}`}
+                    state={{allWishlist: wishlists, currentName: wishlist.name}}
+                    className={`wishlistLinkItem`}>
+                        Name: {wishlist.name}
+                        </Link></li>
+                ))}</ul>
+            )}
         </div>)}
     </div>);
 }
