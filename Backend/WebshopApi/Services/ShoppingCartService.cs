@@ -47,5 +47,5 @@ public class ShoppingCartService
 
     public async Task<List<OrderHistoryDto>?> GetOrderHistoryService(int userId) => await _shoppingcartRepository.GetOrderHistoryByUserId(userId);
 
-    public async Task<CheckoutResultDto> Checkout(int userId) => await _shoppingcartRepository.Checkout(userId);
+    public async Task<CheckoutResultDto> Checkout(int userId, string paymentMethod = "card") => await _shoppingcartRepository.Checkout(userId, paymentMethod);
 }

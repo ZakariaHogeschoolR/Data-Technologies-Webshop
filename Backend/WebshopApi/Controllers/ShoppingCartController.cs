@@ -102,16 +102,17 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService, IHt
 
     [Authorize]
     [HttpPost("checkout")]
-    public async Task<ActionResult<CheckoutResultDto>> Checkout()
+    public async Task<ActionResult<CheckoutResultDto>> Checkout([FromBody] CheckoutRequestDto? request)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
 
         var userId = int.Parse(userIdString);
+        var paymentMethod = request?.PaymentMethod ?? "card";
 
         try
         {
-            var result = await shoppingCartService.Checkout(userId);
+            var result = await shoppingCartService.Checkout(userId, paymentMethod);
 
             _ = Task.Run(async () =>
             {
@@ -126,7 +127,7 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService, IHt
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(new { messge = ex.Message });
+            return BadRequest(new { message = ex.Message });
         }
     }
 }

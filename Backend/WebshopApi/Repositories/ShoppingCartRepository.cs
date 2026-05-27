@@ -236,7 +236,7 @@ public class ShoppingCartRepository
         return orderMap.Values.ToList();
     }
 
-    public async Task<CheckoutResultDto> Checkout(int userId)
+    public async Task<CheckoutResultDto> Checkout(int userId, string paymentMethod = "card")
     {
         await using var conn = await _dbconnectie.GetConnection();
         await using var transaction = await conn.BeginTransactionAsync();
@@ -282,15 +282,14 @@ public class ShoppingCartRepository
 
             var total = items.Sum(i => i.SubTotal);
 
-            const string deleteOrderSql = "DELETE FROM orders WHERE winkelwagen_users_id = @wuid";
-
+            const string deleteOrderSql = "DELETE FROM orders WHERE winkelwagen_users_id = @wuid AND payment_status = FALSE";
             await using var deleteCmd = new NpgsqlCommand(deleteOrderSql, conn, transaction);
             deleteCmd.Parameters.AddWithValue("@wuid", winkelwagenUsersId);
             await deleteCmd.ExecuteNonQueryAsync();
 
             const string insertOrderSql = """
                                           INSERT INTO orders (winkelwagen_users_id, total, payment_status, created_at)
-                                          VALUES (@wuid, @total, TRUE, NOW())
+                                          VALUES (@wuid, @total, FALSE, NOW())
                                           RETURNING id, created_at
                                           """;
 
@@ -306,8 +305,22 @@ public class ShoppingCartRepository
             var orderedAt = orderReader.GetDateTime(orderReader.GetOrdinal("created_at"));
             await orderReader.CloseAsync();
 
-            const string clearCartSql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id = @wuid";
+            const string insertPaymentSql = """
+                                            INSERT INTO "Payments" (order_id, paid_at, payment_method, status)
+                                            VALUES (@orderId, NOW(), @paymentMethod, 'paid')
+                                            """;
 
+            await using var paymentCmd = new NpgsqlCommand(insertPaymentSql, conn, transaction);
+            paymentCmd.Parameters.AddWithValue("@orderId", orderId);
+            paymentCmd.Parameters.AddWithValue("@paymentMethod", paymentMethod);
+            await paymentCmd.ExecuteNonQueryAsync();
+
+            const string updateOrderSql = "UPDATE orders SET payment_status = TRUE WHERE id = @orderId";
+            await using var updateCmd = new NpgsqlCommand(updateOrderSql, conn, transaction);
+            updateCmd.Parameters.AddWithValue("@orderId", orderId);
+            await updateCmd.ExecuteNonQueryAsync();
+
+            const string clearCartSql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id = @wuid";
             await using var clearCmd = new NpgsqlCommand(clearCartSql, conn, transaction);
             clearCmd.Parameters.AddWithValue("@wuid", winkelwagenUsersId);
             await clearCmd.ExecuteNonQueryAsync();

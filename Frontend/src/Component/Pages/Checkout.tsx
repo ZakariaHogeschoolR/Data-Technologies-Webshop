@@ -50,8 +50,8 @@ const Checkout = () => {
         try {
             const res = await fetch('http://localhost:5261/api/ShoppingCart/checkout', {
                 method: 'POST', headers: {
-                    'Content-Type': 'application/json', Authorization: `Bearer ${token}`
-                },
+                    'Content-Type': 'application/json', Authorization: `Bearer ${token}`,
+                }, body: JSON.stringify({paymentMethod: 'card'}),
             });
 
             if (!res.ok) {
