@@ -75,11 +75,13 @@ export default function AddToWishlistButton({productId} : AddToWishlistProp){
                     {wishlists.length === 0 ? (
                         <p>make a wishlist in profile to see it here!</p>
                     ) : (
-                        wishlists.map(list => (
-                            <button key={list.id}
+                    <ul style={{listStyle:`none`}}>
+                        {wishlists.map(list => (
+                            <li id={`${list.id}`}><button key={list.id}
                             onClick={()=>HandleAdd(list.name)}
-                            disabled={loading}>{list.name}</button>
-                        ))
+                            disabled={loading}>{list.name}</button></li>
+                            ))}
+                    </ul>
                     )}
                     {message && (
                         <div>{message}</div>

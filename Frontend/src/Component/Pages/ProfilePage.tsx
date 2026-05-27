@@ -476,19 +476,18 @@ export default function ProfilePage() {
             {wishlists.length === 0 ? (
                 `no wishlist made. make a wishlist to find it here`
             ) : (
-                wishlists.filter((wishlists, index, self) =>
-                    self.findIndex(w => w.name === wishlists.name) === index
-                )
-                .map((wishlist) => (
-                    <Link
+                <ul style={{listStyle: `none`}}>
+                    {wishlists.filter((wishlists, index, self) =>
+                    self.findIndex(w => w.name === wishlists.name) === index)
+                    .map((wishlist) => (
+                    <li id={`${wishlist.id}`}><Link
                     key={wishlist.id}
                     to={`/wishlist/${wishlist.id}`}
                     state={{allWishlist: wishlists, currentName: wishlist.name}}
-                    className={`wishlistLinkItem`}
-                    >
+                    className={`wishlistLinkItem`}>
                         Name: {wishlist.name}
-                    </Link>
-                ))
+                        </Link></li>
+                ))}</ul>
             )}
         </div>)}
     </div>);

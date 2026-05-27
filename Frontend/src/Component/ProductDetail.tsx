@@ -174,10 +174,10 @@ const ProductDetail = () => {
     }
     return (
         <>
+            <AddToWishlistButton productId={Number.parseInt(id!)}/>
             <p className="product-id-content">PRODUCT {id}</p>
             <section className="product-border-line"></section>
             <div className="Addtowinkelwagenwindow">
-                <AddToWishlistButton productId={Number.parseInt(id!)}/>
                 <p>Add quantity to Shoppingcart:</p>
                 <input className="quantity-input" id="quantity" type="number" min={1} max={11} onChange={(e) => setQuantity(parseInt(e.target.value) > 11 ? 11 : parseInt(e.target.value) < 1 ? 1 : parseInt(e.target.value))}/>
                 <button className="quantity-button" onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
