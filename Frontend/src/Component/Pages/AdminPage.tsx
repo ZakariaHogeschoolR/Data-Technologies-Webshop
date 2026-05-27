@@ -143,6 +143,29 @@ const AdminPage = () => {
         }
     };
 
+    const [showAddTeam, setShowAddTeam] = useState(false);
+    const [newTeam, setNewTeam] = useState({ name: "", type: "" });
+
+    const handleAddTeam = async () => {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/teams/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(newTeam)
+        });
+
+        if (res.ok) {
+            setResetMessage("Team added successfully!");
+            setShowAddTeam(false);
+            setNewTeam({ name: "", type: "" });
+        } else {
+            setResetMessage("Something went wrong.");
+        }
+    };
+
     const handleAddProduct = async () => {
         const token = localStorage.getItem("token");
 
@@ -332,13 +355,16 @@ const AdminPage = () => {
                 <h2 className="admin-section-title">Products</h2>
 
                 <div style={{ marginBottom: "1rem", display: "flex", gap: "8px" }}>
-                    <button onClick={() => setShowAddProduct(!showAddProduct)} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "6px 14px" }}>
-                        {showAddProduct ? "Cancel" : "+ Add Product"}
-                    </button>
-                    <button onClick={() => setShowEditPrice(!showEditPrice)} className="admin-badge badge-user" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "6px 14px" }}>
-                        {showEditPrice ? "Cancel" : "✏️ Edit Price"}
-                    </button>
-                </div>
+                <button onClick={() => setShowAddProduct(!showAddProduct)} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "6px 14px" }}>
+                    {showAddProduct ? "Cancel" : "+ Add Product"}
+                </button>
+                <button onClick={() => setShowEditPrice(!showEditPrice)} className="admin-badge badge-user" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "6px 14px" }}>
+                    {showEditPrice ? "Cancel" : "✏️ Edit Price"}
+                </button>
+                <button onClick={() => setShowAddTeam(!showAddTeam)} className="admin-badge badge-user" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "6px 14px" }}>
+                    {showAddTeam ? "Cancel" : "+ Add Team"}
+                </button>
+            </div>
 
                 {showAddProduct && (
                     <div style={{ background: "var(--white)", borderRadius: "10px", padding: "1.5rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "10px", maxWidth: "500px" }}>
@@ -365,6 +391,18 @@ const AdminPage = () => {
                         <input placeholder="Product ID" type="number" value={editProductId ?? ""} onChange={e => setEditProductId(parseInt(e.target.value))} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
                         <input placeholder="New Price" type="number" value={editPrice} onChange={e => setEditPrice(parseFloat(e.target.value))} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
                         <button onClick={handleEditPrice} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "8px 14px" }}>Update Price</button>
+                    </div>
+                )}
+
+                {showAddTeam && (
+                    <div style={{ background: "var(--white)", borderRadius: "10px", padding: "1.5rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "10px", maxWidth: "500px" }}>
+                        <input placeholder="Team Name" value={newTeam.name} onChange={e => setNewTeam({...newTeam, name: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
+                        <select value={newTeam.type} onChange={e => setNewTeam({...newTeam, type: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }}>
+                            <option value="">Select Type</option>
+                            <option value="club">Club</option>
+                            <option value="national">National</option>
+                        </select>
+                        <button onClick={handleAddTeam} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "8px 14px" }}>Save Team</button>
                     </div>
                 )}
 
