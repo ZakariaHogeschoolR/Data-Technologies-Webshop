@@ -201,9 +201,11 @@ const AdminPage = () => {
                 });
             }
 
-            setResetMessage("Product added successfully!");
+            setResetMessage(`Product "${newProduct.name}" added successfully! (ID: ${createdProduct.id})`);
             setShowAddProduct(false);
             setNewProduct({ productImage: "", name: "", description: "", price: 0, teamId: 0, categoryId: 0 });
+            setTeamSearch("");
+            setPage(1);
         } else {
             setResetMessage("Something went wrong.");
         }
@@ -246,6 +248,7 @@ const AdminPage = () => {
             setShowEditPrice(false);
             setEditProductId(null);
             setEditPrice(0);
+            setPage(p => p);
         } else {
             setResetMessage("Something went wrong.");
         }
