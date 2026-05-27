@@ -66,6 +66,14 @@ public class AdminController(UserService userService, ProductService productServ
         return Ok(products);
     }
 
+    [HttpGet("teams/search")]
+    public async Task<IActionResult> SearchTeams([FromQuery] string name)
+    {
+        var teams = await teamService.GetAllService();
+        var filtered = teams.Where(t => t.Name.ToLower().Contains(name.ToLower())).ToList();
+        return Ok(filtered);
+    }
+
     [HttpPost("users/{id}/reset-password")]
     public async Task<IActionResult> ResetPassword(int id)
     {
@@ -74,6 +82,13 @@ public class AdminController(UserService userService, ProductService productServ
 
         await passwordResetService.SendResetEmail(user.Email);
         return Ok(new { message = "Password reset email sent." });
+    }
+
+    [HttpPost("teams/create")]
+    public async Task<IActionResult> CreateTeam([FromBody] TeamDto data)
+    {
+        await teamService.CreateService(data);
+        return Ok(new { message = "Team created successfully" });
     }
 
     [HttpPost("products/create")]
