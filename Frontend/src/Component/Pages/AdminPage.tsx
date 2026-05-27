@@ -390,8 +390,7 @@ const AdminPage = () => {
                         <input placeholder="Product Image URL" value={newProduct.productImage} onChange={e => setNewProduct({...newProduct, productImage: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
                         <input placeholder="Name" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
                         <input placeholder="Description" value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
-                        <input placeholder="Price" type="number" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
-                        <input placeholder="Team ID" type="number" value={newProduct.teamId} onChange={e => setNewProduct({...newProduct, teamId: parseInt(e.target.value)})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
+                        <input placeholder="Price (€)" type="number" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: parseFloat(e.target.value)})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }} />
                         <select value={newProduct.categoryId} onChange={e => setNewProduct({...newProduct, categoryId: parseInt(e.target.value)})} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px" }}>
                             <option value={0}>Select Category</option>
                             <option value={1}>Shirt</option>
@@ -401,6 +400,32 @@ const AdminPage = () => {
                             <option value={399}>Shorts</option>
                             <option value={398}>Gloves</option>
                         </select>
+                        <div style={{ position: "relative" }}>
+                            <input
+                                placeholder="Search team name..."
+                                value={teamSearch}
+                                onChange={e => handleTeamSearch(e.target.value)}
+                                style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "100%" }}
+                            />
+                            {teamResults.length > 0 && (
+                                <div style={{ position: "absolute", background: "var(--white)", border: "1px solid #ccc", borderRadius: "6px", width: "100%", zIndex: 99, maxHeight: "200px", overflowY: "auto" }}>
+                                    {teamResults.map(t => (
+                                        <div
+                                            key={t.id}
+                                            onClick={() => { setNewProduct({...newProduct, teamId: t.id}); setTeamSearch(t.name); setTeamResults([]); }}
+                                            style={{ padding: "8px 12px", cursor: "pointer", fontSize: "14px", color: "var(--dark-green)", borderBottom: "1px solid #eee" }}
+                                            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--mint)")}
+                                            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--white)")}
+                                        >
+                                            <strong>{t.name}</strong> — ID: {t.id}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            {newProduct.teamId > 0 && (
+                                <p style={{ fontSize: "12px", color: "var(--dark-green)", marginTop: "4px" }}>✓ Team ID: {newProduct.teamId}</p>
+                            )}
+                        </div>
                         <button onClick={handleAddProduct} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "8px 14px" }}>Save Product</button>
                     </div>
                 )}
