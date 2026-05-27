@@ -209,6 +209,25 @@ const AdminPage = () => {
         }
     };
 
+    const [teamSearch, setTeamSearch] = useState("");
+    const [teamResults, setTeamResults] = useState<{ id: number; name: string }[]>([]);
+
+    const handleTeamSearch = async (value: string) => {
+        setTeamSearch(value);
+        if (value.length < 2) {
+            setTeamResults([]);
+            return;
+        }
+        const token = localStorage.getItem("token");
+        const res = await fetch(`http://localhost:5261/api/Admin/teams/search?name=${value}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            setTeamResults(data);
+        }
+    };
+
     const handleEditPrice = async () => {
         if (!editProductId) return;
 
@@ -408,6 +427,30 @@ const AdminPage = () => {
 
                 <div style={{ marginBottom: "1rem" }}>
                     <input type="text" placeholder="Search by name or team..." value={searchQuery} onChange={e => handleSearch(e.target.value)} style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "300px", color: "var(--dark-green)" }} />
+                </div>
+                <div style={{ marginBottom: "1rem", position: "relative" }}>
+                    <input
+                        type="text"
+                        placeholder="Search team by name..."
+                        value={teamSearch}
+                        onChange={e => handleTeamSearch(e.target.value)}
+                        style={{ padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "14px", width: "300px", color: "var(--dark-green)" }}
+                    />
+                    {teamResults.length > 0 && (
+                        <div style={{ position: "absolute", background: "var(--white)", border: "1px solid #ccc", borderRadius: "6px", width: "300px", zIndex: 99, maxHeight: "200px", overflowY: "auto" }}>
+                            {teamResults.map(t => (
+                                <div
+                                    key={t.id}
+                                    onClick={() => { setTeamSearch(t.name); setTeamResults([]); }}
+                                    style={{ padding: "8px 12px", cursor: "pointer", fontSize: "14px", color: "var(--dark-green)", borderBottom: "1px solid #eee" }}
+                                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--mint)")}
+                                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--white)")}
+                                >
+                                    <strong>{t.name}</strong> — ID: {t.id}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div style={{ display: "flex", gap: "8px", marginBottom: "1rem", flexWrap: "wrap" }}>
