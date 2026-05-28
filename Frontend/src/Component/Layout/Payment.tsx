@@ -1,84 +1,82 @@
 import './../../Styles/Payment.css';
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from 'react';
-import { useFetch } from '../../CustomHooks/GetFetchHook';
-import NotFound from '../Pages/NotFound';
+import {useNavigate} from "react-router-dom";
+import {useState} from 'react';
 
-interface winkelwagen{
-    id: number,
-    productId:number,
-    shoppingProducts:[],
-    quantity:number,
-    createdAt:string,
-    updatedAt:string
-}
-
-type props = {
-    winkelwagenItems: winkelwagen[];
-    total: number;
-    currentWinkelwagenId:number;
-}
-
-type Orders = {
+interface WinkelwagenItem {
     id: number;
-    winkelwagenUsersId: number;
-    total: number;
-    paymentStatus: boolean;
-    createdAt: Date;
+    productId: number;
+    shoppingProducts: any;
+    quantity: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
-const Payout = ({winkelwagenItems, total, currentWinkelwagenId}:props) => {
-    const navigate = useNavigate();
+type Props = {
+    winkelwagenItems: WinkelwagenItem[]; total: number; currentWinkelwagenId: number;
+}
 
-    const handleCheckout = async () => {
-        console.log(currentWinkelwagenId);
-        try 
-        {
-            await fetch(
-            `http://localhost:5261/api/Order/winkelwagen/delete/${currentWinkelwagenId}`,
-            { method: "DELETE" }
-            );
-            console.log(total);
-            await fetch("http://localhost:5261/api/Order/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    "winkelwagenUsersId": currentWinkelwagenId,
-                    "total": total,
-                    "paymentStatus": true,
-                    "createdAt": new Date().toISOString()
-                })
+const Payment = ({winkelwagenItems, total}: Props) => {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleCheckout = () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/auth');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const orderLines = winkelwagenItems.map((item: any) => {
+                const product = Array.isArray(item.shoppingProducts) ? item.shoppingProducts[0] : item.shoppingProducts;
+
+                return {
+                    productId: item.productId,
+                    name: product?.name || 'Product Name',
+                    productImage: product?.productImage || product?.imageUrl || '',
+                    price: product?.price || 0,
+                    quantity: item.quantity,
+                    subTotal: (product?.price || 0) * item.quantity
+                };
             });
-            winkelwagenItems.map(product =>
-                fetch("http://localhost:5261/api/Graph/bought", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        userId: currentWinkelwagenId,
-                        productId: product.productId
-                    })
-                })
-            )
-            navigate("/checkout");
-        } catch (err) 
-        {
-            console.error(err);
+
+            navigate('/checkout', {
+                state: {
+                    orderLines: orderLines, total: total
+                }
+            });
+        } catch (err) {
+            setError('Er ging iets mis bij het voorbereiden van de checkout.');
+            setLoading(false);
         }
     };
-    return(
-        <>
-            <div className="Payment-container">
-                <p className="sub-total-price-payment">subTotal: <p className="sub-total">{total}</p></p>
-                <section className="Borderline"></section>
-                <p className="total-price">Total: <p className="total">{total}</p></p>
-                <p className="tax">inc tax</p>
-                <button type="button" className="button-checkout" onClick={handleCheckout}>Checkout</button>
-            </div>
-        </>
-    );
-}
-export default Payout;
+
+    return (<div className="Payment-container">
+            <p className="sub-total-price-payment">
+                Subtotal: <span className="sub-total">€{total.toFixed(2)}</span>
+            </p>
+            <section className="Borderline"/>
+            <p className="total-price">
+                Total: <span className="total">€{total.toFixed(2)}</span>
+            </p>
+            <p className="tax">inc. tax</p>
+
+            {error && (<p style={{color: '#c0392b', fontSize: '11px', padding: '0 20px', textAlign: 'center'}}>
+                    {error}
+                </p>)}
+
+            <button
+                type="button"
+                className="button-checkout"
+                onClick={handleCheckout}
+                disabled={loading}
+            >
+                {loading ? 'Bezig...' : 'Checkout'}
+            </button>
+        </div>);
+};
+
+export default Payment;

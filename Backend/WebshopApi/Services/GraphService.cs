@@ -18,4 +18,6 @@ public class GraphService
     {
         await _graphRepository.AddBought(dto);
     }
+
+    public async Task AddBulkBoughtService(BulkBoughtDto dto) => await _graphRepository.AddBulkBought(dto);
 }
