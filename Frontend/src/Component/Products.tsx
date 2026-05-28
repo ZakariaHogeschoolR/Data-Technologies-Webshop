@@ -13,7 +13,7 @@ type product =
     name: string;
     description: string;
     price: number;
-    TeamId: number;
+    teamId: number;
 }
 
 type teams =
@@ -83,14 +83,15 @@ const Products = () => {
         .slice(0, 3);
 
     const productsWithTeam = randomProducts.map(prod => {
-        const team = getTeams.find(t => t.id === prod.TeamId);
+        const team = getTeams.find(t => t.id === prod.teamId);
 
         return {
             product: prod,
             teamName: team?.name ?? "Unknown"
         };
     });
-
+            
+    console.log(getTeams);
     return (
         <>
             <p className="recent">RECENT</p>
