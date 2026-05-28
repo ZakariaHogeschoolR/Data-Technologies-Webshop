@@ -13,7 +13,7 @@ type product =
     name: string;
     description: string;
     price: number;
-    TeamId: number;
+    teamId: number;
 }
 
 type teams =
