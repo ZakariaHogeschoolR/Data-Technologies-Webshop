@@ -77,14 +77,29 @@ public class ProductService
         return await _productRepository.GetProductsByCategories(categoryIds, page, pageSize);
     }
 
+    public async Task AddProductCategoryService(int productId, int categoryId)
+    {
+        await _productRepository.AddProductCategory(productId, categoryId);
+    }
+
     public async Task CreateService(ProductDto product)
     {
         await _productRepository.AddProduct(product);
     }
 
+    public async Task<int> CreateServiceReturnId(ProductDto product)
+    {
+        return await _productRepository.AddProductScrape(product);
+    }
+
     public async Task UpdateService(ProductDto product)
     {
         await _productRepository.UpdateProduct(product);
+    }
+
+    public async Task UpdatePriceService(int id, decimal price)
+    {
+        await _productRepository.UpdatePrice(id, price);
     }
 
     public async Task DeleteService(int id)

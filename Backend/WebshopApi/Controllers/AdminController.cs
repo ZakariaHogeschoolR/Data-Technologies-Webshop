@@ -12,7 +12,7 @@ namespace WebshopApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "admin,hoofdadmin")]
-public class AdminController(UserService userService, ProductService productService) : ControllerBase
+public class AdminController(UserService userService, ProductService productService, TeamService teamService, PasswordResetService passwordResetService) : ControllerBase
 {
     [HttpGet("users")]
     public async Task<IActionResult> GetAllUsers()
@@ -66,11 +66,43 @@ public class AdminController(UserService userService, ProductService productServ
         return Ok(products);
     }
 
-    [HttpPost("users/{id}/reset-password")]
-    public async Task<IActionResult> ResetPassword(int id, [FromBody] AdminResetPasswordDto data)
+    [HttpGet("teams/search")]
+    public async Task<IActionResult> SearchTeams([FromQuery] string name)
     {
-        await userService.ResetPasswordService(id, data.NewPassword);
-        return Ok(new { message = "Password reset successful" });
+        var teams = await teamService.GetAllService();
+        var filtered = teams.Where(t => t.Name.ToLower().Contains(name.ToLower())).ToList();
+        return Ok(filtered);
+    }
+
+    [HttpPost("users/{id}/reset-password")]
+    public async Task<IActionResult> ResetPassword(int id)
+    {
+        var user = await userService.GetByIdService(id);
+        if (user == null) return NotFound();
+
+        await passwordResetService.SendResetEmail(user.Email);
+        return Ok(new { message = "Password reset email sent." });
+    }
+
+    [HttpPost("teams/create")]
+    public async Task<IActionResult> CreateTeam([FromBody] TeamDto data)
+    {
+        await teamService.CreateService(data);
+        return Ok(new { message = "Team created successfully" });
+    }
+
+    [HttpPost("products/create")]
+    public async Task<IActionResult> CreateProduct([FromBody] ProductDto data)
+    {
+        var id = await productService.CreateServiceReturnId(data);
+        return Ok(new { message = "Product created successfully", id });
+    }
+
+    [HttpPost("products/category")]
+    public async Task<IActionResult> AddProductCategory([FromBody] ProductCategoryDto data)
+    {
+        await productService.AddProductCategoryService(data.ProductId, data.CategoryId);
+        return Ok(new { message = "Category added successfully" });
     }
 
     [HttpPut("users/{id}/role")]
@@ -85,6 +117,13 @@ public class AdminController(UserService userService, ProductService productServ
 
         await userService.UpdateRoleService(id, data.Role);
         return Ok(new { message = "Role updated successfully" });
+    }
+
+    [HttpPut("products/{id}/price")]
+    public async Task<IActionResult> UpdateProductPrice(int id, [FromBody] UpdatePriceDto data)
+    {
+        await productService.UpdatePriceService(id, data.Price);
+        return Ok(new { message = "Price updated successfully" });
     }
 
     [HttpDelete("users/{id}")]

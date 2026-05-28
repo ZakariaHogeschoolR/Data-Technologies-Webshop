@@ -36,6 +36,9 @@ builder.Services.AddScoped<TeamRepository>();
 builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<ScraperService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<PasswordResetRepository>();
+builder.Services.AddScoped<PasswordResetService>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddCors(options =>
 {

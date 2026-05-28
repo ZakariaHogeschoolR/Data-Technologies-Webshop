@@ -489,6 +489,16 @@ public class ProductRepository
         await cmd.ExecuteNonQueryAsync();
     }
 
+    public async Task UpdatePrice(int id, decimal price)
+    {
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = "UPDATE products SET price = @price WHERE id = @id";
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.Parameters.AddWithValue("@price", price);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
     public async Task<int> GetOrCreateTeam(string name, string type)
     {
         using var conn = await _dbConnectie.GetConnection();
