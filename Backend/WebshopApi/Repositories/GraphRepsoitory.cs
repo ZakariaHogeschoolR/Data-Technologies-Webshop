@@ -63,18 +63,6 @@ public class GraphRepository
     {
         if (dto.ProductIds == null || !dto.ProductIds.Any()) return;
 
-        await using var conn = await _dbConnectie.GetConnection();
-        const string sql = "SELECT user_id FROM winkelwagen_users WHERE id = @userId";
-
-        await using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@userId", dto.UserId);
-
-        var result = await cmd.ExecuteScalarAsync();
-        var idUser = 0;
-        if (result != null) idUser = Convert.ToInt32(result);
-
-        if (idUser == 0) return;
-
         await using var session = _neo4j.CreateSession();
 
         const string query = """
@@ -94,7 +82,7 @@ public class GraphRepository
 
         await session.RunAsync(query, new
         {
-            userId = idUser,
+            userId = dto.UserId,
             productIds = dto.ProductIds
         });
     }
