@@ -8,6 +8,7 @@ type product =
     name: string;
     description: string;
     price: number;
+    TeamId: number;
 }
 
 export const GetRecentProducts = (): product[] => {
