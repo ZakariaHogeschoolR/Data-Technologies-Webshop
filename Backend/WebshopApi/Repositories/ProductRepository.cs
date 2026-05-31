@@ -221,7 +221,7 @@ public class ProductRepository
                               plainto_tsquery('english', @name)
                             ) AS rank
                     FROM products
-                    WHERE to_ts_vector('english', @name)
+                    WHERE to_tsvector('english', @name)
                           @@ plainto_tsquery('english', @name)
                     ORDER BY rank DESC
                     LIMIT 5";
