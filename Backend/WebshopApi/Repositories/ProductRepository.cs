@@ -217,7 +217,7 @@ public class ProductRepository
 
         var sql = @"SELECT *,
                            ts_rank(
-                              to_tsvector('simple', @name),
+                              to_tsvector('simple', name),
                               plainto_tsquery('simple', @name)
                             ) AS rank
                     FROM products
