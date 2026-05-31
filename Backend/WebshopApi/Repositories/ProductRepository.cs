@@ -215,7 +215,10 @@ public class ProductRepository
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "SELECT * FROM products WHERE LOWER(name) LIKE LOWER('%' || @name || '%') LIMIT 5";
+        var sql = @"SELECT *, ts_rank(
+        to_tsvector('english', @name)
+        ) AS rank FROM products WHERE to_ts_vector('english', @name)
+        @@ plainto_tsquery('english', @name) ORDER BY rank DESC LIMIT 5";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@name", name);
 
