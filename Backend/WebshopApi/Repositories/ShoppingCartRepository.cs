@@ -114,7 +114,7 @@ public class ShoppingCartRepository
             cmd.Parameters.AddWithValue("QUAN", shoppingcarts.Quantity);
 
             using var reader = await cmd.ExecuteReaderAsync();
-            if(! await reader.ReadAsync())
+            if (!await reader.ReadAsync())
             {
                 throw new Exception("Failed to add product");
             }
