@@ -237,7 +237,8 @@ public class ProductRepository
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Description = reader.GetString(reader.GetOrdinal("description")),
-                Price = reader.GetDecimal(reader.GetOrdinal("price"))
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
         }
 
