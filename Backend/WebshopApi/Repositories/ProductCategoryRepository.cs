@@ -222,7 +222,6 @@ public class ProductCategoryRepository
             AND p.id > @lastId
             ORDER BY p.id
         LIMIT 30";
-        
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("categoryId", categoryId);
         cmd.Parameters.AddWithValue("lastId", lastId);
