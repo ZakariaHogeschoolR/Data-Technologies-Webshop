@@ -49,7 +49,47 @@ public class ProductCategoryRepository
         return products;
     }
 
-    public async Task<List<Products>> GetProductsPrev(int categoryId, int lastId)
+    public async Task<List<Products>> GetAllProductCategorys(int id, String cte)
+    {
+        var products = new List<Products>();
+
+        using var conn = await _dbConnectie.GetConnection();
+
+        var sql = @"
+        With CategoryProducts AS (
+            SELECT product_id
+            FROM product_categories
+            WHERE category_id = @categoryId
+        )
+        SELECT *
+        FROM Products p
+        JOIN CategoryProducts cp
+            ON p.id = cp.product_id
+        LIMIT 30";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("categoryId", id);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        return products;
+    }
+
+
+    public async Task<List<Products>?> GetProductsPrev(int categoryId, int lastId)
     {
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
@@ -62,6 +102,48 @@ public class ProductCategoryRepository
             AND p.id < @lastId
             ORDER BY p.id DESC
             LIMIT 30";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("categoryId", categoryId);
+        cmd.Parameters.AddWithValue("lastId", lastId);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        products.Reverse();
+        return products;
+    }
+
+    public async Task<List<Products>> GetProductsPrev(int categoryId, int lastId, string cte)
+    {
+        var products = new List<Products>();
+        using var conn = await _dbConnectie.GetConnection();
+
+        var sql = @"
+        With CategoryProducts AS (
+            SELECT product_id
+            FROM product_categories
+            WHERE category_id = @categoryId
+        )
+        SELECT *
+        FROM Products p
+        JOIN CategoryProducts cp
+            ON p.id = cp.product_id
+            AND p.id < @lastId
+            ORDER BY p.id DESC
+        LIMIT 30";
 
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("categoryId", categoryId);
@@ -100,6 +182,47 @@ public class ProductCategoryRepository
             ORDER BY p.id
             LIMIT 30";
 
+        using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("categoryId", categoryId);
+        cmd.Parameters.AddWithValue("lastId", lastId);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            products.Add(new Products
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
+            });
+        }
+
+        return products;
+    }
+
+    public async Task<List<Products>> GetProductsNext(int categoryId, int lastId, string cte)
+    {
+        var products = new List<Products>();
+        using var conn = await _dbConnectie.GetConnection();
+
+        var sql = @"
+        With CategoryProducts AS (
+            SELECT product_id
+            FROM product_categories
+            WHERE category_id = @categoryId
+        )
+        SELECT *
+        FROM Products p
+        JOIN CategoryProducts cp
+            ON p.id = cp.product_id
+            AND p.id > @lastId
+            ORDER BY p.id
+        LIMIT 30";
+        
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("categoryId", categoryId);
         cmd.Parameters.AddWithValue("lastId", lastId);
