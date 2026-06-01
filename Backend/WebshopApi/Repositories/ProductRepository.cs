@@ -217,12 +217,12 @@ public class ProductRepository
 
         var sql = @"SELECT *,
                            ts_rank(
-                              to_tsvector('simple', name),
-                              plainto_tsquery('simple', @name)
+                              to_tsvector('english', name || ' ' || description),
+                              to_tsquery('english', @name)
                             ) AS rank
                     FROM products
-                    WHERE to_tsvector('simple', @name)
-                          @@ plainto_tsquery('simple', @name)
+                    WHERE to_tsvector('english', @name)
+                          @@ to_tsquery('english', @name)
                     ORDER BY rank DESC
                     LIMIT 5";
         using var cmd = new NpgsqlCommand(sql, conn);
