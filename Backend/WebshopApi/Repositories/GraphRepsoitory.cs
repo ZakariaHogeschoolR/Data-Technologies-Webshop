@@ -2,7 +2,7 @@ using ApplicationDbContext;
 
 using DataTransferObject;
 
-public class GraphRepository
+public class GraphRepository: IGraph
 {
     private readonly DatabaseConnectie _dbConnectie;
     private readonly Neo4jService _neo4j;

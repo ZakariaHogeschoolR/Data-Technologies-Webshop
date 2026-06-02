@@ -4,7 +4,7 @@ using models;
 
 namespace Service;
 
-public class CategoryService
+public class CategoryService: ICategoryService
 {
     private readonly CategoryRepository _categoryRepository;
 

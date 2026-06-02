@@ -8,7 +8,7 @@ using models;
 
 namespace Service;
 
-public class TokenService(IConfiguration configuration)
+public class TokenService(IConfiguration configuration): ITokenService
 {
     public string GenerateToken(Users user)
     {

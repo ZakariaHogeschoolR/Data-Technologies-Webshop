@@ -4,7 +4,7 @@ using models;
 
 namespace Service;
 
-public class OrderService
+public class OrderService: IOrderService
 {
     private readonly OrderRepository _orderRepository;
 

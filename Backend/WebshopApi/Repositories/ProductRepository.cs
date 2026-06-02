@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class ProductRepository
+public class ProductRepository: IProduct
 {
     private readonly DatabaseConnectie _dbConnectie;
     private readonly Neo4jService _neo4j;

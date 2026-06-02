@@ -4,7 +4,7 @@ using models;
 
 namespace Service;
 
-public class ShoppingCartService
+public class ShoppingCartService: IShoppingCartService
 {
     private readonly ShoppingCartRepository _shoppingcartRepository;
     public ShoppingCartService(ShoppingCartRepository shoppingcartRepository)
