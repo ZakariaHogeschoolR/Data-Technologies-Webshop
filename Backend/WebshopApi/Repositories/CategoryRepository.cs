@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class CategoryRepository
+public class CategoryRepository: ICategory
 {
     private readonly DatabaseConnectie _dbConnectie;
     private readonly Neo4jService _neo4j;
