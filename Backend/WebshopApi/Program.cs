@@ -115,3 +115,5 @@ app.MapPost("/scrape", async (ScraperService scraperService) =>
 }).WithOpenApi();
 
 app.Run();
+
+public partial class Program;// for integration tests
