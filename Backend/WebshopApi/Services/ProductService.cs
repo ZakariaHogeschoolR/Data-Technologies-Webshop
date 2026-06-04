@@ -77,6 +77,11 @@ public class ProductService
         return await _productRepository.GetProductsByCategories(categoryIds, page, pageSize);
     }
 
+    public async Task<List<object>> GetTopProductsService()
+    {
+        return await _productRepository.GetTopProducts();
+    }
+
     public async Task AddProductCategoryService(int productId, int categoryId)
     {
         await _productRepository.AddProductCategory(productId, categoryId);
