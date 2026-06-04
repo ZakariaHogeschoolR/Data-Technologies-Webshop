@@ -340,7 +340,6 @@ const AdminPage = () => {
             </section>
 
             <section className="admin-section">
-            <section className="admin-section">
                 <h2 className="admin-section-title">Users</h2>
                 {resetMessage && <p style={{ color: "var(--dark-green)", marginBottom: "1rem" }}>{resetMessage}</p>}
                 {usersLoading ? (
