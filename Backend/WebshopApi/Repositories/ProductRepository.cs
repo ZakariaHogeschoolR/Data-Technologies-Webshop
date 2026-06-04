@@ -262,6 +262,32 @@ public class ProductRepository
         return null;
     }
 
+    public async Task<List<object>> GetTopProducts()
+    {
+        var result = new List<object>();
+        using var conn = await _dbConnectie.GetConnection();
+        var sql = @"SELECT p.name, SUM(w.quantity) as total_sold
+                    FROM winkelwagen w
+                    JOIN products p ON w.product_id = p.id
+                    GROUP BY p.name
+                    ORDER BY total_sold DESC
+                    LIMIT 5";
+
+        using var cmd = new NpgsqlCommand(sql, conn);
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            result.Add(new
+            {
+                name = reader.GetString(0),
+                totalSold = reader.GetInt64(1)
+            });
+        }
+
+        return result;
+    }
+
     public async Task<List<Products?>> GetProductByPrice(double price)
     {
         var products = new List<Products>();
@@ -387,7 +413,7 @@ public class ProductRepository
         cmd.Parameters.AddWithValue("@name", product.Name);
         cmd.Parameters.AddWithValue("@description", product.Description);
         cmd.Parameters.AddWithValue("@price", product.Price);
-        cmd.Parameters.AddWithValue("@teamId", product.TeamId);
+        cmd.Parameters.AddWithValue("@teamId", product.TeamId.HasValue ? product.TeamId.Value : DBNull.Value);
         await cmd.ExecuteNonQueryAsync();
         await AddProductToGraph(product);
     }
