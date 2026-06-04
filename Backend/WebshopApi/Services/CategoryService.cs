@@ -25,18 +25,6 @@ public class CategoryService: ICategoryService
         return await category;
     }
 
-    public async Task<List<Categories>> GetByPriceService(double price)
-    {
-        Task<List<Categories?>> category = _categoryRepository.GetCategoryByPrice(price);
-        return await category;
-    }
-
-    public async Task<List<Categories>> GetByNameService(string name)
-    {
-        Task<List<Categories?>> category = _categoryRepository.GetCategoryByTeam(name);
-        return await category;
-    }
-
     public async Task CreateService(CategoryDto category)
     {
         await _categoryRepository.AddCategory(category);
