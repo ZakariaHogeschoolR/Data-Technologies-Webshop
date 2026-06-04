@@ -1,158 +1,175 @@
-
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Payment from '../Layout/Payment';
 import bin from '../../../src/assets/bin.png';
 import '../../Styles/Winkelwagen.css';
 
-interface winkelwagen{
-    id: number,
-    productId:number,
-    shoppingProducts:[],
-    quantity:number,
-    createdAt:string,
-    updatedAt:string
+interface winkelwagen {
+    id: number;
+    productId: number;
+    shoppingProducts: [];
+    quantity: number;
+    createdAt: string;
+    updatedAt: string;
 }
-type product =
-{
+
+type product = {
     id: number;
     productImage: string;
     name: string;
     description: string;
     price: number;
-}
+};
 
-export default function Winkelwagen(){
-    // const {id} = useParams()
-    const [winkelwagenItems, setWinkelwagenItems] = useState<winkelwagen[]>([])
-    const [products, setProducts] = useState<product[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(``)
-    const [inError, setInError] = useState(false)
+export default function Winkelwagen() {
+    const [winkelwagenItems, setWinkelwagenItems] = useState<winkelwagen[]>([]);
+    const [products, setProducts] = useState<product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [inError, setInError] = useState(false);
 
-    const token = localStorage.getItem(`token`)
+    const token = localStorage.getItem('token');
 
     const fetchData = useCallback(async () => {
-        if(!token){
-            setLoading(false)
+        if (!token) {
+            setLoading(false);
             return;
         }
-        try{
-            setLoading(true)
+        try {
+            setLoading(true);
             const request = await fetch(`http://localhost:5261/api/ShoppingCart/mine`, {
-                headers:{
-                    "Authorization":`Bearer ${token}`
-                }
-            })
-            // console.log(request)
-            const json : winkelwagen[] = await request.json()
-            // console.log(json)
-            setWinkelwagenItems(json)
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const json: winkelwagen[] = await request.json();
+            setWinkelwagenItems(json);
 
-            if(json.length > 0){
-                const productPromises = json.map( (ww) =>
-                    fetch(`http://localhost:5261/api/Product/${ww.productId}`).then(r=> r.json())
-                )
-
-                const results = await Promise.all(productPromises) as product[]
-                setProducts(results)
+            if (json.length > 0) {
+                const productPromises = json.map((ww) =>
+                    fetch(`http://localhost:5261/api/Product/${ww.productId}`).then((r) => r.json())
+                );
+                const results = await Promise.all(productPromises) as product[];
+                setProducts(results);
             }
-        } catch(err){
-            setInError(true)
-            setError(`${err}`)
-            console.log(`error: `+ err)
-        } finally{
-            setLoading(false)
+        } catch (err) {
+            setInError(true);
+            setError(`${err}`);
+        } finally {
+            setLoading(false);
         }
-    }, [token])
-    useEffect(() =>{
-        fetchData()
-    }, [fetchData])
+    }, [token]);
 
-    // gebruik useMemo() voor het caching van een resultaat
-    // van een calculatie tussen rerenders(pagina herladen). cool!
-    // https://react.dev/reference/react/useMemo
-    const totalPrice = useMemo(()=>{
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    const totalPrice = useMemo(() => {
         return winkelwagenItems.reduce((total, item) => {
-            const product = products.find(p => p.id === item.productId)
-            return total + (product ? product.price * item.quantity : 0)
-        }, 0)
-    }, [winkelwagenItems, products])
+            const product = products.find((p) => p.id === item.productId);
+            return total + (product ? product.price * item.quantity : 0);
+        }, 0);
+    }, [winkelwagenItems, products]);
 
-    const DeleteProductFromWinkelwagen = async(e:React.MouseEvent, productId:number) => {
-        e.preventDefault()
-
-        console.log(`Delete gestart op product: `, productId)//log1
-
-        const url = `http://localhost:5261/api/ShoppingCart/delete/product`
-
-        try{
+    const DeleteProductFromWinkelwagen = async (e: React.MouseEvent, productId: number) => {
+        e.preventDefault();
+        const url = `http://localhost:5261/api/ShoppingCart/delete/product`;
+        try {
             const response = await fetch(url, {
-                method: `DELETE`,
+                method: 'DELETE',
                 headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({id: 0, productId: productId })
-                // backend is supposed to replace
-                // id with one from claims in backend
-            })
-            console.log(`Response status:`, response.status)//log2
-            if(response.status === 204){
-                console.log(`Delete succes, data ophalen`)//log3
-                await fetchData()
+                body: JSON.stringify({ id: 0, productId }),
+            });
+            if (response.status === 204) {
+                await fetchData();
             }
-            else{
-                console.error(`verwijderen mislukt` + response.statusText)
-            }
+        } catch (e) {
+            console.log('netwerk error: ', e);
         }
-        catch(e){
-            console.log(`netwerk error: `, e)
-        }
-    }
+    };
 
-    if(loading) return <>Loading...</>
-    else if(inError) return <>{error}</>
-    else if(!token){
-        return(<div className='Winkelwagen_container'>
-            <p>Je moet een account hebben en ingelogd zijn om te kunnen shoppen.</p>
-        </div>)
-    }
-    else if (winkelwagenItems.length === 0) return (<p className="None-p-tag">Your shoppingcart is empty. Add Products to see them here.</p>)
-    return(
-        <>
+    if (loading) return (
         <div className="Winkelwagen_container">
+            <p style={{ color: 'var(--dark-green)', letterSpacing: '2px', fontSize: '13px' }}>Loading...</p>
+        </div>
+    );
+
+    if (inError) return (
+        <div className="Winkelwagen_container">
+            <p style={{ color: '#b00', fontSize: '13px' }}>{error}</p>
+        </div>
+    );
+
+    if (!token) return (
+        <div className="cart-empty-state">
+            <p>Log in om je winkelwagen te zien.</p>
+        </div>
+    );
+
+    if (winkelwagenItems.length === 0) return (
+        <div className="cart-empty-state">
+            <p>Je winkelwagen is leeg.</p>
+        </div>
+    );
+
+    return (
+        <div className="Winkelwagen_container">
+            <h1>Winkelwagen</h1>
+
             <div className="cart-layout">
+                {/* Items */}
                 <div className="items-lijst">
                     <ul>
-                        {winkelwagenItems.map((winkelwagen) => {
-                            const product = products.find(p => p.id === winkelwagen.productId)
-                            return(
-                            <li key={winkelwagen.id}>
-                                <div className="winkelwagen-container-item">
-                                {product&& (
-                                    <img src={`${product.productImage}`}
-                                    alt={`${product.name}`}
-                                    style={{width:`5rem`, height:`5rem`}}/>
-                                    )}
-                                    <p className="winkelwagen-name" >Name: {product ? product.name : `Error...`}; Quantity: {winkelwagen.quantity}; price: {product ? product.price: 0.00};</p>
-                                    <p className="winkelwagen-price">Sum Price:{product ? (product.price * winkelwagen.quantity).toFixed(2) : '0.00'}</p>
-                                    <p className="winkelwagen-quantity">{winkelwagen.quantity}</p>
-                                    <button className="bin-button" onClick={(e) => DeleteProductFromWinkelwagen(e, winkelwagen.productId)}><img className="bin-img" src={bin} /></button>
+                        {winkelwagenItems.map((item) => {
+                            const product = products.find((p) => p.id === item.productId);
+                            return (
+                                <li key={item.id}>
+                                    <div className="winkelwagen-container-item">
+                                        {product && (
+                                            <img
+                                                className="winkelwagen-item-img"
+                                                src={product.productImage}
+                                                alt={product.name}
+                                            />
+                                        )}
+
+                                        <div className="winkelwagen-item-info">
+                                            <p className="winkelwagen-name">
+                                                {product ? product.name : 'Product niet gevonden'}
+                                            </p>
+                                            <p className="winkelwagen-qty-label">
+                                                Qty: {item.quantity}
+                                            </p>
+                                        </div>
+
+                                        <p className="winkelwagen-price">
+                                            €{product
+                                                ? (product.price * item.quantity).toFixed(2)
+                                                : '0.00'}
+                                        </p>
+
+                                        <button
+                                            className="bin-button"
+                                            onClick={(e) => DeleteProductFromWinkelwagen(e, item.productId)}
+                                            title="Verwijder"
+                                        >
+                                            <img className="bin-img" src={bin} alt="Verwijder" />
+                                        </button>
                                     </div>
-                                    </li>
-                                    );
-                                }
-                            )
-                        }
+                                </li>
+                            );
+                        })}
                     </ul>
-                    <div className="payment-winkelwagen">
-                        <Payment winkelwagenItems={winkelwagenItems} total={totalPrice} currentWinkelwagenId={winkelwagenItems[0].id}/>
-                    </div>
-                    <div className={`totale-prijs`}><p>Total Price: {totalPrice}</p></div>
                 </div>
+
+                {/* Payment sidebar */}
+                <Payment
+                    winkelwagenItems={winkelwagenItems}
+                    total={totalPrice}
+                    currentWinkelwagenId={winkelwagenItems[0].id}
+                />
             </div>
         </div>
-        </>
     );
 }
