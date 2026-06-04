@@ -103,7 +103,7 @@ public class OrderRepository: IOrder
         cmd.Parameters.AddWithValue("@winkelwagenUsersId", order.WinkelwagenUsersId);
         cmd.Parameters.AddWithValue("@total", order.Total);
         cmd.Parameters.AddWithValue("@paymentStatus", order.PaymentStatus);
-        cmd.Parameters.AddWithValue("createdAt", order.CreatedAt);
+        cmd.Parameters.AddWithValue("@createdAt", order.CreatedAt);
         await cmd.ExecuteNonQueryAsync();
     }
 
@@ -112,10 +112,10 @@ public class OrderRepository: IOrder
         using var conn = await _dbConnectie.GetConnection();
 
         var sql = @"UPDATE orders
-                    SET winkelwage_users_id = @winkelwagenUsersId,
+                    SET winkelwagen_users_id = @winkelwagenUsersId,
                         total = @total,
-                        description = @description,
-                        payment_status = @paymentStatus
+                        payment_status = @paymentStatus,
+                        created_at = @createdAt
                     WHERE id = @id";
 
         using var cmd = new NpgsqlCommand(sql, conn);
@@ -123,7 +123,7 @@ public class OrderRepository: IOrder
         cmd.Parameters.AddWithValue("@winkelwagenUsersId", order.WinkelwagenUsersId);
         cmd.Parameters.AddWithValue("@total", order.Total);
         cmd.Parameters.AddWithValue("@paymentStatus", order.PaymentStatus);
-        cmd.Parameters.AddWithValue("createdAt", order.CreatedAt);
+        cmd.Parameters.AddWithValue("@createdAt", order.CreatedAt);
 
         await cmd.ExecuteNonQueryAsync();
     }
