@@ -1,4 +1,5 @@
 using DataTransferObject;
+using System.Linq;
 
 using models;
 
@@ -13,10 +14,10 @@ public class CategoryService: ICategoryService
         _categoryRepository = categoryRepository;
     }
 
+
     public async Task<List<Categories>> GetAllService()
     {
-        Task<List<Categories?>> category = _categoryRepository.GetAllCategories();
-        return await category;
+        return await _categoryRepository.GetAllCategories();
     }
 
     public async Task<Categories> GetByIdService(int id)

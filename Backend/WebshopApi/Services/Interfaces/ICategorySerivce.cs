@@ -12,9 +12,9 @@ public interface ICategoryService
 
     Task<Categories> GetByIdService(int id);
 
-    Task<List<Categories>> GetByPriceService(double price);
+    // Task<List<Categories>> GetByPriceService(double price);
 
-    Task<List<Categories>> GetByNameService(string name);
+    // Task<List<Categories>> GetByNameService(string name);
 
     Task CreateService(CategoryDto category);
 

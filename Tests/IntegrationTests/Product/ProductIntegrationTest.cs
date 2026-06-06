@@ -1,8 +1,13 @@
 using System.Threading.Tasks;
+
 using ApplicationDbContext;
-using Microsoft.Extensions.Configuration;
+
 using DataTransferObject;
+
+using Microsoft.Extensions.Configuration;
+
 using Npgsql;
+
 using Xunit;
 
 public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
@@ -20,8 +25,8 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Neo4j:Uri"]      = _fixture.Neo4j.GetConnectionString(),
-                ["Neo4j:User"]     = "neo4j",
+                ["Neo4j:Uri"] = _fixture.Neo4j.GetConnectionString(),
+                ["Neo4j:User"] = "neo4j",
                 ["Neo4j:Password"] = "password"
             })
             .Build();
@@ -77,10 +82,10 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
                     RETURNING id;";
         await using var cmd = new NpgsqlCommand(sql, connection);
         cmd.Parameters.AddWithValue("@productImage", image);
-        cmd.Parameters.AddWithValue("@name",         name);
-        cmd.Parameters.AddWithValue("@description",  description);
-        cmd.Parameters.AddWithValue("@price",        price);
-        cmd.Parameters.AddWithValue("@teamId",       teamId);
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@description", description);
+        cmd.Parameters.AddWithValue("@price", price);
+        cmd.Parameters.AddWithValue("@teamId", teamId);
         return Convert.ToInt32(await cmd.ExecuteScalarAsync());
     }
 
@@ -200,8 +205,8 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         var (_, repository) = CreateRepository();
         await using var connection = await OpenConnectionAsync();
         await CleanProductsAsync(connection);
-        var teamId1 = await EnsureTeamAsync(connection, "Team One",   "sales");
-        var teamId2 = await EnsureTeamAsync(connection, "Team Two",   "sales");
+        var teamId1 = await EnsureTeamAsync(connection, "Team One", "sales");
+        var teamId2 = await EnsureTeamAsync(connection, "Team Two", "sales");
 
         await SeedProductAsync(connection, "img1", "Product A", "Desc A", 10.00m, teamId1);
         await SeedProductAsync(connection, "img2", "Product B", "Desc B", 20.00m, teamId1);
@@ -221,9 +226,9 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         await CleanProductsAsync(connection);
         var teamId = await EnsureTeamAsync(connection);
 
-        await SeedProductAsync(connection, "img1", "Apple Watch",  "Desc A", 10.00m, teamId);
+        await SeedProductAsync(connection, "img1", "Apple Watch", "Desc A", 10.00m, teamId);
         await SeedProductAsync(connection, "img2", "Apple iPhone", "Desc B", 20.00m, teamId);
-        await SeedProductAsync(connection, "img3", "Samsung TV",   "Desc C", 30.00m, teamId);
+        await SeedProductAsync(connection, "img3", "Samsung TV", "Desc C", 30.00m, teamId);
 
         var results = await repository.SearchProductsByName("apple");
 
@@ -261,11 +266,11 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
 
         Assert.NotNull(product);
         Assert.Equal(generatedId, product.Id);
-        Assert.Equal("img1",      product.ProductImage);
+        Assert.Equal("img1", product.ProductImage);
         Assert.Equal("Product A", product.Name);
-        Assert.Equal("Desc A",    product.Description);
-        Assert.Equal(77.99m,      product.Price);
-        Assert.Equal(teamId,      product.TeamId);
+        Assert.Equal("Desc A", product.Description);
+        Assert.Equal(77.99m, product.Price);
+        Assert.Equal(teamId, product.TeamId);
     }
 
     [Fact]
@@ -288,9 +293,9 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         await CleanProductsAsync(connection);
         var teamId = await EnsureTeamAsync(connection);
 
-        await SeedProductAsync(connection, "img1", "Apple Watch",  "Desc A", 10.00m, teamId);
+        await SeedProductAsync(connection, "img1", "Apple Watch", "Desc A", 10.00m, teamId);
         await SeedProductAsync(connection, "img2", "Apple iPhone", "Desc B", 20.00m, teamId);
-        await SeedProductAsync(connection, "img3", "Samsung TV",   "Desc C", 30.00m, teamId);
+        await SeedProductAsync(connection, "img3", "Samsung TV", "Desc C", 30.00m, teamId);
 
         var results = await repository.GetProductByName("apple");
 
@@ -345,10 +350,10 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         var dto = new ProductDto
         {
             ProductImage = "img1",
-            Name         = "Product A",
-            Description  = "Desc A",
-            Price        = 77.99m,
-            TeamId       = teamId
+            Name = "Product A",
+            Description = "Desc A",
+            Price = 77.99m,
+            TeamId = teamId
         };
 
         await repository.AddProduct(dto);
@@ -360,10 +365,10 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
 
         Assert.True(await reader.ReadAsync());
         Assert.Equal(dto.ProductImage, reader.GetString(0));
-        Assert.Equal(dto.Name,         reader.GetString(1));
-        Assert.Equal(dto.Description,  reader.GetString(2));
-        Assert.Equal(dto.Price,        reader.GetDecimal(3));
-        Assert.Equal(dto.TeamId,       reader.GetInt32(4));
+        Assert.Equal(dto.Name, reader.GetString(1));
+        Assert.Equal(dto.Description, reader.GetString(2));
+        Assert.Equal(dto.Price, reader.GetDecimal(3));
+        Assert.Equal(dto.TeamId, reader.GetInt32(4));
     }
 
     [Fact]
@@ -378,12 +383,12 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
 
         var dto = new ProductDto
         {
-            Id           = generatedId,
+            Id = generatedId,
             ProductImage = "img_updated",
-            Name         = "New Name",
-            Description  = "New Desc",
-            Price        = 99.99m,
-            TeamId       = teamId
+            Name = "New Name",
+            Description = "New Desc",
+            Price = 99.99m,
+            TeamId = teamId
         };
 
         await repository.UpdateProduct(dto);
@@ -395,9 +400,9 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
 
         Assert.True(await reader.ReadAsync());
         Assert.Equal("img_updated", reader.GetString(0));
-        Assert.Equal("New Name",    reader.GetString(1));
-        Assert.Equal("New Desc",    reader.GetString(2));
-        Assert.Equal(99.99m,        reader.GetDecimal(3));
+        Assert.Equal("New Name", reader.GetString(1));
+        Assert.Equal("New Desc", reader.GetString(2));
+        Assert.Equal(99.99m, reader.GetDecimal(3));
     }
 
     [Fact]
@@ -418,7 +423,7 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         await using var reader = await selectCommand.ExecuteReaderAsync();
 
         Assert.True(await reader.ReadAsync());
-        Assert.Equal(49.99m,      reader.GetDecimal(0));
+        Assert.Equal(49.99m, reader.GetDecimal(0));
         Assert.Equal("Product A", reader.GetString(1)); // other fields unchanged
     }
 
@@ -453,10 +458,10 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         var dto = new ProductDto
         {
             ProductImage = "img1",
-            Name         = "Scraped Product",
-            Description  = "Scraped Desc",
-            Price        = 19.99m,
-            TeamId       = teamId
+            Name = "Scraped Product",
+            Description = "Scraped Desc",
+            Price = 19.99m,
+            TeamId = teamId
         };
 
         var returnedId = await repository.AddProductScrape(dto);
@@ -470,7 +475,7 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
 
         Assert.True(await reader.ReadAsync());
         Assert.Equal("Scraped Product", reader.GetString(0));
-        Assert.Equal(19.99m,            reader.GetDecimal(1));
+        Assert.Equal(19.99m, reader.GetDecimal(1));
     }
 
     [Fact]
@@ -481,10 +486,10 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         var dto = new ProductDto
         {
             ProductImage = "",
-            Name         = "No Image Product",
-            Description  = "Desc",
-            Price        = 9.99m,
-            TeamId       = 1
+            Name = "No Image Product",
+            Description = "Desc",
+            Price = 9.99m,
+            TeamId = 1
         };
 
         var result = await repository.AddProductScrape(dto);
@@ -513,7 +518,7 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
 
         Assert.True(await reader.ReadAsync());
         Assert.Equal("Brand New Team", reader.GetString(0));
-        Assert.Equal("sales",          reader.GetString(1));
+        Assert.Equal("sales", reader.GetString(1));
     }
 
     [Fact]
@@ -521,7 +526,7 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
     {
         var (_, repository) = CreateRepository();
 
-        var firstId  = await repository.GetOrCreateTeam("Existing Team", "sales");
+        var firstId = await repository.GetOrCreateTeam("Existing Team", "sales");
         var secondId = await repository.GetOrCreateTeam("Existing Team", "sales");
 
         Assert.Equal(firstId, secondId);
@@ -551,7 +556,7 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
     {
         var (_, repository) = CreateRepository();
 
-        var firstId  = await repository.GetOrCreateCategory("Existing Category");
+        var firstId = await repository.GetOrCreateCategory("Existing Category");
         var secondId = await repository.GetOrCreateCategory("Existing Category");
 
         Assert.Equal(firstId, secondId);
@@ -565,19 +570,19 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         await CleanProductsAsync(connection);
         var teamId = await EnsureTeamAsync(connection);
 
-        var productId  = await SeedProductAsync(connection, "img1", "Product A", "Desc A", 10.00m, teamId);
+        var productId = await SeedProductAsync(connection, "img1", "Product A", "Desc A", 10.00m, teamId);
         var categoryId = await repository.GetOrCreateCategory("Electronics");
 
         await repository.AddProductCategory(productId, categoryId);
 
         var selectQuery = "SELECT product_id, category_id FROM product_categories WHERE product_id = @productId AND category_id = @categoryId;";
         await using var selectCommand = new NpgsqlCommand(selectQuery, connection);
-        selectCommand.Parameters.AddWithValue("@productId",  productId);
+        selectCommand.Parameters.AddWithValue("@productId", productId);
         selectCommand.Parameters.AddWithValue("@categoryId", categoryId);
         await using var reader = await selectCommand.ExecuteReaderAsync();
 
         Assert.True(await reader.ReadAsync());
-        Assert.Equal(productId,  reader.GetInt32(0));
+        Assert.Equal(productId, reader.GetInt32(0));
         Assert.Equal(categoryId, reader.GetInt32(1));
     }
 
@@ -589,7 +594,7 @@ public class ProductIntegrationTest : IClassFixture<DatabaseFixture>
         await CleanProductsAsync(connection);
         var teamId = await EnsureTeamAsync(connection);
 
-        var productId  = await SeedProductAsync(connection, "img1", "Product A", "Desc A", 10.00m, teamId);
+        var productId = await SeedProductAsync(connection, "img1", "Product A", "Desc A", 10.00m, teamId);
         var categoryId = await repository.GetOrCreateCategory("Electronics");
 
         await repository.AddProductCategory(productId, categoryId);

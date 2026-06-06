@@ -2,10 +2,15 @@ using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using ApplicationDbContext;
-using Microsoft.Extensions.Configuration;
+
 using DataTransferObject;
+
+using Microsoft.Extensions.Configuration;
+
 using Npgsql;
+
 using Xunit;
 
 public class OrderIntegrationTest : IClassFixture<DatabaseFixture>
@@ -77,7 +82,7 @@ public class OrderIntegrationTest : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task GetCategoryById_ShouldSaveAndRetrieveCorrectData()
     {
-        
+
         var connectionString = _fixture.Postgres.GetConnectionString();
         var connectionNeo4jString = _fixture.Neo4j.GetConnectionString();
         var db = new DatabaseConnectie(connectionString);
@@ -93,7 +98,7 @@ public class OrderIntegrationTest : IClassFixture<DatabaseFixture>
         var neo4j = new Neo4jService(config);
         var testOrderWinkelWagenId = 1;
         var testOrderTotal = 100;
-        var testOrderPaymentStatus  = false;
+        var testOrderPaymentStatus = false;
         DateTime? testOrderCreatedAt = DateTime.Now;
 
         await using var connection = new NpgsqlConnection(connectionString);
@@ -109,7 +114,7 @@ public class OrderIntegrationTest : IClassFixture<DatabaseFixture>
             ON CONFLICT DO NOTHING;
         ", connection);
 
-await seed.ExecuteNonQueryAsync();
+        await seed.ExecuteNonQueryAsync();
         var insertQuery =
             @"INSERT INTO orders (winkelwagen_users_id, total, payment_status, created_at)
             VALUES (@winkelwagenUsersId, @total, @paymentStatus, @createdAt)
@@ -165,7 +170,7 @@ await seed.ExecuteNonQueryAsync();
         var neo4j = new Neo4jService(config);
         var testOrderWinkelWagenId = 1;
         var testOrderTotal = 100;
-        var testOrderPaymentStatus  = false;
+        var testOrderPaymentStatus = false;
         DateTime? testOrderCreatedAt = DateTime.Now;
 
         await using var connection = new NpgsqlConnection(connectionString);
@@ -181,7 +186,7 @@ await seed.ExecuteNonQueryAsync();
             ON CONFLICT DO NOTHING;
         ", connection);
 
-await seed.ExecuteNonQueryAsync();
+        await seed.ExecuteNonQueryAsync();
         var insertQuery =
             @"INSERT INTO orders (winkelwagen_users_id, total, payment_status, created_at)
             VALUES (@winkelwagenUsersId, @total, @paymentStatus, @createdAt)
@@ -216,7 +221,7 @@ await seed.ExecuteNonQueryAsync();
         Assert.Equal(testOrderWinkelWagenId, Order.WinkelwagenUsersId);
         Assert.Equal(testOrderTotal, Order.Total);
         Assert.Equal(testOrderPaymentStatus, Order.PaymentStatus);
-    }   
+    }
 
     [Fact]
     public async Task UpdateOrder_ShouldUpdateCorrectly()
@@ -278,7 +283,7 @@ await seed.ExecuteNonQueryAsync();
 
         Assert.Equal(2, reader.GetInt32(0));
         Assert.Equal(250, reader.GetDecimal(1));
-        Assert.Equal(true, reader.GetBoolean(2));
+        Assert.True(reader.GetBoolean(2));
     }
 
     [Fact]
@@ -327,11 +332,11 @@ await seed.ExecuteNonQueryAsync();
 
         await using var reader = await selectCmd.ExecuteReaderAsync();
         Assert.False(await reader.ReadAsync());
-        if(await reader.ReadAsync())
+        if (await reader.ReadAsync())
         {
             Assert.Equal(0, reader.GetInt32(1));
             Assert.Equal(0, reader.GetDecimal(2));
-            Assert.Equal(false, reader.GetBoolean(3));
+            Assert.False(reader.GetBoolean(3));
         }
     }
 }

@@ -2,10 +2,15 @@ using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using ApplicationDbContext;
-using Microsoft.Extensions.Configuration;
+
 using DataTransferObject;
+
+using Microsoft.Extensions.Configuration;
+
 using Npgsql;
+
 using Xunit;
 
 public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
@@ -30,10 +35,10 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
             new NpgsqlCommand("DELETE FROM category;", connection);
         await cleanupCommand.ExecuteNonQueryAsync();
         var insertQuery = "INSERT INTO category (Name) VALUES (@name) RETURNING Id;";
-        
+
         await using var insertCommand = new NpgsqlCommand(insertQuery, connection);
         insertCommand.Parameters.AddWithValue("@name", testCategoryName);
-        
+
         var generatedId = await insertCommand.ExecuteScalarAsync();
 
         var selectQuery = "SELECT Name FROM category WHERE Id = @id;";
@@ -41,7 +46,7 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
         selectCommand.Parameters.AddWithValue("@id", generatedId);
 
         var retrievedName = (string?)await selectCommand.ExecuteScalarAsync();
-        
+
         Assert.NotNull(retrievedName);
         Assert.Equal(testCategoryName, retrievedName);
     }
@@ -70,10 +75,10 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
             new NpgsqlCommand("DELETE FROM category;", connection);
         await cleanupCommand.ExecuteNonQueryAsync();
         var insertQuery = "INSERT INTO category (Name) VALUES (@name) RETURNING Id;";
-        
+
         await using var insertCommand = new NpgsqlCommand(insertQuery, connection);
         insertCommand.Parameters.AddWithValue("@name", testCategoryName);
-        
+
         var generatedId = await insertCommand.ExecuteScalarAsync();
 
         var selectQuery = "SELECT Name FROM category WHERE Id = @id;";
@@ -81,7 +86,7 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
         selectCommand.Parameters.AddWithValue("@id", generatedId);
 
         var retrievedName = (string?)await selectCommand.ExecuteScalarAsync();
-        
+
         var repository = new CategoryRepository(db, neo4j);
         var category = await repository.GetCategoryById((int)generatedId);
 
@@ -114,10 +119,10 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
             new NpgsqlCommand("DELETE FROM category;", connection);
         await cleanupCommand.ExecuteNonQueryAsync();
         var insertQuery = "INSERT INTO category (Name) VALUES (@name) RETURNING Id;";
-        
+
         await using var insertCommand = new NpgsqlCommand(insertQuery, connection);
         insertCommand.Parameters.AddWithValue("@name", testCategoryName);
-        
+
         var generatedId = await insertCommand.ExecuteScalarAsync();
 
         var selectQuery = "SELECT Name FROM category WHERE Id = @id;";
@@ -129,7 +134,7 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
         var repository = new CategoryRepository(db, neo4j);
         var dto = new CategoryDto
         {
-            Id = (int)generatedId + 1, 
+            Id = (int)generatedId + 1,
             Name = "Electricity2"
         };
         await repository.AddCategory(dto);
@@ -141,7 +146,7 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
         Assert.NotNull(retrievedName);
         Assert.Equal(testCategoryName, retrievedName);
         Assert.Equal(dto.Name, retrievedRepName);
-    }   
+    }
 
     [Fact]
     public async Task UpdateCategory_ShouldSaveAndRetrieveCorrectData()
@@ -168,14 +173,14 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
             new NpgsqlCommand("DELETE FROM category;", connection);
         await cleanupCommand.ExecuteNonQueryAsync();
         var insertQuery = "INSERT INTO category (Name) VALUES (@name) RETURNING Id;";
-        
+
         await using var insertCommand = new NpgsqlCommand(insertQuery, connection);
         insertCommand.Parameters.AddWithValue("@name", testCategoryName);
-        
+
         var generatedId = await insertCommand.ExecuteScalarAsync();
-        
+
         var updateQuery = "UPDATE category SET name = @name  WHERE id = @id;";
-        
+
         await using var updateCommand = new NpgsqlCommand(updateQuery, connection);
         updateCommand.Parameters.AddWithValue("@name", testCategoryUpdateName);
         updateCommand.Parameters.AddWithValue("@id", generatedId);
@@ -188,7 +193,7 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
         var repository = new CategoryRepository(db, neo4j);
         var dto = new CategoryDto
         {
-            Id = (int)generatedId, 
+            Id = (int)generatedId,
             Name = testCategoryUpdateName
         };
         await repository.UpdateCategory(dto);
@@ -226,13 +231,13 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
             new NpgsqlCommand("DELETE FROM category;", connection);
         await cleanupCommand.ExecuteNonQueryAsync();
         var insertQuery = "INSERT INTO category (Name) VALUES (@name) RETURNING Id;";
-        
+
         await using var insertCommand = new NpgsqlCommand(insertQuery, connection);
         insertCommand.Parameters.AddWithValue("@name", testCategoryName);
-        
+
         var generatedId = await insertCommand.ExecuteScalarAsync();
         var sql = "DELETE FROM category WHERE id = @id;";
-        await using var deleteCommand  = new NpgsqlCommand(sql, connection);
+        await using var deleteCommand = new NpgsqlCommand(sql, connection);
         deleteCommand.Parameters.AddWithValue("@id", generatedId);
         await deleteCommand.ExecuteNonQueryAsync();
         var selectQuery = "SELECT Name FROM category WHERE Id = @id;";
@@ -244,7 +249,7 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
         var repository = new CategoryRepository(db, neo4j);
         var dto = new CategoryDto
         {
-            Id = (int)generatedId + 1, 
+            Id = (int)generatedId + 1,
             Name = "Electricity2"
         };
         await repository.AddCategory(dto);
@@ -255,7 +260,7 @@ public class CategoryIntegrationTest : IClassFixture<DatabaseFixture>
         await using var selectRepCommand = new NpgsqlCommand(selectRepQuery, connection);
         selectRepCommand.Parameters.AddWithValue("@id", dto.Id);
         var retrievedRepName = (string?)await selectRepCommand.ExecuteScalarAsync();
-        Assert.Equal(null, retrievedName);
-        Assert.Equal(null, retrievedRepName);
+        Assert.Null(retrievedName);
+        Assert.Null(retrievedRepName);
     }
 }

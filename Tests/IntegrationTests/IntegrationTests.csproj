@@ -7,10 +7,13 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Backend\WebshopApi\WebshopApi.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.8" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
-    <ProjectReference Include="..\..\Backend\WebshopApi\WebshopApi.csproj" />
     <PackageReference Include="Testcontainers.Neo4j" Version="4.12.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.12.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
@@ -30,3 +33,4 @@
   </ItemGroup>
 
 </Project>
+

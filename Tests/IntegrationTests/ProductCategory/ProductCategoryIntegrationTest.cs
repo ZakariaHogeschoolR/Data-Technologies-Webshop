@@ -1,8 +1,13 @@
 using System.Threading.Tasks;
+
 using ApplicationDbContext;
-using Microsoft.Extensions.Configuration;
+
 using DataTransferObject;
+
+using Microsoft.Extensions.Configuration;
+
 using Npgsql;
+
 using Xunit;
 
 public class ProductCategoryIntegrationTest : IClassFixture<DatabaseFixture>
@@ -55,8 +60,8 @@ public class ProductCategoryIntegrationTest : IClassFixture<DatabaseFixture>
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Neo4j:Uri"]      = _fixture.Neo4j.GetConnectionString(),
-                ["Neo4j:User"]     = "neo4j",
+                ["Neo4j:Uri"] = _fixture.Neo4j.GetConnectionString(),
+                ["Neo4j:User"] = "neo4j",
                 ["Neo4j:Password"] = "password"
             })
             .Build();
@@ -113,10 +118,10 @@ public class ProductCategoryIntegrationTest : IClassFixture<DatabaseFixture>
                     RETURNING id;";
         await using var cmd = new NpgsqlCommand(sql, connection);
         cmd.Parameters.AddWithValue("@productImage", image);
-        cmd.Parameters.AddWithValue("@name",         name);
-        cmd.Parameters.AddWithValue("@description",  description);
-        cmd.Parameters.AddWithValue("@price",        price);
-        cmd.Parameters.AddWithValue("@teamId",       teamId);
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@description", description);
+        cmd.Parameters.AddWithValue("@price", price);
+        cmd.Parameters.AddWithValue("@teamId", teamId);
         return Convert.ToInt32(await cmd.ExecuteScalarAsync());
     }
 

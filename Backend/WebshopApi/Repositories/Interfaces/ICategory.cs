@@ -15,11 +15,11 @@ public interface ICategory
 
     Task<Categories?> GetCategoryById(int id);
 
-    Task<List<Categories?>> GetCategoryByPrice(double price);
+    // Task<List<Categories?>> GetCategoryByPrice(double price);
 
-    Task<List<Categories?>> GetCategoryByTeam(string name);
+    // Task<List<Categories?>> GetCategoryByTeam(string name);
 
-    Task<List<Categories?>> GetCategorysByPrice(double price);
+    // Task<List<Categories?>> GetCategorysByPrice(double price);
 
     Task AddCategory(CategoryDto category);
 

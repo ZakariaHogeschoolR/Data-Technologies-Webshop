@@ -1,7 +1,11 @@
 using ApplicationDbContext;
+
 using DataTransferObject;
+
 using models;
+
 using Npgsql;
+
 using Xunit;
 
 public class TeamIntegrationTest : IClassFixture<DatabaseFixture>
