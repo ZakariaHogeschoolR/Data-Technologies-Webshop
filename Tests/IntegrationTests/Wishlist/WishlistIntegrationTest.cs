@@ -1,4 +1,5 @@
 using ApplicationDbContext;   // for DatabaseConnectie
+
 using DataTransferObject;
 
 using Npgsql;     // for WishlistDTO
@@ -65,8 +66,8 @@ public class WishlistIntegrationTests : IClassFixture<DatabaseFixture>
         var db = new DatabaseConnectie(connectionString);
         var repository = new WishlistRepository(db);
 
-        await repository.AddWishlist(new WishlistDTO{Name = "List1", UserId = userId, ProductId = productId});
-        await repository.AddWishlist(new WishlistDTO{Name = "List2", UserId = userId, ProductId = productId});
+        await repository.AddWishlist(new WishlistDTO { Name = "List1", UserId = userId, ProductId = productId });
+        await repository.AddWishlist(new WishlistDTO { Name = "List2", UserId = userId, ProductId = productId });
 
         var result = await repository.GetAllWishLists();
 
@@ -113,8 +114,8 @@ public class WishlistIntegrationTests : IClassFixture<DatabaseFixture>
         var db = new DatabaseConnectie(connectionString);
         var repository = new WishlistRepository(db);
 
-        await repository.AddWishlist(new WishlistDTO{Name = "User1List", UserId = userId1, ProductId = productId});
-        await repository.AddWishlist(new WishlistDTO{Name = "User2List", UserId = userId2, ProductId = productId});
+        await repository.AddWishlist(new WishlistDTO { Name = "User1List", UserId = userId1, ProductId = productId });
+        await repository.AddWishlist(new WishlistDTO { Name = "User2List", UserId = userId2, ProductId = productId });
 
         var result = await repository.GetWishlistsByUserId(userId1);
 
@@ -295,7 +296,7 @@ public class WishlistIntegrationTests : IClassFixture<DatabaseFixture>
         Assert.Empty(result);
     }
 
-    private async Task <(int userId, int productId)> SeedRequiredData(NpgsqlConnection connection)
+    private async Task<(int userId, int productId)> SeedRequiredData(NpgsqlConnection connection)
     {
         await using var userCmd = new NpgsqlCommand(
             "INSERT INTO users (username, email, password) VALUES (@username, @email, @password) RETURNING id;",
