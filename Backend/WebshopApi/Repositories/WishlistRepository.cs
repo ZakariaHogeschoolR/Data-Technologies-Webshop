@@ -42,7 +42,7 @@ public class WishlistRepository: IWishlist
         WHERE name= (SELECT name FROM wishlist WHERE id= @id)
         AND user_id= (SELECT user_id FROM wishlist WHERE id =@id)";
         using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@user_id", id);
+        cmd.Parameters.AddWithValue("@id", id);
         using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
