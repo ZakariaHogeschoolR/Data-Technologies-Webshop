@@ -7,13 +7,10 @@ using Npgsql;     // for WishlistDTO
 public class WishlistIntegrationTests : IClassFixture<DatabaseFixture>
 {
     private readonly DatabaseFixture _fixture;
-    private WishlistRepository repository;
     private string connectionString;
     public WishlistIntegrationTests(DatabaseFixture fixture)
     {
         _fixture = fixture;
-        var db = new DatabaseConnectie(fixture.Postgres.GetConnectionString());
-        repository = new WishlistRepository(db);
         connectionString = _fixture.Postgres.GetConnectionString();
     }
 

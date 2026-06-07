@@ -162,7 +162,7 @@ public class ShoppingCartRepository: IShoppingCart
     public async Task DeleteShoppingCarts(int id)
     {
         using var conn = await _dbconnectie.GetConnection();
-        var sql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id =@id";
+        var sql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id =(SELECT id FROM winkelwagen_users WHERE user_id = @id)";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
         await cmd.ExecuteNonQueryAsync();
@@ -179,7 +179,7 @@ public class ShoppingCartRepository: IShoppingCart
         try
         {
             var getWWU_ID = new NpgsqlCommand("SELECT id FROM winkelwagen_users WHERE user_id= @U_ID", conn, transaction);
-            getWWU_ID.Parameters.AddWithValue("U_ID", shoppingCartDTO.Id);
+            getWWU_ID.Parameters.AddWithValue("@U_ID", shoppingCartDTO.Id);
             var result = await getWWU_ID.ExecuteScalarAsync();
             if (result == null)
             {
@@ -268,7 +268,7 @@ public class ShoppingCartRepository: IShoppingCart
                 items.Add(new CheckoutItemDto(
                     reader.GetInt32(reader.GetOrdinal("product_id")),
                     reader.GetString(reader.GetOrdinal("name")),
-                    reader.GetString(reader.GetOrdinal("product_image")),
+                    reader.IsDBNull(reader.GetOrdinal("product_image")) ? " " : reader.GetString(reader.GetOrdinal("product_image")),
                     price,
                     quantity,
                     price * quantity
