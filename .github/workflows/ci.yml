@@ -3,6 +3,9 @@ name: CI Pipeline
 on:
   push:
 
+permissions:
+    contents: write
+
 jobs:
 
   format:
