@@ -1,6 +1,6 @@
 import './../../Styles/Payment.css';
-import {useNavigate} from "react-router-dom";
-import {useState} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 interface WinkelwagenItem {
     id: number;
@@ -12,10 +12,12 @@ interface WinkelwagenItem {
 }
 
 type Props = {
-    winkelwagenItems: WinkelwagenItem[]; total: number; currentWinkelwagenId: number;
-}
+    winkelwagenItems: WinkelwagenItem[];
+    total: number;
+    currentWinkelwagenId: number;
+};
 
-const Payment = ({winkelwagenItems, total}: Props) => {
+const Payment = ({ winkelwagenItems, total }: Props) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -31,7 +33,9 @@ const Payment = ({winkelwagenItems, total}: Props) => {
 
         try {
             const orderLines = winkelwagenItems.map((item: any) => {
-                const product = Array.isArray(item.shoppingProducts) ? item.shoppingProducts[0] : item.shoppingProducts;
+                const product = Array.isArray(item.shoppingProducts)
+                    ? item.shoppingProducts[0]
+                    : item.shoppingProducts;
 
                 return {
                     productId: item.productId,
@@ -39,14 +43,12 @@ const Payment = ({winkelwagenItems, total}: Props) => {
                     productImage: product?.productImage || product?.imageUrl || '',
                     price: product?.price || 0,
                     quantity: item.quantity,
-                    subTotal: (product?.price || 0) * item.quantity
+                    subTotal: (product?.price || 0) * item.quantity,
                 };
             });
 
             navigate('/checkout', {
-                state: {
-                    orderLines: orderLines, total: total
-                }
+                state: { orderLines, total },
             });
         } catch (err) {
             setError('Er ging iets mis bij het voorbereiden van de checkout.');
@@ -54,19 +56,27 @@ const Payment = ({winkelwagenItems, total}: Props) => {
         }
     };
 
-    return (<div className="Payment-container">
-            <p className="sub-total-price-payment">
-                Subtotal: <span className="sub-total">€{total.toFixed(2)}</span>
-            </p>
-            <section className="Borderline"/>
-            <p className="total-price">
-                Total: <span className="total">€{total.toFixed(2)}</span>
-            </p>
-            <p className="tax">inc. tax</p>
+    return (
+        <div className="Payment-container">
+            <div className="payment-row">
+                <span>Subtotaal</span>
+                <span>€{total.toFixed(2)}</span>
+            </div>
 
-            {error && (<p style={{color: '#c0392b', fontSize: '11px', padding: '0 20px', textAlign: 'center'}}>
+            <section className="Borderline" />
+
+            <div className="payment-row total">
+                <span>Totaal</span>
+                <span>€{total.toFixed(2)}</span>
+            </div>
+
+            <p className="tax">incl. btw</p>
+
+            {error && (
+                <p style={{ color: '#c0392b', fontSize: '11px', marginBottom: '0.75rem' }}>
                     {error}
-                </p>)}
+                </p>
+            )}
 
             <button
                 type="button"
@@ -76,7 +86,8 @@ const Payment = ({winkelwagenItems, total}: Props) => {
             >
                 {loading ? 'Bezig...' : 'Checkout'}
             </button>
-        </div>);
+        </div>
+    );
 };
 
 export default Payment;

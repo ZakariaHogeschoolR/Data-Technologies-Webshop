@@ -66,6 +66,7 @@ const AdminPage = () => {
         ? `http://localhost:5261/api/Admin/products/filter?${selectedCategories.map(id => `categoryIds=${id}`).join("&")}&page=${page}&pageSize=${pageSize}`
         : `http://localhost:5261/api/Admin/products?page=${page}&pageSize=${pageSize}`;
 
+    const { data: topProducts } = useFetch<{ name: string; totalSold: number }[]>({ url: "http://localhost:5261/api/Admin/stats/top-products" });
     const { data: products, isLoading: productsLoading } = useFetch<Product[]>({ url: productUrl });
     const { data: stats } = useFetch<Stats>({ url: "http://localhost:5261/api/Admin/stats" });
 
@@ -317,6 +318,28 @@ const AdminPage = () => {
             </div>
 
             <section className="admin-section">
+                <h2 className="admin-section-title">Top 5 Best Selling Products</h2>
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Total Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {topProducts?.map((p, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{p.name}</td>
+                                <td>{p.totalSold}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </section>
+
+            <section className="admin-section">
                 <h2 className="admin-section-title">Users</h2>
                 {resetMessage && <p style={{ color: "var(--dark-green)", marginBottom: "1rem" }}>{resetMessage}</p>}
                 {usersLoading ? (
@@ -425,13 +448,20 @@ const AdminPage = () => {
                                     ))}
                                 </div>
                             )}
-                            {newProduct.teamId > 0 && (
-                                <p style={{ fontSize: "12px", color: "var(--dark-green)", marginTop: "4px" }}>✓ Team ID: {newProduct.teamId}</p>
+                            {newProduct.teamId > 0 ? (
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <p style={{ fontSize: "12px", color: "var(--dark-green)", margin: 0 }}>✓ Team: {teamSearch}</p>
+                                    <button onClick={() => { setNewProduct({...newProduct, teamId: 0}); setTeamSearch(""); }} style={{ fontSize: "12px", color: "#c0392b", background: "none", border: "none", cursor: "pointer" }}>
+                                        ✕ Remove
+                                    </button>
+                                </div>
+                            ) : (
+                                <p style={{ fontSize: "12px", color: "#999", margin: 0 }}>No team selected (optional)</p>
                             )}
+                            </div>
+                            <button onClick={handleAddProduct} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "8px 14px" }}>Save Product</button>
                         </div>
-                        <button onClick={handleAddProduct} className="admin-badge badge-admin" style={{ cursor: "pointer", border: "none", fontSize: "13px", padding: "8px 14px" }}>Save Product</button>
-                    </div>
-                )}
+                    )}
 
                 {showEditPrice && (
                     <div style={{ background: "var(--white)", borderRadius: "10px", padding: "1.5rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "10px", maxWidth: "500px" }}>

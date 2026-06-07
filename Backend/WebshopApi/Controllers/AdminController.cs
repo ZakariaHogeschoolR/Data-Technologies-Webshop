@@ -74,6 +74,13 @@ public class AdminController(UserService userService, ProductService productServ
         return Ok(filtered);
     }
 
+    [HttpGet("stats/top-products")]
+    public async Task<IActionResult> GetTopProducts()
+    {
+        var topProducts = await productService.GetTopProductsService();
+        return Ok(topProducts);
+    }
+
     [HttpPost("users/{id}/reset-password")]
     public async Task<IActionResult> ResetPassword(int id)
     {
