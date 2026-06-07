@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class ShoppingCartRepository: IShoppingCart
+public class ShoppingCartRepository : IShoppingCart
 {
     private readonly DatabaseConnectie _dbconnectie;
 

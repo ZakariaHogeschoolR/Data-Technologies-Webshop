@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class OrderRepository: IOrder
+public class OrderRepository : IOrder
 {
     private readonly DatabaseConnectie _dbConnectie;
 

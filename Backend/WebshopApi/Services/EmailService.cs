@@ -3,7 +3,7 @@ using System.Net.Mail;
 
 namespace Service;
 
-public class EmailService: IEmailservice
+public class EmailService : IEmailservice
 {
     private readonly IConfiguration _configuration;
 

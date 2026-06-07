@@ -6,7 +6,7 @@ using models;
 
 namespace Service;
 
-public class UserService: IUserService
+public class UserService : IUserService
 {
     private readonly UserRepository _userRepository;
     private readonly UserGraphRepository _graphRepo;

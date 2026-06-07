@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class TeamRepository: ITeam
+public class TeamRepository : ITeam
 {
     private readonly DatabaseConnectie _dbConnectie;
 

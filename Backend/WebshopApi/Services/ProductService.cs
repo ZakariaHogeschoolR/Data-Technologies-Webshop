@@ -4,7 +4,7 @@ using models;
 
 namespace Service;
 
-public class ProductService: IProductService
+public class ProductService : IProductService
 {
     private readonly ProductRepository _productRepository;
 

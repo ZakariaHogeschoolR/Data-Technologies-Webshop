@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class WishlistRepository: IWishlist
+public class WishlistRepository : IWishlist
 {
     private readonly DatabaseConnectie _dbconnectie;
 

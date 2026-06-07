@@ -1,4 +1,5 @@
 using DataTransferObject;
+
 using models;
 
 public interface ITeamService
@@ -11,6 +12,6 @@ public interface ITeamService
     Task CreateService(TeamDto team);
 
     Task UpdateService(TeamDto team);
-    
+
     Task DeleteService(int id);
 }

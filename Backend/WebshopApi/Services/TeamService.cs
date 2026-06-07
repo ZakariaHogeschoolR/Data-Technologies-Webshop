@@ -4,7 +4,7 @@ using models;
 
 namespace Service;
 
-public class TeamService: ITeamService
+public class TeamService : ITeamService
 {
     private readonly TeamRepository _teamRepository;
 

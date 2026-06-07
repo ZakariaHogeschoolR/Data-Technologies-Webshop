@@ -5,5 +5,5 @@ public interface IPasswordReset
     Task<(int UserId, bool Used, DateTime ExpiresAt)?> GetToken(string token);
 
     Task MarkTokenAsUsed(string token);
-    
+
 }

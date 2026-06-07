@@ -1,11 +1,12 @@
-using DataTransferObject;
 using System.Linq;
+
+using DataTransferObject;
 
 using models;
 
 namespace Service;
 
-public class CategoryService: ICategoryService
+public class CategoryService : ICategoryService
 {
     private readonly CategoryRepository _categoryRepository;
 
