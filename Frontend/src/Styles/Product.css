@@ -1,3 +1,15 @@
+.trending-products-container{
+    scrollbar-width: none;
+    width: 92%;
+    margin-top: 100px;
+    margin-left: 175px;
+    margin-bottom: 80px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 80px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 .Products-Container{
     scrollbar-width: none;
     width: 92%;
