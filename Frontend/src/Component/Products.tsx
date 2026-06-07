@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useFetch } from '../CustomHooks/GetFetchHook';
+import { useFetchSecond } from '../CustomHooks/GetFetchSecond';
 import { GetRecentProducts } from './storage/recentProducts';
 import '../../src/Styles/Product.css';
 
@@ -10,11 +11,20 @@ type product = {
     name: string;
     description: string;
     price: number;
+    teamId: number;
+};
+
+type teams = {
+    id: number;
+    name: string;
+    type: string;
 };
 
 const Products = () => {
     const [getProducts, setProducts] = useState<product[]>([]);
+    const [getTeams, setTeams] = useState<teams[]>([]);
     const { data, isLoading, error } = useFetch<product[]>({ url: 'http://localhost:5261/api/Product' });
+    const { data2, isLoading2, error2 } = useFetchSecond<teams[]>({ url: 'http://localhost:5261/api/Team' });
     const [recent, setRecent] = useState<product[]>([]);
     const location = useLocation();
     const [firstId, setFirstId] = useState<number | null>(null);
@@ -26,7 +36,10 @@ const Products = () => {
             setFirstId(data[0].id);
             setLastId(data[data.length - 1].id);
         }
-    }, [data]);
+        if (data2) {
+            setTeams(data2);
+        }
+    }, [data, data2]);
 
     useEffect(() => {
         setRecent(GetRecentProducts());
@@ -52,12 +65,20 @@ const Products = () => {
         setLastId(data[data.length - 1].id);
     };
 
-    if (isLoading) return <p style={{ padding: '2rem', color: 'var(--dark-green)', letterSpacing: '2px', fontSize: '13px' }}>Loading...</p>;
+    const productsWithTeam = [...getProducts]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map(prod => ({
+            product: prod,
+            teamName: getTeams.find(t => t.id === prod.teamId)?.name ?? 'Unknown',
+        }));
+
+    if (isLoading || isLoading2) return <p style={{ padding: '2rem', color: 'var(--dark-green)', letterSpacing: '2px', fontSize: '13px' }}>Loading...</p>;
     if (error) return <p style={{ padding: '2rem', color: '#b00' }}>Error: {error}</p>;
+    if (error2) return <p style={{ padding: '2rem', color: '#b00' }}>Error: {error2}</p>;
 
     return (
         <>
-            {/* Recent */}
             {recent.length > 0 && (
                 <>
                     <p className="recent">Recent bekeken</p>
@@ -66,11 +87,7 @@ const Products = () => {
                         {recent.map((prod) => (
                             <Link to={`products/${prod.id}`} className="link" key={prod.id}>
                                 <div className="Product-content-recent">
-                                    <img
-                                        src={prod.productImage}
-                                        className="recent-ProductImage"
-                                        alt={prod.name}
-                                    />
+                                    <img src={prod.productImage} className="recent-ProductImage" alt={prod.name} />
                                 </div>
                             </Link>
                         ))}
@@ -78,23 +95,17 @@ const Products = () => {
                 </>
             )}
 
-            {/* All products grid */}
             <div className="Products-Container">
                 {getProducts.map((prod) => (
                     <Link to={`products/${prod.id}`} className="link" key={prod.id}>
                         <div className="Product-content">
-                            <img
-                                src={prod.productImage}
-                                className="products-ProductImage"
-                                alt={prod.name}
-                            />
+                            <img src={prod.productImage} className="products-ProductImage" alt={prod.name} />
                             <p className="products-Name">{prod.name}</p>
                         </div>
                     </Link>
                 ))}
             </div>
 
-            {/* Pagination */}
             <div className="pagination-row">
                 <button className="prev-button" onClick={handlePrev}>← Prev</button>
                 <button className="next-button" onClick={handleNext}>Next →</button>
@@ -102,9 +113,21 @@ const Products = () => {
 
             <div className="product-content-border-line" />
 
-            {/* Trending teams placeholder */}
             <p className="trending-teams">Trending Teams</p>
             <div className="trending-teams-border-line" />
+
+            <div className="trending-products-container">
+                {productsWithTeam.map((item) => (
+                    <Link to={`products/${item.product.id}`} className="link" key={item.product.id}>
+                        <div className="Product-content">
+                            <img src={item.product.productImage} className="products-ProductImage" alt={item.product.name} />
+                            <p className="products-Name">{item.product.name}</p>
+                            <p className="team-name">{item.teamName}</p>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+
             <div className="trending-teams-content-border-line" />
         </>
     );

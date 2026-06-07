@@ -215,7 +215,16 @@ public class ProductRepository
         var products = new List<Products>();
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "SELECT * FROM products WHERE LOWER(name) LIKE LOWER('%' || @name || '%') LIMIT 5";
+        var sql = @"SELECT *,
+                           ts_rank(
+                              to_tsvector('english', name || ' ' || description),
+                              to_tsquery('english', @name)
+                            ) AS rank
+                    FROM products
+                    WHERE to_tsvector('english', @name)
+                          @@ to_tsquery('english', @name)
+                    ORDER BY rank DESC
+                    LIMIT 5";
         using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@name", name);
 
@@ -228,7 +237,8 @@ public class ProductRepository
                 ProductImage = reader.GetString(reader.GetOrdinal("product_image")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Description = reader.GetString(reader.GetOrdinal("description")),
-                Price = reader.GetDecimal(reader.GetOrdinal("price"))
+                Price = reader.GetDecimal(reader.GetOrdinal("price")),
+                TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
         }
 
@@ -369,24 +379,31 @@ public class ProductRepository
     public async Task<List<Products>> GetProductsByCategories(List<int> categoryIds, int page, int pageSize)
     {
         var products = new List<Products>();
-        using var conn = await _dbConnectie.GetConnection();
+        await using var conn = await _dbConnectie.GetConnection();
 
-        var sql = @"SELECT p.* FROM products p
-                    INNER JOIN product_categories pc ON p.id = pc.product_id
-                    WHERE pc.category_id = ANY(@categoryIds)
-                    ORDER BY p.id
-                    LIMIT @pageSize OFFSET @offset";
+        const string sql = """
+                           WITH category_matches AS (
+                               SELECT DISTINCT product_id
+                               FROM product_categories
+                               WHERE category_id = ANY(@categoryIds)
+                           ),
+                           matched_products AS (
+                               SELECT p.id, p.product_image, p.name, p.description, p.price, p.team_id
+                               FROM products p
+                               JOIN category_matches cm ON p.id = cm.product_id
+                           )
+                           SELECT * FROM matched_products ORDER BY id LIMIT @pageSize OFFSET @offset
+                           """;
 
         var offset = (page - 1) * pageSize;
 
-        using var cmd = new NpgsqlCommand(sql, conn);
+        await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@categoryIds", categoryIds.ToArray());
         cmd.Parameters.AddWithValue("@pageSize", pageSize);
         cmd.Parameters.AddWithValue("@offset", offset);
 
-        using var reader = await cmd.ExecuteReaderAsync();
+        await using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
-        {
             products.Add(new Products
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
@@ -396,8 +413,6 @@ public class ProductRepository
                 Price = reader.GetDecimal(reader.GetOrdinal("price")),
                 TeamId = reader.GetInt32(reader.GetOrdinal("team_id"))
             });
-        }
-
         return products;
     }
 

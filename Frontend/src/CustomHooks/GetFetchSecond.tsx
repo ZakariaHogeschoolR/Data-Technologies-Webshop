@@ -37,9 +37,7 @@ export function useFetchSecond<T>({ url }: UseFetchProps) {
                 setIsLoading(false);
             }
         }
-
         getData();
     }, [url]);
-
     return { data2, isLoading2, error2 };
 }
