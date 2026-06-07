@@ -1,6 +1,6 @@
 using Neo4j.Driver;
 
-public class Neo4jService
+public class Neo4jService : INeo4jService
 {
     private readonly IDriver _driver;
 

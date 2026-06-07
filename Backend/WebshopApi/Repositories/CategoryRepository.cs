@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class CategoryRepository
+public class CategoryRepository : ICategory
 {
     private readonly DatabaseConnectie _dbConnectie;
     private readonly Neo4jService _neo4j;
@@ -90,73 +90,6 @@ public class CategoryRepository
         }
 
         return null;
-    }
-
-    public async Task<List<Categories?>> GetCategoryByPrice(double price)
-    {
-        var categories = new List<Categories>();
-        using var conn = await _dbConnectie.GetConnection();
-
-        var sql = "SELECT * FROM category WHERE Categorys.Price = @price";
-
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@price", price);
-
-        using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            categories.Add(new Categories
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
-                Name = reader.GetString(reader.GetOrdinal("name")),
-            });
-        }
-        return categories;
-    }
-
-    public async Task<List<Categories?>> GetCategoryByTeam(string name)
-    {
-        var categories = new List<Categories>();
-        using var conn = await _dbConnectie.GetConnection();
-
-        var sql = "SELECT * FROM Category WHERE Categorys.Name = @name";
-
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@name", name);
-
-        using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            categories.Add(new Categories
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
-                Name = reader.GetString(reader.GetOrdinal("name")),
-            });
-        }
-
-        return categories;
-    }
-
-    public async Task<List<Categories?>> GetCategorysByPrice(double price)
-    {
-        var categories = new List<Categories>();
-        using var conn = await _dbConnectie.GetConnection();
-        var sql = "SELECT * FROM Categorys WHERE price >= @price";
-
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@price", price);
-        using var reader = await cmd.ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
-        {
-            categories.Add(new Categories
-            {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
-                Name = reader.GetString(reader.GetOrdinal("name")),
-            });
-        }
-
-        return categories;
     }
 
     public async Task AddCategory(CategoryDto category)

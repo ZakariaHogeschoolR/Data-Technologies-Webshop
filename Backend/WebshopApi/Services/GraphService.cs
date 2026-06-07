@@ -5,7 +5,7 @@ using models;
 
 namespace Service;
 
-public class GraphService
+public class GraphService : IGraphService
 {
     private readonly GraphRepository _graphRepository;
 

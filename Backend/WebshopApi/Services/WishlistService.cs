@@ -3,7 +3,7 @@ using DataTransferObject;
 using models;
 namespace Service;
 
-public class WishlistService
+public class WishlistService : IWishlistService
 {
     private readonly WishlistRepository _wishlistRepository;
     public WishlistService(WishlistRepository wishlistRepository)

@@ -8,7 +8,7 @@ using Neo4j.Driver;
 
 using Npgsql;
 
-public class UserGraphRepository
+public class UserGraphRepository : IUserGraph
 {
     private readonly Neo4jService _neo4j;
 
