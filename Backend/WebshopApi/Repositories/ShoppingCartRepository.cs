@@ -203,10 +203,11 @@ public class ShoppingCartRepository
 
         const string sql = """
                            WITH cart_history AS (
-                               SELECT wu.id AS order_id, wu.created_at AS order_date, w.product_id, w.quantity
-                               FROM winkelwagen_users wu
-                               JOIN winkelwagen w ON w.winkelwagen_users_id = wu.id
-                               WHERE wu.user_id = @userId
+                               SELECT o.id AS order_id, o.created_at  AS order_date, oi.product_id, oi.quantity
+                               FROM orders o
+                               JOIN winkelwagen_users wu ON wu.id = o.winkelwagen_users_id
+                               JOIN order_items oi ON oi.order_id = o.id
+                               WHERE wu.user_id = @userId AND o.payment_status = TRUE
                            )
                            SELECT order_id, order_date, product_id, quantity
                            FROM cart_history
@@ -319,6 +320,19 @@ public class ShoppingCartRepository
             await using var updateCmd = new NpgsqlCommand(updateOrderSql, conn, transaction);
             updateCmd.Parameters.AddWithValue("@orderId", orderId);
             await updateCmd.ExecuteNonQueryAsync();
+
+            const string insertItemsSql = """
+                                          INSERT INTO order_items (order_id, product_id, quantity, price)
+                                          SELECT @orderId, product_id, quantity, price
+                                          FROM winkelwagen w
+                                          JOIN products p ON p.id = w.product_id
+                                          WHERE w.winkelwagen_users_id = @wuid
+                                          """;
+
+            await using var insertItemsCmd = new NpgsqlCommand(insertItemsSql, conn, transaction);
+            insertItemsCmd.Parameters.AddWithValue("@orderId", orderId);
+            insertItemsCmd.Parameters.AddWithValue("@wuid", winkelwagenUsersId);
+            await insertItemsCmd.ExecuteNonQueryAsync();
 
             const string clearCartSql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id = @wuid";
             await using var clearCmd = new NpgsqlCommand(clearCartSql, conn, transaction);
