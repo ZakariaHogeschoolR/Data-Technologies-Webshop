@@ -54,23 +54,18 @@ public class ShoppingCartRepository
 
     public async Task<List<ShoppingCarts?>> GetShoppingCartById(int id)
     {
-        var shoppingcartslist = new List<ShoppingCarts>();
-        using var conn = await _dbconnectie.GetConnection();
+        var shoppingCartList = new List<ShoppingCarts?>();
+        await using var conn = await _dbconnectie.GetConnection();
 
-        var sql = @"SELECT w.winkelwagen_users_id, w.product_id,
-        w.quantity, wu.created_at
-        FROM winkelwagen w
-        JOIN winkelwagen_users wu
-        ON w.winkelwagen_users_id = wu.id
-        WHERE wu.user_id = @id";
+        const string sql = "SELECT * FROM cart_details WHERE user_id = @id";
 
-        using var cmd = new NpgsqlCommand(sql, conn);
+        await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
 
-        using var reader = await cmd.ExecuteReaderAsync();
+        await using var reader = await cmd.ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
-            shoppingcartslist.Add(new ShoppingCarts
+            shoppingCartList.Add(new ShoppingCarts
             {
                 Id = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
                 ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
@@ -78,7 +73,7 @@ public class ShoppingCartRepository
                 CreatedAt = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("created_at")))
             });
 
-        return shoppingcartslist;
+        return shoppingCartList;
     }
 
     public async Task<ShoppingCarts> AddShoppingCarts(ShoppingCartDTO shoppingcarts)
@@ -211,11 +206,16 @@ public class ShoppingCartRepository
         await using var conn = await _dbconnectie.GetConnection();
 
         const string sql = """
-                           SELECT wu.Id AS order_id, wu.created_at AS order_date, w.product_id, w.quantity
-                           FROM winkelwagen_users wu
-                           JOIN winkelwagen w ON w.winkelwagen_users_id = wu.id
-                           WHERE wu.user_id = @userId
-                           ORDER BY wu.created_at DESC, w.product_id
+                           WITH cart_history AS (
+                               SELECT o.id AS order_id, o.created_at  AS order_date, oi.product_id, oi.quantity
+                               FROM orders o
+                               JOIN winkelwagen_users wu ON wu.id = o.winkelwagen_users_id
+                               JOIN order_items oi ON oi.order_id = o.id
+                               WHERE wu.user_id = @userId AND o.payment_status = TRUE
+                           )
+                           SELECT order_id, order_date, product_id, quantity
+                           FROM cart_history
+                           ORDER BY order_date DESC, product_id
                            """;
 
         await using var cmd = new NpgsqlCommand(sql, conn);
@@ -223,20 +223,21 @@ public class ShoppingCartRepository
 
         await using var reader = await cmd.ExecuteReaderAsync();
 
-        if (!await reader.ReadAsync()) return null;
-
         var orderMap = new Dictionary<int, OrderHistoryDto>();
-        var orderId = reader.GetInt32(reader.GetOrdinal("order_id"));
 
-        if (!orderMap.TryGetValue(orderId, out var order))
+        while (await reader.ReadAsync())
         {
-            order = new OrderHistoryDto(orderId, reader.GetDateTime(reader.GetOrdinal("order_date")), []);
-            orderMap[orderId] = order;
+            var orderId = reader.GetInt32(reader.GetOrdinal("order_id"));
+
+            if (!orderMap.TryGetValue(orderId, out var order))
+            {
+                order = new OrderHistoryDto(orderId, reader.GetDateTime(reader.GetOrdinal("order_date")), []);
+                orderMap[orderId] = order;
+            }
+
+            order.Items.Add(new OrderItemDto(reader.GetInt32(reader.GetOrdinal("product_id")),
+                reader.GetInt32(reader.GetOrdinal("quantity"))));
         }
-
-        order.Items.Add(new OrderItemDto(reader.GetInt32(reader.GetOrdinal("product_id")),
-            reader.GetInt32(reader.GetOrdinal("quantity"))));
-
         return orderMap.Values.ToList();
     }
 
@@ -323,6 +324,19 @@ public class ShoppingCartRepository
             await using var updateCmd = new NpgsqlCommand(updateOrderSql, conn, transaction);
             updateCmd.Parameters.AddWithValue("@orderId", orderId);
             await updateCmd.ExecuteNonQueryAsync();
+
+            const string insertItemsSql = """
+                                          INSERT INTO order_items (order_id, product_id, quantity, price)
+                                          SELECT @orderId, product_id, quantity, price
+                                          FROM winkelwagen w
+                                          JOIN products p ON p.id = w.product_id
+                                          WHERE w.winkelwagen_users_id = @wuid
+                                          """;
+
+            await using var insertItemsCmd = new NpgsqlCommand(insertItemsSql, conn, transaction);
+            insertItemsCmd.Parameters.AddWithValue("@orderId", orderId);
+            insertItemsCmd.Parameters.AddWithValue("@wuid", winkelwagenUsersId);
+            await insertItemsCmd.ExecuteNonQueryAsync();
 
             const string clearCartSql = "DELETE FROM winkelwagen WHERE winkelwagen_users_id = @wuid";
             await using var clearCmd = new NpgsqlCommand(clearCartSql, conn, transaction);
