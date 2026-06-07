@@ -105,3 +105,30 @@
     padding: 3rem 0;
     grid-column: 1 / -1;
 }
+
+/* ── Remove product button ────────────────────────────────── */
+.wishlist-remove-product-btn {
+    margin-top: 8px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #c0392b;
+    background: transparent;
+    border: 1.5px solid #c0392b;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    align-self: flex-start;
+}
+
+.wishlist-remove-product-btn:hover {
+    background-color: #c0392b;
+    color: var(--white);
+}
+
+.wishlist-remove-product-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
