@@ -19,6 +19,7 @@ export default function WishlistDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deletingProductId, setDeletingProductId] = useState<number | null>(null);
 
     async function HandleDeleteWishlist() {
         if (!window.confirm(`Weet je zeker dat je "${wishlistName}" wilt verwijderen?`)) return;
@@ -38,6 +39,29 @@ export default function WishlistDetail() {
             setError(e.message || 'Verwijderen mislukt');
         } finally {
             setIsDeleting(false);
+        }
+    }
+
+    async function HandleDeleteProduct(productId: number) {
+        if (!window.confirm('Weet je zeker dat je dit product wilt verwijderen?')) return;
+        try {
+            setDeletingProductId(productId);
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API}Wishlist/delete/product`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ id: productId, wishlistName }),
+            });
+            if (!response.ok) throw new Error('Product kon niet worden verwijderd');
+            // Remove product from local state
+            setProducts(prev => prev.filter(p => p.id !== productId));
+        } catch (e: any) {
+            setError(e.message || 'Verwijderen mislukt');
+        } finally {
+            setDeletingProductId(null);
         }
     }
 
@@ -119,6 +143,13 @@ export default function WishlistDetail() {
                             <div className="wishlist-product-info">
                                 <p className="wishlist-product-name">{product.name}</p>
                                 <p className="wishlist-product-price">€ {product.price}</p>
+                                <button
+                                    className="wishlist-remove-product-btn"
+                                    onClick={() => HandleDeleteProduct(product.id)}
+                                    disabled={deletingProductId === product.id}
+                                >
+                                    {deletingProductId === product.id ? 'Verwijderen...' : '✕ Remove'}
+                                </button>
                             </div>
                         </div>
                     ))
