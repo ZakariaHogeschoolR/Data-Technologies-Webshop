@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useFetch } from '../CustomHooks/GetFetchHook';
 import { useFetchSecond } from '../CustomHooks/GetFetchSecond';
@@ -30,6 +30,10 @@ const Products = () => {
     const [firstId, setFirstId] = useState<number | null>(null);
     const [lastId, setLastId] = useState<number | null>(null);
 
+    // Trending teams — eenmaal gezet bij eerste load, verandert niet bij next/prev
+    const [trendingProducts, setTrendingProducts] = useState<{ product: product; teamName: string }[]>([]);
+    const trendingSet = useRef(false);
+
     useEffect(() => {
         if (data && data.length > 0) {
             setProducts(data);
@@ -40,6 +44,23 @@ const Products = () => {
             setTeams(data2);
         }
     }, [data, data2]);
+
+    // Trending alleen instellen bij eerste keer dat data beschikbaar is
+    useEffect(() => {
+        if (trendingSet.current) return;
+        if (getProducts.length === 0) return;
+
+        const random = [...getProducts]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3)
+            .map(prod => ({
+                product: prod,
+                teamName: getTeams.find(t => t.id === prod.teamId)?.name ?? 'Unknown',
+            }));
+
+        setTrendingProducts(random);
+        trendingSet.current = true;
+    }, [getProducts, getTeams]);
 
     useEffect(() => {
         setRecent(GetRecentProducts());
@@ -64,14 +85,6 @@ const Products = () => {
         setFirstId(data[0].id);
         setLastId(data[data.length - 1].id);
     };
-
-    const productsWithTeam = [...getProducts]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
-        .map(prod => ({
-            product: prod,
-            teamName: getTeams.find(t => t.id === prod.teamId)?.name ?? 'Unknown',
-        }));
 
     if (isLoading || isLoading2) return <p style={{ padding: '2rem', color: 'var(--dark-green)', letterSpacing: '2px', fontSize: '13px' }}>Loading...</p>;
     if (error) return <p style={{ padding: '2rem', color: '#b00' }}>Error: {error}</p>;
@@ -117,7 +130,7 @@ const Products = () => {
             <div className="trending-teams-border-line" />
 
             <div className="trending-products-container">
-                {productsWithTeam.map((item) => (
+                {trendingProducts.map((item) => (
                     <Link to={`products/${item.product.id}`} className="link" key={item.product.id}>
                         <div className="Product-content">
                             <img src={item.product.productImage} className="products-ProductImage" alt={item.product.name} />
