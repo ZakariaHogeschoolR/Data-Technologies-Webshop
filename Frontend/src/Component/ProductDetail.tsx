@@ -100,8 +100,6 @@ const ProductDetail = () => {
 
     return (
         <div className="product-page">
-            <AddToWishlistButton productId={Number.parseInt(id!)} />
-
             <p className="product-id-content">Product {id}</p>
             <div className="product-border-line" />
 
@@ -138,6 +136,13 @@ const ProductDetail = () => {
                             Toevoegen
                         </button>
                     </div>
+
+                    {/* Wishlist button — nu onder de toevoegen knop */}
+                    {token && (
+                        <div style={{ marginTop: '1rem' }}>
+                            <AddToWishlistButton productId={Number.parseInt(id!)} />
+                        </div>
+                    )}
                 </div>
             </div>
 
