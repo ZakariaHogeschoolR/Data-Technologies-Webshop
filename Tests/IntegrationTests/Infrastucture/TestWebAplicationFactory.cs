@@ -9,6 +9,10 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     public TestWebApplicationFactory(DatabaseFixture fixture)
     {
         _fixture = fixture;
+
+        Environment.SetEnvironmentVariable("Jwt__Key", "test-secret-key-that-is-long-enough-32chars!");
+        Environment.SetEnvironmentVariable("Jwt__Issuer", "test");
+        Environment.SetEnvironmentVariable("Jwt__Audience", "test");
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
