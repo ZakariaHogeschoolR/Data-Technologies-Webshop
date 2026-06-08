@@ -1,0 +1,134 @@
+/* ── Wishlist Detail Page ─────────────────────────────────── */
+.wishlistWrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 2rem 6rem;
+}
+
+.wishlist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.wishlistName {
+    font-family: "Alfa Slab One", serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    color: var(--dark-green);
+    text-transform: uppercase;
+}
+
+.wishlist-delete-btn {
+    font-family: "Alfa Slab One", serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c0392b;
+    background: transparent;
+    border: 2px solid #c0392b;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.wishlist-delete-btn:hover {
+    background-color: #c0392b;
+    color: var(--white);
+}
+
+.wishlist-delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Product grid ─────────────────────────────────────────── */
+.productsList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.wishlistProductItem {
+    background-color: var(--beige);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 12px rgba(15, 61, 46, 0.07);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.wishlistProductItem:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(15, 61, 46, 0.12);
+}
+
+.wishlist-product-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background-color: var(--white);
+}
+
+.wishlist-product-info {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wishlist-product-name {
+    font-family: "Alfa Slab One", serif;
+    font-size: 13px;
+    color: var(--dark-green);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wishlist-product-price {
+    font-family: "Alfa Slab One", serif;
+    font-size: 14px;
+    color: var(--mint);
+}
+
+.noProducts {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    padding: 3rem 0;
+    grid-column: 1 / -1;
+}
+
+/* ── Remove product button ────────────────────────────────── */
+.wishlist-remove-product-btn {
+    margin-top: 8px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #c0392b;
+    background: transparent;
+    border: 1.5px solid #c0392b;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    align-self: flex-start;
+}
+
+.wishlist-remove-product-btn:hover {
+    background-color: #c0392b;
+    color: var(--white);
+}
+
+.wishlist-remove-product-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

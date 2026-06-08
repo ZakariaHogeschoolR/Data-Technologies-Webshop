@@ -1,0 +1,139 @@
+/* ── Page ─────────────────────────────────────────────────── */
+.about-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.about-hero {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.about-hero-title {
+    font-family: "Alfa Slab One", serif;
+    font-size: 48px;
+    color: var(--dark-green);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.about-hero-sub {
+    font-family: "Alfa Slab One", serif;
+    font-size: 15px;
+    color: var(--mint);
+    letter-spacing: 2px;
+}
+
+/* ── Cards section ────────────────────────────────────────── */
+.about-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+}
+
+.about-card {
+    background-color: var(--beige);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(15, 61, 46, 0.07);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.about-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 32px rgba(15, 61, 46, 0.12);
+}
+
+.about-icon {
+    font-size: 32px;
+}
+
+.about-card-title {
+    font-family: "Alfa Slab One", serif;
+    font-size: 16px;
+    color: var(--dark-green);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.about-card-text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.7;
+    font-family: sans-serif;
+}
+
+/* ── Stats ────────────────────────────────────────────────── */
+.about-stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    background-color: var(--dark-green);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 3.5rem;
+}
+
+.about-stat {
+    text-align: center;
+}
+
+.about-stat-number {
+    font-family: "Alfa Slab One", serif;
+    font-size: 40px;
+    color: var(--mint);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+.about-stat-label {
+    font-family: "Alfa Slab One", serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--beige);
+    opacity: 0.7;
+}
+
+/* ── CTA ──────────────────────────────────────────────────── */
+.about-cta {
+    text-align: center;
+    background-color: var(--beige);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+}
+
+.about-cta-title {
+    font-family: "Alfa Slab One", serif;
+    font-size: 22px;
+    color: var(--dark-green);
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.about-cta-btn {
+    display: inline-block;
+    font-family: "Alfa Slab One", serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background-color: var(--dark-green);
+    color: var(--beige);
+    padding: 14px 36px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.about-cta-btn:hover {
+    background-color: #0a2b1f;
+    transform: translateY(-2px);
+}
