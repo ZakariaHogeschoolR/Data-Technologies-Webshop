@@ -96,7 +96,7 @@ public class ShoppingCartController(ShoppingCartService shoppingCartService, IHt
     [HttpDelete("delete/{id:int}")]
     public async Task<ActionResult> DeleteShoppingcart(int id)
     {
-        shoppingCartService.DeleteService(id);
+        await shoppingCartService.DeleteService(id);
         return NoContent();
     }
 
