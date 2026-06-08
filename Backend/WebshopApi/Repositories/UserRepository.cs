@@ -233,6 +233,7 @@ public class UserRepository : IUser
         cmd.Parameters.AddWithValue("@password", user.Password);
         cmd.Parameters.AddWithValue("@address", user.Address);
         cmd.Parameters.AddWithValue("@postcode", user.PostCode);
+        cmd.Parameters.AddWithValue("@id", user.Id);
         await cmd.ExecuteNonQueryAsync();
     }
 

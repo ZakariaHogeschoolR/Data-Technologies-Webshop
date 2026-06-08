@@ -30,7 +30,7 @@ public class OrderRepository : IOrder
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 WinkelwagenUsersId = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
-                Total = reader.GetInt32(reader.GetOrdinal("total")),
+                Total = reader.GetDecimal(reader.GetOrdinal("total")),
                 PaymentStatus = reader.GetBoolean(reader.GetOrdinal("payment_status")),
                 CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
             });
@@ -56,7 +56,7 @@ public class OrderRepository : IOrder
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 WinkelwagenUsersId = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
-                Total = reader.GetInt32(reader.GetOrdinal("total")),
+                Total = reader.GetDecimal(reader.GetOrdinal("total")),
                 PaymentStatus = reader.GetBoolean(reader.GetOrdinal("payment_status")),
                 CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
             };
@@ -82,7 +82,7 @@ public class OrderRepository : IOrder
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 WinkelwagenUsersId = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
-                Total = reader.GetInt32(reader.GetOrdinal("total")),
+                Total = reader.GetDecimal(reader.GetOrdinal("total")),
                 PaymentStatus = reader.GetBoolean(reader.GetOrdinal("payment_status")),
                 CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
             };
