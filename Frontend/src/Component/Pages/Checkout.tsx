@@ -61,7 +61,7 @@ const Checkout = () => {
 
             const order = await res.json();
 
-            setFinalOrderDate(order.orderedAt || new Date().toISOString());
+            setFinalOrderDate(order.createdAt || new Date().toISOString());
 
             setSubmitted(true);
 
