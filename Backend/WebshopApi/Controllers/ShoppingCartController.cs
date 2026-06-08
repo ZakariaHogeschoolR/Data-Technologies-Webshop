@@ -16,7 +16,7 @@ namespace WebshopApi.Controllers;
 public class ShoppingCartController(ShoppingCartService shoppingCartService, IHttpClientFactory httpClientFactory)
     : ControllerBase
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "admin")]
     [HttpGet]
     public async Task<ActionResult<List<ShoppingCarts>>> GetAllShoppingCarts()
     {
