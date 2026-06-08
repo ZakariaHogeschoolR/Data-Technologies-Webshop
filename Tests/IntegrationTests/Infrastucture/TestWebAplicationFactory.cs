@@ -15,6 +15,12 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureAppConfiguration((context, config) =>
         {
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Key"] = "test-secret-key-that-is-long-enough-32chars",
+                ["Jwt:Issuer"] = "test",
+                ["Jwt:Audience"] = "test"
+            });
             var settings = new Dictionary<string, string?>
             {
                 ["ConnectionStrings:DefaultConnection"] = _fixture.Postgres.GetConnectionString()
