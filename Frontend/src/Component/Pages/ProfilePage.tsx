@@ -21,7 +21,7 @@ type OrderItem = {
 };
 
 type Order = {
-    orderId: number; date: string; items: OrderItem[];
+    orderId: number; orderDate: string; items: OrderItem[];
 };
 
 export type ProductInfo = {
@@ -432,7 +432,7 @@ export default function ProfilePage() {
                     return (<div key={order.orderId} className="order-card">
                         <div className="order-card-header">
                             <span>Order #{order.orderId}</span>
-                            <span className="order-date">{order.date}</span>
+                            <span className="order-date">{order.orderDate}</span>
                         </div>
                         <ul className="order-items-list">
                             {order.items.map(item => {
