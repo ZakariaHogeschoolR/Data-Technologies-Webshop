@@ -221,7 +221,7 @@ public class ProductRepository : IProduct
                               to_tsquery('english', @name)
                             ) AS rank
                     FROM products
-                    WHERE to_tsvector('english', @name)
+                    WHERE to_tsvector('english', name || ' ' || description)
                           @@ to_tsquery('english', @name)
                     ORDER BY rank DESC
                     LIMIT 5";
