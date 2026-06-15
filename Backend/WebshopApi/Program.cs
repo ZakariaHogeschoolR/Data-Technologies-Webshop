@@ -11,9 +11,12 @@ using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var DefaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var AdminConnectionString = builder.Configuration.GetConnectionString("AdminConnection");
 
-builder.Services.AddSingleton(new DatabaseConnectie(connectionString));
+builder.Services.AddSingleton(new DatabaseConnectie(DefaultConnectionString));
+builder.Services.AddSingleton(new AdminDatabaseConnection(AdminConnectionString));
+builder.Services.AddSingleton<Neo4jService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<ProductCategoryRepository>();
@@ -21,7 +24,6 @@ builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<GraphRepository>();
 builder.Services.AddScoped<ShoppingCartRepository>();
-builder.Services.AddSingleton<Neo4jService>();
 builder.Services.AddScoped<UserGraphRepository>();
 builder.Services.AddScoped<WishlistRepository>();
 builder.Services.AddScoped<WishlistService>();

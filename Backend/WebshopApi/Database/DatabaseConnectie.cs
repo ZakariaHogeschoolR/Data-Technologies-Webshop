@@ -1,28 +1,18 @@
-using System.Data;
-using System.Threading.Tasks;
-
 using Npgsql;
 
 namespace ApplicationDbContext;
 
-public class DatabaseConnectie
+public class DatabaseConnectie(string connectionString)
 {
-    private readonly string _connectionString;
-    public DatabaseConnectie(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
-
     public async Task<NpgsqlConnection> GetConnection()
     {
-        var conn = new NpgsqlConnection(_connectionString);
+        var conn = new NpgsqlConnection(connectionString);
         await conn.OpenAsync();
         return conn;
-
     }
 
     public async Task TestConnectionAsync()
     {
-        using var connection = await GetConnection();
+        await using var connection = await GetConnection();
     }
 }

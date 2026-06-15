@@ -13,10 +13,10 @@ using Npgsql;
 
 public class UserRepository : IUser
 {
-    private readonly DatabaseConnectie _dbConnectie;
+    private readonly AdminDatabaseConnection _dbConnectie;
     private readonly Neo4jService _neo4j;
 
-    public UserRepository(DatabaseConnectie dbConnectie, Neo4jService neo4j)
+    public UserRepository(AdminDatabaseConnection dbConnectie, Neo4jService neo4j)
     {
         _dbConnectie = dbConnectie;
         _neo4j = neo4j;
@@ -88,14 +88,20 @@ public class UserRepository : IUser
 
     public async Task<Users?> GetUserById(int id)
     {
-        using var conn = await _dbConnectie.GetConnection();
+        await using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "SELECT * FROM users WHERE id = @id";
+        const string sql = """
+                           SELECT u.id, u.first_name, u.last_name, u.username, u.role,
+                                  p.email, p.password, p.address, p.postcode
+                           FROM public.users u
+                           JOIN pii.users_pii p ON p.user_id = u.id
+                           WHERE u.id = @id
+                           """;
 
-        using var cmd = new NpgsqlCommand(sql, conn);
+        await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
 
-        using var reader = await cmd.ExecuteReaderAsync();
+        await using var reader = await cmd.ExecuteReaderAsync();
 
         if (await reader.ReadAsync())
         {
@@ -120,7 +126,13 @@ public class UserRepository : IUser
     {
         await using var conn = await _dbConnectie.GetConnection();
 
-        const string sql = "SELECT * FROM users WHERE email = @email";
+        const string sql = """
+                           SELECT u.id, u.first_name, u.last_name, u.username, u.role,
+                                  p.email, p.password, p.address, p.postcode
+                           FROM pii.users_pii p
+                           JOIN public.users u ON u.id = p.user_id
+                           WHERE p.email = @email
+                           """;
 
         await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@email", email);
@@ -145,21 +157,44 @@ public class UserRepository : IUser
 
     public async Task AddUser(UserDto user)
     {
-        using var conn = await _dbConnectie.GetConnection();
+        await using var conn = await _dbConnectie.GetConnection();
+        await using var transaction = await conn.BeginTransactionAsync();
 
-        var sql = "INSERT INTO users (first_name, last_name, username, email, password, address, postcode, role) VALUES (@firstName, @lastName, @username, @email, @password, @address, @postcode, @role)";
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@firstName", user.FirstName);
-        cmd.Parameters.AddWithValue("@lastName", user.LastName);
-        cmd.Parameters.AddWithValue("@username", user.Username);
-        cmd.Parameters.AddWithValue("@email", user.Email);
-        cmd.Parameters.AddWithValue("@password", user.Password);
-        cmd.Parameters.AddWithValue("@address", user.Address);
-        cmd.Parameters.AddWithValue("@postcode", user.PostCode);
-        cmd.Parameters.AddWithValue("@role", "user");
-        await cmd.ExecuteNonQueryAsync();
-        Users userByEmail = await GetUserByEmail(user.Email);
-        await AddUserToGraph(user, userByEmail.Id);
+        try
+        {
+            const string coreSql = """
+                                   INSERT INTO public.users (first_name, last_name, username, role)
+                                   VALUES (@firstName, @lastName, @username, @role)
+                                   RETURNING id
+                                   """;
+            await using var coreCmd = new NpgsqlCommand(coreSql, conn, transaction);
+            coreCmd.Parameters.AddWithValue("@firstName", user.FirstName);
+            coreCmd.Parameters.AddWithValue("@lastName", user.LastName);
+            coreCmd.Parameters.AddWithValue("@username", user.Username);
+            coreCmd.Parameters.AddWithValue("@role", "user");
+            var userId = (int)(await coreCmd.ExecuteScalarAsync())!;
+
+            const string piiSql = """
+                                  INSERT INTO pii.users_pii (user_id, email, password, address, postcode)
+                                  VALUES (@userId, @email, @password, @address, @postcode)
+                                  """;
+            await using var piiCmd = new NpgsqlCommand(piiSql, conn, transaction);
+            piiCmd.Parameters.AddWithValue("@userId", userId);
+            piiCmd.Parameters.AddWithValue("@email", user.Email);
+            piiCmd.Parameters.AddWithValue("@password", user.Password);
+            piiCmd.Parameters.AddWithValue("@address", user.Address);
+            piiCmd.Parameters.AddWithValue("@postcode", user.PostCode);
+            await piiCmd.ExecuteNonQueryAsync();
+
+            await transaction.CommitAsync();
+
+            await AddUserToGraph(user, userId);
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     private async Task AddUserToGraph(UserDto user, int userId)
@@ -221,27 +256,52 @@ public class UserRepository : IUser
 
     public async Task UpdateUser(UserDto user)
     {
-        using var conn = await _dbConnectie.GetConnection();
+        await using var conn = await _dbConnectie.GetConnection();
+        await using var transaction = await conn.BeginTransactionAsync();
 
-        var sql = "UPDATE users SET first_name = @firstName, last_name = @lastName, username = @username, email = @email, password = @password, address = @address, postcode = @postcode WHERE id = @id";
+        try
+        {
+            const string coreSql = """
+                                   UPDATE public.users SET first_name = @firstName, last_name = @lastName, username = @username
+                                   WHERE id = @id
+                                   """;
 
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@firstName", user.FirstName);
-        cmd.Parameters.AddWithValue("@lastName", user.LastName);
-        cmd.Parameters.AddWithValue("@username", user.Username);
-        cmd.Parameters.AddWithValue("@email", user.Email);
-        cmd.Parameters.AddWithValue("@password", user.Password);
-        cmd.Parameters.AddWithValue("@address", user.Address);
-        cmd.Parameters.AddWithValue("@postcode", user.PostCode);
-        cmd.Parameters.AddWithValue("@id", user.Id);
-        await cmd.ExecuteNonQueryAsync();
+            await using var coreCmd = new NpgsqlCommand(coreSql, conn, transaction);
+            coreCmd.Parameters.AddWithValue("@firstName", user.FirstName);
+            coreCmd.Parameters.AddWithValue("@lastName", user.LastName);
+            coreCmd.Parameters.AddWithValue("@username", user.Username);
+            coreCmd.Parameters.AddWithValue("@id", user.Id);
+
+            await coreCmd.ExecuteNonQueryAsync();
+
+            const string piiSql = """
+                                  UPDATE pii.users_pii SET email = @email, password = @password, address = @address, postcode = @postcode
+                                  WHERE user_id = @userId
+                                  """;
+
+            await using var piiCmd = new NpgsqlCommand(piiSql, conn, transaction);
+            piiCmd.Parameters.AddWithValue("@userId", user.Id);
+            piiCmd.Parameters.AddWithValue("@email", user.Email);
+            piiCmd.Parameters.AddWithValue("@password", user.Password);
+            piiCmd.Parameters.AddWithValue("@address", user.Address);
+            piiCmd.Parameters.AddWithValue("@postcode", user.PostCode);
+
+            await piiCmd.ExecuteNonQueryAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task UpdatePassword(int id, string hashedPassword)
     {
-        using var conn = await _dbConnectie.GetConnection();
-        var sql = "UPDATE users SET password = @password WHERE id = @id";
-        using var cmd = new NpgsqlCommand(sql, conn);
+        await using var conn = await _dbConnectie.GetConnection();
+        const string sql = "UPDATE pii.users_pii SET password = @password WHERE user_id = @id";
+        await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("@id", id);
         cmd.Parameters.AddWithValue("@password", hashedPassword);
         await cmd.ExecuteNonQueryAsync();
