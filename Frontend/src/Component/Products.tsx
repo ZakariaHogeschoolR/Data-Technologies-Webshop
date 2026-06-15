@@ -14,6 +14,16 @@ type product = {
     teamId: number;
 };
 
+type Trendingproduct = {
+    id: number;
+    productImage: string;
+    name: string;
+    imageUrl: string;
+    description: string;
+    price: number;
+    teamId: number;
+};
+
 type teams = {
     id: number;
     name: string;
@@ -47,20 +57,47 @@ const Products = () => {
 
     // Trending alleen instellen bij eerste keer dat data beschikbaar is
     useEffect(() => {
+        // 1. Voorkom dubbele runs of wacht tot de teams geladen zijn
         if (trendingSet.current) return;
-        if (getProducts.length === 0) return;
+        if (getTeams.length === 0) return; 
 
-        const random = [...getProducts]
-            .sort(() => Math.random() - 0.5)
-            .slice(0, 3)
-            .map(prod => ({
-                product: prod,
-                teamName: getTeams.find(t => t.id === prod.teamId)?.name ?? 'Unknown',
-            }));
+        const fetchTrendingProducts = async () => {
+            try {
+                // 2. Fetch de echte top 3 van jouw nieuwe GraphController
+                const response = await fetch('http://localhost:5261/api/graph/trending');
+                if (!response.ok) throw new Error("Fout bij ophalen trending data");
+                
+                const trendingData = await response.json(); // Dit is de List<TrendingProductDto> uit C#
 
-        setTrendingProducts(random);
-        trendingSet.current = true;
-    }, [getProducts, getTeams]);
+                // 3. Map de data exact naar de structuur van jouw 'product' type
+                const mappedTrending = trendingData.map((trendingProd: Trendingproduct) => {
+                    // Zoek de teamnaam op uit je lokale getTeams array op basis van het meegegeven teamId
+                    const matchingTeam = getTeams.find(t => t.id === trendingProd.teamId);
+                    
+                    return {
+                        product: {
+                            id: trendingProd.id,
+                            name: trendingProd.name,
+                            price: trendingProd.price,
+                            // GEFIXT: We stoppen de imageUrl uit de API nu in de 'productImage' property
+                            productImage: trendingProd.imageUrl, 
+                            description: trendingProd.description || "",
+                            teamId: trendingProd.teamId
+                        },
+                        teamName: matchingTeam ? matchingTeam.name : 'Unknown'
+                    };
+                });
+
+                // 4. Update de state en zet de lock op true
+                setTrendingProducts(mappedTrending);
+                trendingSet.current = true;
+            } catch (error) {
+                console.error("Trending producten laden mislukt:", error);
+            }
+        };
+
+        fetchTrendingProducts();
+    }, [getTeams]);
 
     useEffect(() => {
         setRecent(GetRecentProducts());

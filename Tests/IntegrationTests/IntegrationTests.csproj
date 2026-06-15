@@ -31,6 +31,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
       <ProjectReference Include="..\Data-Technologies-Webshop\Data-Technologies-Webshop.csproj" />  
+    <None Update="Sql\rbac_setup.sql">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

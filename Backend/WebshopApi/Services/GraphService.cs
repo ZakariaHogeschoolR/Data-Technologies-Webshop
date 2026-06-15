@@ -20,4 +20,10 @@ public class GraphService : IGraphService
     }
 
     public async Task AddBulkBoughtService(BulkBoughtDto dto) => await _graphRepository.AddBulkBought(dto);
+
+    public async Task<List<TrendingProductDto>> TrendingTeamsService()
+    {
+        var Teams = await _graphRepository.TrendingProducts();
+        return Teams;
+    }
 }
