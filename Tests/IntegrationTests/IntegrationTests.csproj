@@ -30,6 +30,7 @@
     <None Update="Sql\schema.sql">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+      <ProjectReference Include="..\Data-Technologies-Webshop\Data-Technologies-Webshop.csproj" />  
   </ItemGroup>
 
 </Project>
