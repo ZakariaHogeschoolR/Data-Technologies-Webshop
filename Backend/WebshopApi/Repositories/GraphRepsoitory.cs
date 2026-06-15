@@ -2,7 +2,9 @@ using ApplicationDbContext;
 
 using DataTransferObject;
 
-public class GraphRepository
+using Neo4j.Driver;
+
+public class GraphRepository : IGraph
 {
     private readonly DatabaseConnectie _dbConnectie;
     private readonly Neo4jService _neo4j;
@@ -64,5 +66,45 @@ public class GraphRepository
             userId = dto.UserId,
             productIds = dto.ProductIds
         });
+    }
+
+    public async Task<List<TrendingProductDto>> TrendingProducts()
+    {
+        await using var session = _neo4j.CreateSession();
+
+        // MATCH dwingt af: User -> BOUGHT -> Product -> BELONGS_TO -> Team
+        const string query = """
+            MATCH (:User)-[b:BOUGHT]->(p:Product)-[:BELONGS_TO]->(t:Team)
+            RETURN
+                p.id AS id,
+                p.name AS name,
+                p.price AS price,
+                p.productImage AS imageUrl,
+                t.id AS teamId,
+                sum(b.count) AS purchases
+            ORDER BY purchases DESC
+            LIMIT 3
+            """;
+
+        var cursor = await session.RunAsync(query);
+        var products = new List<TrendingProductDto>();
+
+        while (await cursor.FetchAsync())
+        {
+            var record = cursor.Current;
+
+            products.Add(new TrendingProductDto
+            {
+                // Convert is veiliger dan .As<T>() als Neo4j strings gebruikt voor ID's
+                Id = Convert.ToInt32(record["id"]),
+                Name = record["name"].ToString(),
+                Price = Convert.ToDecimal(record["price"]),
+                ImageUrl = record["imageUrl"]?.ToString() ?? "",
+                TeamId = Convert.ToInt32(record["teamId"]), // Hier halen we t.id nu gegarandeerd binnen
+                Purchases = Convert.ToInt64(record["purchases"])
+            });
+        }
+
+        return products;
     }
 }

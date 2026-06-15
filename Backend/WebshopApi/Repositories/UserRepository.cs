@@ -11,7 +11,7 @@ using models;
 
 using Npgsql;
 
-public class UserRepository
+public class UserRepository : IUser
 {
     private readonly AdminDatabaseConnection _dbConnectie;
     private readonly Neo4jService _neo4j;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useFetch } from '../CustomHooks/GetFetchHook';
 import { useFetchSecond } from '../CustomHooks/GetFetchSecond';
@@ -9,6 +9,16 @@ type product = {
     id: number;
     productImage: string;
     name: string;
+    description: string;
+    price: number;
+    teamId: number;
+};
+
+type Trendingproduct = {
+    id: number;
+    productImage: string;
+    name: string;
+    imageUrl: string;
     description: string;
     price: number;
     teamId: number;
@@ -30,6 +40,10 @@ const Products = () => {
     const [firstId, setFirstId] = useState<number | null>(null);
     const [lastId, setLastId] = useState<number | null>(null);
 
+    // Trending teams — eenmaal gezet bij eerste load, verandert niet bij next/prev
+    const [trendingProducts, setTrendingProducts] = useState<{ product: product; teamName: string }[]>([]);
+    const trendingSet = useRef(false);
+
     useEffect(() => {
         if (data && data.length > 0) {
             setProducts(data);
@@ -40,6 +54,50 @@ const Products = () => {
             setTeams(data2);
         }
     }, [data, data2]);
+
+    // Trending alleen instellen bij eerste keer dat data beschikbaar is
+    useEffect(() => {
+        // 1. Voorkom dubbele runs of wacht tot de teams geladen zijn
+        if (trendingSet.current) return;
+        if (getTeams.length === 0) return; 
+
+        const fetchTrendingProducts = async () => {
+            try {
+                // 2. Fetch de echte top 3 van jouw nieuwe GraphController
+                const response = await fetch('http://localhost:5261/api/graph/trending');
+                if (!response.ok) throw new Error("Fout bij ophalen trending data");
+                
+                const trendingData = await response.json(); // Dit is de List<TrendingProductDto> uit C#
+
+                // 3. Map de data exact naar de structuur van jouw 'product' type
+                const mappedTrending = trendingData.map((trendingProd: Trendingproduct) => {
+                    // Zoek de teamnaam op uit je lokale getTeams array op basis van het meegegeven teamId
+                    const matchingTeam = getTeams.find(t => t.id === trendingProd.teamId);
+                    
+                    return {
+                        product: {
+                            id: trendingProd.id,
+                            name: trendingProd.name,
+                            price: trendingProd.price,
+                            // GEFIXT: We stoppen de imageUrl uit de API nu in de 'productImage' property
+                            productImage: trendingProd.imageUrl, 
+                            description: trendingProd.description || "",
+                            teamId: trendingProd.teamId
+                        },
+                        teamName: matchingTeam ? matchingTeam.name : 'Unknown'
+                    };
+                });
+
+                // 4. Update de state en zet de lock op true
+                setTrendingProducts(mappedTrending);
+                trendingSet.current = true;
+            } catch (error) {
+                console.error("Trending producten laden mislukt:", error);
+            }
+        };
+
+        fetchTrendingProducts();
+    }, [getTeams]);
 
     useEffect(() => {
         setRecent(GetRecentProducts());
@@ -64,14 +122,6 @@ const Products = () => {
         setFirstId(data[0].id);
         setLastId(data[data.length - 1].id);
     };
-
-    const productsWithTeam = [...getProducts]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
-        .map(prod => ({
-            product: prod,
-            teamName: getTeams.find(t => t.id === prod.teamId)?.name ?? 'Unknown',
-        }));
 
     if (isLoading || isLoading2) return <p style={{ padding: '2rem', color: 'var(--dark-green)', letterSpacing: '2px', fontSize: '13px' }}>Loading...</p>;
     if (error) return <p style={{ padding: '2rem', color: '#b00' }}>Error: {error}</p>;
@@ -117,7 +167,7 @@ const Products = () => {
             <div className="trending-teams-border-line" />
 
             <div className="trending-products-container">
-                {productsWithTeam.map((item) => (
+                {trendingProducts.map((item) => (
                     <Link to={`products/${item.product.id}`} className="link" key={item.product.id}>
                         <div className="Product-content">
                             <img src={item.product.productImage} className="products-ProductImage" alt={item.product.name} />

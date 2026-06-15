@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class OrderRepository
+public class OrderRepository : IOrder
 {
     private readonly DatabaseConnectie _dbConnectie;
 
@@ -30,7 +30,7 @@ public class OrderRepository
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 WinkelwagenUsersId = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
-                Total = reader.GetInt32(reader.GetOrdinal("total")),
+                Total = reader.GetDecimal(reader.GetOrdinal("total")),
                 PaymentStatus = reader.GetBoolean(reader.GetOrdinal("payment_status")),
                 CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
             });
@@ -56,7 +56,7 @@ public class OrderRepository
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 WinkelwagenUsersId = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
-                Total = reader.GetInt32(reader.GetOrdinal("total")),
+                Total = reader.GetDecimal(reader.GetOrdinal("total")),
                 PaymentStatus = reader.GetBoolean(reader.GetOrdinal("payment_status")),
                 CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
             };
@@ -82,7 +82,7 @@ public class OrderRepository
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 WinkelwagenUsersId = reader.GetInt32(reader.GetOrdinal("winkelwagen_users_id")),
-                Total = reader.GetInt32(reader.GetOrdinal("total")),
+                Total = reader.GetDecimal(reader.GetOrdinal("total")),
                 PaymentStatus = reader.GetBoolean(reader.GetOrdinal("payment_status")),
                 CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
             };
@@ -103,7 +103,7 @@ public class OrderRepository
         cmd.Parameters.AddWithValue("@winkelwagenUsersId", order.WinkelwagenUsersId);
         cmd.Parameters.AddWithValue("@total", order.Total);
         cmd.Parameters.AddWithValue("@paymentStatus", order.PaymentStatus);
-        cmd.Parameters.AddWithValue("createdAt", order.CreatedAt);
+        cmd.Parameters.AddWithValue("@createdAt", order.CreatedAt);
         await cmd.ExecuteNonQueryAsync();
     }
 
@@ -112,10 +112,10 @@ public class OrderRepository
         using var conn = await _dbConnectie.GetConnection();
 
         var sql = @"UPDATE orders
-                    SET winkelwage_users_id = @winkelwagenUsersId,
+                    SET winkelwagen_users_id = @winkelwagenUsersId,
                         total = @total,
-                        description = @description,
-                        payment_status = @paymentStatus
+                        payment_status = @paymentStatus,
+                        created_at = @createdAt
                     WHERE id = @id";
 
         using var cmd = new NpgsqlCommand(sql, conn);
@@ -123,7 +123,7 @@ public class OrderRepository
         cmd.Parameters.AddWithValue("@winkelwagenUsersId", order.WinkelwagenUsersId);
         cmd.Parameters.AddWithValue("@total", order.Total);
         cmd.Parameters.AddWithValue("@paymentStatus", order.PaymentStatus);
-        cmd.Parameters.AddWithValue("createdAt", order.CreatedAt);
+        cmd.Parameters.AddWithValue("@createdAt", order.CreatedAt);
 
         await cmd.ExecuteNonQueryAsync();
     }

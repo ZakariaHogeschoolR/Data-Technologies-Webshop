@@ -36,16 +36,6 @@ public class CategoryController : ControllerBase
         return Ok(category);
     }
 
-    [HttpGet("by-price/{price:double}")]
-    public async Task<ActionResult<Categories>> GetCategoryByPrice(double price)
-    {
-        var Category = await _categoryService.GetByPriceService(price);
-
-        if (Category == null) return NotFound($"Category with id {price} was not found.");
-
-        return Ok(Category);
-    }
-
     [HttpPost("create")]
     public async Task<ActionResult> CreateCategory([FromBody] CategoryDto category)
     {

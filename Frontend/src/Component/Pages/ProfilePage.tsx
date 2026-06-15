@@ -21,7 +21,7 @@ type OrderItem = {
 };
 
 type Order = {
-    orderId: number; date: string; items: OrderItem[];
+    orderId: number; orderDate: string; items: OrderItem[];
 };
 
 export type ProductInfo = {
@@ -432,7 +432,7 @@ export default function ProfilePage() {
                     return (<div key={order.orderId} className="order-card">
                         <div className="order-card-header">
                             <span>Order #{order.orderId}</span>
-                            <span className="order-date">{order.date}</span>
+                            <span className="order-date">{order.orderDate}</span>
                         </div>
                         <ul className="order-items-list">
                             {order.items.map(item => {
@@ -460,35 +460,52 @@ export default function ProfilePage() {
                 })}
             </div>)}
         </div>)}
-        {tab === `wishlists` && (<div className={`profile-card`}>
-            <p className={`profile-section-title`}>Wishlists:</p>
-            <form onSubmit={handleCreateEmptyWishlist}>
-                <div>
-                    <input type={`text`} placeholder={`Make a new wishlist`}
-                    value={newWishlistName}
-                    onChange={(e) => setNewWishlistName(e.target.value)}
-                    disabled={isSubmitting}/>
-                    <button type={`submit`}
-                    disabled={isSubmitting}>{isSubmitting ? `Create...`:`Create`}</button>
-                </div>
-                {formError && <p>{formError}</p>}
-            </form>
-            {wishlists.length === 0 ? (
-                `no wishlist made. make a wishlist to find it here`
-            ) : (
-                <ul style={{listStyle: `none`}}>
-                    {wishlists.filter((wishlists, index, self) =>
-                    self.findIndex(w => w.name === wishlists.name) === index)
-                    .map((wishlist) => (
-                    <li id={`${wishlist.id}`}><Link
-                    key={wishlist.id}
-                    to={`/wishlist/${wishlist.id}`}
-                    state={{allWishlist: wishlists, currentName: wishlist.name}}
-                    className={`wishlistLinkItem`}>
-                        Name: {wishlist.name}
-                        </Link></li>
-                ))}</ul>
-            )}
-        </div>)}
+        {tab === 'wishlists' && (
+            <div className="profile-card">
+                <p className="profile-section-title">My Wishlists</p>
+
+                <form onSubmit={handleCreateEmptyWishlist} className="wishlist-create-form">
+                    <div className="wishlist-create-row">
+                        <input
+                            type="text"
+                            placeholder="New wishlist name..."
+                            value={newWishlistName}
+                            onChange={(e) => setNewWishlistName(e.target.value)}
+                            disabled={isSubmitting}
+                            className="wishlist-input"
+                        />
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="wishlist-create-btn"
+                        >
+                            {isSubmitting ? 'Creating...' : '+ Create'}
+                        </button>
+                    </div>
+                    {formError && <p className="profile-error" style={{ marginTop: '0.5rem' }}>{formError}</p>}
+                </form>
+
+                {wishlists.length === 0 ? (
+                    <p className="order-empty">No wishlists yet. Create one above!</p>
+                ) : (
+                    <div className="wishlist-list">
+                        {wishlists
+                            .filter((w, index, self) => self.findIndex(x => x.name === w.name) === index)
+                            .map((wishlist) => (
+                                <Link
+                                    key={wishlist.id}
+                                    to={`/wishlist/${wishlist.id}`}
+                                    state={{ allWishlist: wishlists, currentName: wishlist.name }}
+                                    className="wishlist-card"
+                                >
+                                    <span className="wishlist-card-icon">♡</span>
+                                    <span className="wishlist-card-name">{wishlist.name}</span>
+                                    <span className="wishlist-card-arrow">→</span>
+                                </Link>
+                            ))}
+                    </div>
+                )}
+            </div>
+        )}
     </div>);
 }

@@ -6,7 +6,7 @@ using models;
 
 using Npgsql;
 
-public class ProductRepository
+public class ProductRepository : IProduct
 {
     private readonly DatabaseConnectie _dbConnectie;
     private readonly Neo4jService _neo4j;
@@ -276,9 +276,11 @@ public class ProductRepository
     {
         var result = new List<object>();
         using var conn = await _dbConnectie.GetConnection();
-        var sql = @"SELECT p.name, SUM(w.quantity) as total_sold
-                    FROM winkelwagen w
-                    JOIN products p ON w.product_id = p.id
+        var sql = @"SELECT p.name, SUM(oi.quantity) as total_sold
+                    FROM order_items oi
+                    JOIN products p ON oi.product_id = p.id
+                    JOIN orders o ON oi.order_id = o.id
+                    WHERE o.payment_status = TRUE
                     GROUP BY p.name
                     ORDER BY total_sold DESC
                     LIMIT 5";

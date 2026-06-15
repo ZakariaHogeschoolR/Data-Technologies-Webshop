@@ -3,6 +3,9 @@ name: CI Pipeline
 on:
   push:
 
+permissions:
+    contents: write
+
 jobs:
 
   format:
@@ -51,10 +54,12 @@ jobs:
             nuget-${{ runner.os }}
 
       - name: Restore Dependencies
-        run: dotnet restore Backend/WebshopApi/WebshopApi.csproj
+        run: |
+            dotnet restore Backend/WebshopApi/WebshopApi.csproj
+            dotnet restore Tests/IntegrationTests/IntegrationTests.csproj
 
       - name: Run Backend Tests
-        run: dotnet test Backend/ --no-restore --verbosity normal
+        run: dotnet test Tests/IntegrationTests/IntegrationTests.csproj --no-restore --verbosity normal
         continue-on-error: true
 
   build:
@@ -87,7 +92,7 @@ jobs:
       - name: Build and Save Log
         working-directory: Backend/WebshopApi
         # > build-report.txt
-        run: dotnet build WebshopApi.csproj --no-restore
+        run: dotnet build WebshopApi.csproj --no-restore | tee build-report.txt
 
       - name: check for vulnerable packages and save log
         # met true aan het einde, gaat de pipeline door met kwatsbaarheden
