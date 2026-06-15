@@ -11,25 +11,36 @@ using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var DefaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var AdminConnectionString = builder.Configuration.GetConnectionString("AdminConnection");
 
-builder.Services.AddSingleton(new DatabaseConnectie(connectionString));
+builder.Services.AddSingleton(new DatabaseConnectie(DefaultConnectionString));
+builder.Services.AddSingleton(new AdminDatabaseConnection(AdminConnectionString));
+builder.Services.AddSingleton<Neo4jService>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<ProductCategoryRepository>();
 builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<GraphRepository>();
 builder.Services.AddScoped<ShoppingCartRepository>();
+builder.Services.AddScoped<UserGraphRepository>();
 builder.Services.AddScoped<WishlistRepository>();
 builder.Services.AddScoped<WishlistService>();
 builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddScoped<ProductCategoryService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<GraphService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<TeamRepository>();
 builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<ScraperService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<PasswordResetRepository>();
+builder.Services.AddScoped<PasswordResetService>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddCors(options =>
 {
@@ -60,6 +71,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
+
+builder.Services.AddHttpClient();
 
 builder.Services.AddAuthorization();
 
@@ -104,3 +117,5 @@ app.MapPost("/scrape", async (ScraperService scraperService) =>
 }).WithOpenApi();
 
 app.Run();
+
+public partial class Program;// for integration tests

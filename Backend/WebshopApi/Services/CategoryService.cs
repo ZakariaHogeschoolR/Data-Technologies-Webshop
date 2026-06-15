@@ -1,10 +1,12 @@
+using System.Linq;
+
 using DataTransferObject;
 
 using models;
 
 namespace Service;
 
-public class CategoryService
+public class CategoryService : ICategoryService
 {
     private readonly CategoryRepository _categoryRepository;
 
@@ -13,27 +15,15 @@ public class CategoryService
         _categoryRepository = categoryRepository;
     }
 
+
     public async Task<List<Categories>> GetAllService()
     {
-        Task<List<Categories?>> category = _categoryRepository.GetAllCategories();
-        return await category;
+        return await _categoryRepository.GetAllCategories();
     }
 
     public async Task<Categories> GetByIdService(int id)
     {
         Task<Categories?> category = _categoryRepository.GetCategoryById(id);
-        return await category;
-    }
-
-    public async Task<List<Categories>> GetByPriceService(double price)
-    {
-        Task<List<Categories?>> category = _categoryRepository.GetCategoryByPrice(price);
-        return await category;
-    }
-
-    public async Task<List<Categories>> GetByNameService(string name)
-    {
-        Task<List<Categories?>> category = _categoryRepository.GetCategoryByTeam(name);
         return await category;
     }
 

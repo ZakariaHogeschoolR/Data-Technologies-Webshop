@@ -4,7 +4,7 @@ using models;
 
 namespace Service;
 
-public class ProductService
+public class ProductService : IProductService
 {
     private readonly ProductRepository _productRepository;
 
@@ -43,6 +43,11 @@ public class ProductService
         return await products;
     }
 
+    public async Task<List<Products>> GetAllServiceAdminPaged(int page, int pageSize)
+    {
+        return await _productRepository.GetAllProductsAdminPaged(page, pageSize);
+    }
+
     public async Task<List<Products>> SearchProductsByName(string name)
     {
         Task<List<Products>> products = _productRepository.SearchProductsByName(name);
@@ -67,9 +72,29 @@ public class ProductService
         return await product;
     }
 
+    public async Task<List<Products>> GetProductsByCategoriesService(List<int> categoryIds, int page, int pageSize)
+    {
+        return await _productRepository.GetProductsByCategories(categoryIds, page, pageSize);
+    }
+
+    public async Task<List<object>> GetTopProductsService()
+    {
+        return await _productRepository.GetTopProducts();
+    }
+
+    public async Task AddProductCategoryService(int productId, int categoryId)
+    {
+        await _productRepository.AddProductCategory(productId, categoryId);
+    }
+
     public async Task CreateService(ProductDto product)
     {
         await _productRepository.AddProduct(product);
+    }
+
+    public async Task<int> CreateServiceReturnId(ProductDto product)
+    {
+        return await _productRepository.AddProductScrape(product);
     }
 
     public async Task UpdateService(ProductDto product)
@@ -77,8 +102,15 @@ public class ProductService
         await _productRepository.UpdateProduct(product);
     }
 
+    public async Task UpdatePriceService(int id, decimal price)
+    {
+        await _productRepository.UpdatePrice(id, price);
+    }
+
     public async Task DeleteService(int id)
     {
         await _productRepository.DeleteProduct(id);
     }
+
+
 }

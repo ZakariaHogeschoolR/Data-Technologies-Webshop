@@ -1,118 +1,220 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from 'react-router-dom';
 import { useFetch } from '../CustomHooks/GetFetchHook';
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
 import NotFound from '../Component/Pages/NotFound';
 import '../Styles/ProductDetail.css';
-import { AddRecentProducts } from "./storage/recentProducts";
-import { useEffect } from "react";
+import { AddRecentProducts } from './storage/recentProducts';
+import AddToWishlistButton from './AddToWishlist';
 
-type product =
-{
+const API = 'http://localhost:5261/api';
+
+type product = {
     id: number;
     productImage: string;
     name: string;
     description: string;
     price: number;
     teamId: number;
-}
+};
 
 const ProductDetail = () => {
     const { id } = useParams();
-    const { data, isLoading, error } = useFetch<product>({ url: `http://localhost:5261/api/Product/${id}` });
+    const { data, isLoading, error } = useFetch<product>({ url: `${API}/Product/${id}` });
     const [productsByTeam, setProductsByTeam] = useState<product[]>([]);
-    const token = localStorage.getItem(`token`)
+    const [recommendationResponse, setRecommendedProducts] = useState<product[]>([]);
+    const [recommandedVisible, setRecommandedVisible] = useState<boolean>(true);
+    const [quantity, setQuantity] = useState<number>(1);
+    const token = localStorage.getItem('token');
 
-    const [quantity, setQuantity] = useState(1)
-
-    async function AddToWinkelwagen(){
-        // console.log(quantity)
-        // const { id } = useParams();
-        if(!token){
-            alert(`Log in eerst om producten toe te voegen`)
+    async function AddToWinkelwagen() {
+        if (!token) {
+            alert('Log in eerst om producten toe te voegen');
             return;
         }
+        try {
+            const response = await fetch(`${API}/ShoppingCart/create`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                method: 'POST',
+                body: JSON.stringify({ productId: id, quantity }),
+            });
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Server fout: ${response.status} - ${errorData}`);
+            }
+            alert('Product toegevoegd aan winkelwagen');
 
-        try{
-            const response = await fetch(`http://localhost:5261/api/ShoppingCart/create`, { headers:{
-                "Content-Type" : "application/json",
-                "Accept" : "application/json",
-                "Authorization": `Bearer ${token}`
-            }, method: `POST`,
-            body: JSON.stringify({
-                // id: id,
-                productId : id,
-                quantity: quantity,
-                // createdAt: new Date().toISOString(),
-                // updatedAt: new Date().toISOString(),
-            })
-        })
-        if(!response.ok){
-            const errorData = await response.text();
-            throw new Error(`Server fout: ${response.status} - ${errorData}`)
+            const recResponse = await fetch(`${API}/User/recommended`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (recResponse.ok) {
+                const recommendations = await recResponse.json();
+                setRecommendedProducts(recommendations);
+                setRecommandedVisible(true);
+            }
+        } catch (e) {
+            console.log(`Something went wrong: ${e}`);
         }
-        const json = await response.json();
-        console.log(json);
-        alert(`product toegevoegd aan winkelwagen`)
     }
-    catch(e){
-        console.log(`Something went wrong: ${e}`)
+
+    async function AddToWinkelwagenRecommended(prodId: number) {
+        if (!token) {
+            alert('Log in eerst om producten toe te voegen');
+            return;
+        }
+        try {
+            const response = await fetch(`${API}/ShoppingCart/create`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                method: 'POST',
+                body: JSON.stringify({ productId: prodId, quantity }),
+            });
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Server fout: ${response.status} - ${errorData}`);
+            }
+            alert('Product toegevoegd aan winkelwagen');
+        } catch (e) {
+            console.log(`Something went wrong: ${e}`);
+        }
     }
-}
+
     useEffect(() => {
-        if(data )
-            {
-                AddRecentProducts(data);
-            fetch(`http://localhost:5261/api/Product/team/${data.teamId}`)
-            .then(res => res.json())
-            .then(result => {
-                console.log("teamId:", data.teamId);
-                console.log("API result:", result);
-                setProductsByTeam(result);
-            })
-            .catch(err => console.log("Fetch error:", err));
+        if (data) {
+            AddRecentProducts(data);
+            fetch(`${API}/Product/team/${data.teamId}`)
+                .then((res) => res.json())
+                .then((result) => setProductsByTeam(result))
+                .catch((err) => console.log('Fetch error:', err));
         }
     }, [data]);
-    if (isLoading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
-    if (error || !data) {
-        return <NotFound />;
-    }
+
+    if (isLoading) return <p style={{ padding: '2rem', color: 'var(--dark-green)' }}>Loading...</p>;
+    if (error || !data) return <NotFound />;
+
     return (
-        <>
-            <p className="product-id-content">PRODUCT {id}</p>
-            <section className="product-border-line"></section>
-            <div className="Addtowinkelwagenwindow">
-                <p>Add quantity to Shoppingcart:</p>
-                <input id="quantity" type="number" min={1} max={11} onChange={(e) => setQuantity(parseInt(e.target.value))}/>
-                <button onClick={AddToWinkelwagen} value={`Submit`}>Submit</button>
-            </div>
+        <div className="product-page">
+            <p className="product-id-content">Product {id}</p>
+            <div className="product-border-line" />
+
+            {/* Main product card */}
             <div className="product-container">
+                {/* Image */}
                 <div className="product-content">
-                    <img src={data.productImage} className="product-img-content"/> 
+                    <img src={data.productImage} className="product-img-content" alt={data.name} />
                 </div>
+
+                {/* Info + Add to cart */}
                 <div className="Costimizing-section">
-                    <p className="Costimizing-Color">COLOR: </p>
-                    <p className="Costimizing-Size">SIZE: </p>
-                    <p className="Costomizing-Quantity">QUANTITY: </p>
+                    <p className="product-label">Naam</p>
+                    <h1 className="name">{data.name}</h1>
+
+                    <p className="product-label">Prijs</p>
+                    <p className="price">€ {data.price}</p>
+
+                    <p className="product-label">Aantal</p>
+                    <div className="Addtowinkelwagenwindow">
+                        <input
+                            className="quantity-input"
+                            id="quantity"
+                            type="number"
+                            min={1}
+                            max={11}
+                            value={quantity}
+                            onChange={(e) => {
+                                const v = parseInt(e.target.value);
+                                setQuantity(v > 11 ? 11 : v < 1 ? 1 : v);
+                            }}
+                        />
+                        <button className="quantity-button" onClick={AddToWinkelwagen}>
+                            Toevoegen
+                        </button>
+                    </div>
+
+                    {/* Wishlist button — nu onder de toevoegen knop */}
+                    {token && (
+                        <div style={{ marginTop: '1rem' }}>
+                            <AddToWishlistButton productId={Number.parseInt(id!)} />
+                        </div>
+                    )}
                 </div>
             </div>
-            <p className="you-may-also-like-p-tag">You may also like</p>
-            <section className="border-line-may-also-like"></section>
-            <div className="Products-Team-Container">
-                {productsByTeam.map(prod => (
-                    <Link to={`/products/${prod.id}`} className="link">
-                        <div className="Product-Team-content">
-                            <img src={prod.productImage} className="products-Team-ProductImage"/>
-                            <p className="products-Team-Name">{prod.name}</p>
-                            {/* <p className="products-Team-Description">{prod.description}</p> */}
-                            <p className="products-Team-Price-p-tag">{prod.price}</p>
+
+            {/* You may also like */}
+            {productsByTeam.length > 0 && (
+                <>
+                    <p className="you-may-also-like-p-tag">You may also like</p>
+                    <div className="border-line-may-also-like" />
+                    <div className="Products-Team-Container">
+                        {productsByTeam.map((prod) => (
+                            <Link to={`/products/${prod.id}`} key={prod.id} className="link">
+                                <div className="Product-Team-content">
+                                    <img
+                                        src={prod.productImage}
+                                        className="products-Team-ProductImage"
+                                        alt={prod.name}
+                                    />
+                                    <p className="products-Team-Name">{prod.name}</p>
+                                    <p className="products-Team-Price-p-tag">€ {prod.price}</p>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                    <div className="border-line-may-also-like-end" />
+                </>
+            )}
+
+            {/* Recommendations popup */}
+            {recommendationResponse.length > 0 && recommandedVisible && (
+                <div className="rec-container">
+                    <div className="rec-header">
+                        <p className="rec-title">Aanbevolen</p>
+                        <button className="cross-button" onClick={() => setRecommandedVisible(false)}>
+                            ✕
+                        </button>
+                    </div>
+                    {recommendationResponse.map((prod) => (
+                        <div key={prod.id} className="Product-Team-content-rec">
+                            <img
+                                src={prod.productImage}
+                                className="products-Team-ProductImage-rec"
+                                alt={prod.name}
+                            />
+                            <div className="rec-item-info">
+                                <p className="products-Team-Name-rec">{prod.name}</p>
+                                <p className="products-Team-Price-p-tag-rec">€ {prod.price}</p>
+                            </div>
+                            <div className="Addtowinkelwagenwindow-rec">
+                                <input
+                                    className="quantity-input-rec"
+                                    type="number"
+                                    min={1}
+                                    max={11}
+                                    defaultValue={1}
+                                    onChange={(e) => {
+                                        const v = parseInt(e.target.value);
+                                        setQuantity(v > 11 ? 11 : v < 1 ? 1 : v);
+                                    }}
+                                />
+                                <button
+                                    className="quantity-button-rec"
+                                    onClick={() => AddToWinkelwagenRecommended(prod.id)}
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
-                    </Link>
-                ))}
-            </div>
-            <section className="border-line-may-also-like-end"></section>
-        </>
+                    ))}
+                </div>
+            )}
+        </div>
     );
-}
+};
+
 export default ProductDetail;

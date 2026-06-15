@@ -1,33 +1,28 @@
-import { useParams, useLocation} from "react-router-dom";
+import { useParams, useLocation, Link } from 'react-router-dom';
 import { useFetch } from '../CustomHooks/GetFetchHook';
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
 import NotFound from '../Component/Pages/NotFound';
-import '../Styles/ProductDetail.css';
-import { useEffect } from "react";
+import '../Styles/Product.css';
 
-type product =
-{
+type product = {
     id: number;
     productImage: string;
     name: string;
     description: string;
     price: number;
     teamId: number;
-}
-
+};
 
 const CategoryDetail = () => {
     const location = useLocation();
-
-    const CTname = location.state?.categoryName || "Category";
+    const CTname = location.state?.categoryName || 'Category';
     const [getProducts, setProducts] = useState<product[]>([]);
     const { id } = useParams();
     const [firstId, setFirstId] = useState<number | null>(null);
     const [lastId, setLastId] = useState<number | null>(null);
-    console.log(id);
+
     const { data, isLoading, error } = useFetch<product[]>({
-        url: `http://localhost:5261/api/ProductCategory/${id}`
+        url: `http://localhost:5261/api/ProductCategory/${id}`,
     });
 
     useEffect(() => {
@@ -38,16 +33,13 @@ const CategoryDetail = () => {
         }
     }, [data]);
 
-    if (isLoading) return <p>Loading...</p>;
-    if (error || !data) return <NotFound />;
     const handleNext = async () => {
         if (!lastId) return;
-
-        const res = await fetch(`http://localhost:5261/api/ProductCategory/next?categoryId=${id}&lastId=${lastId}`);
+        const res = await fetch(
+            `http://localhost:5261/api/ProductCategory/next?categoryId=${id}&lastId=${lastId}`
+        );
         const data = await res.json();
-
-        if (data.length === 0) return; // geen volgende pagina
-
+        if (data.length === 0) return;
         setProducts(data);
         setFirstId(data[0].id);
         setLastId(data[data.length - 1].id);
@@ -55,36 +47,47 @@ const CategoryDetail = () => {
 
     const handlePrev = async () => {
         if (!firstId) return;
-
-        const res = await fetch(`http://localhost:5261/api/ProductCategory/prev?categoryId=${id}&firstId=${firstId}`);
+        const res = await fetch(
+            `http://localhost:5261/api/ProductCategory/prev?categoryId=${id}&firstId=${firstId}`
+        );
         const data = await res.json();
-
-        if (data.length === 0) return; // geen vorige pagina
-
+        if (data.length === 0) return;
         setProducts(data);
         setFirstId(data[0].id);
         setLastId(data[data.length - 1].id);
     };
+
+    if (isLoading) return <p style={{ padding: '2rem', color: 'var(--dark-green)', letterSpacing: '2px', fontSize: '13px' }}>Loading...</p>;
+    if (error || !data) return <NotFound />;
+
     return (
         <>
             <p className="recent">{CTname.toUpperCase()}</p>
-            <section className="recent-border-line"></section>
+            <div className="recent-border-line" />
+
             <div className="Products-Container">
-                {getProducts.map(prod => (
+                {getProducts.map((prod) => (
                     <Link key={prod.id} to={`/products/${prod.id}`} className="link">
                         <div className="Product-content">
-                            <img src={prod.productImage} className="products-ProductImage"/>
+                            <img
+                                src={prod.productImage}
+                                className="products-ProductImage"
+                                alt={prod.name}
+                            />
                             <p className="products-Name">{prod.name}</p>
-                            {/* <p className="products-Description">{prod.description}</p> */}
-                            <p className="products-Price-p-tag">{prod.price}</p>
                         </div>
                     </Link>
                 ))}
             </div>
-            <button className="prev-button" onClick={handlePrev}>Prev</button>
-            <button className="next-button" onClick={handleNext}>Next</button>
-            <section className="product-content-border-line"></section>
+
+            <div className="pagination-row">
+                <button className="prev-button" onClick={handlePrev}>← Prev</button>
+                <button className="next-button" onClick={handleNext}>Next →</button>
+            </div>
+
+            <div className="product-content-border-line" />
         </>
     );
-} 
+};
+
 export default CategoryDetail;

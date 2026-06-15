@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import { Link } from 'react-router-dom';
 import '../../Styles/Auth.css';
 
 const API = 'http://localhost:5261/api/Auth';
@@ -142,6 +143,11 @@ const Auth = () => {
                     <button className="auth-submit" type="submit" disabled={loading}>
                         {loading ? 'Logging in...' : 'Log In'}
                     </button>
+                    <div style={{ textAlign: "right", marginTop: "8px" }}>
+                        <a href="/#/forgot-password" style={{ fontSize: "12px", color: "var(--dark-green)" }}>
+                            Forgot Password?
+                        </a>
+                    </div>
                 </form>)}
 
                 {tab === 'register' && (<form className="auth-form" onSubmit={handleRegister}>

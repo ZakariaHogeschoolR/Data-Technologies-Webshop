@@ -1,15 +1,44 @@
-.NotFound-container{
+.NotFound-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    min-height: 60vh;
     text-align: center;
-    margin-top: 100px;
-    margin-left: 500px;
-    padding-top: 100px;
-    padding-left: 0px; 
-    height: 300px;
-    width: 500px;
-    border-radius: 20px;;
-    background-color: var(--beige);
+    gap: 1rem;
+}
+
+.NotFound-code {
+    font-family: "Alfa Slab One", serif;
+    font-size: 72px;
     color: var(--mint);
-    font-size: 50px;
-    z-index: 99;
+    letter-spacing: 6px;
+    line-height: 1;
+}
+
+.NotFound-message {
+    font-family: "Alfa Slab One", serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--dark-green);
+}
+
+.NotFound-link {
+    margin-top: 1rem;
+    display: inline-block;
+    font-family: "Alfa Slab One", serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background-color: var(--dark-green);
+    color: var(--beige);
+    padding: 10px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.NotFound-link:hover {
+    background-color: #0a2b1f;
 }

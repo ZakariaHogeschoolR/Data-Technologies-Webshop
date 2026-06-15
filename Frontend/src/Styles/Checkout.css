@@ -1,0 +1,270 @@
+.checkout-page {
+    min-height: 80vh;
+    padding: 2rem 2rem 6rem;
+    background-color: var(--mint);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.checkout-layout {
+    display: flex;
+    gap: 2rem;
+    max-width: 1100px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.checkout-summary {
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--beige);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(15, 61, 46, 0.1);
+}
+
+.checkout-section-title {
+    font-family: "Alfa Slab One", serif;
+    font-size: 18px;
+    color: var(--dark-green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.checkout-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.checkout-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background-color: var(--white);
+    border-radius: 10px;
+}
+
+.checkout-item-img {
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: var(--beige);
+    flex-shrink: 0;
+}
+
+.checkout-item-info {
+    flex: 1;
+}
+
+.checkout-item-name {
+    font-size: 13px;
+    color: var(--dark-green);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.checkout-item-qty {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+}
+
+.checkout-item-price {
+    font-size: 14px;
+    color: var(--dark-green);
+    flex-shrink: 0;
+}
+
+.checkout-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 2px solid var(--mint);
+    font-size: 16px;
+    color: var(--dark-green);
+}
+
+.checkout-total-row strong {
+    font-size: 20px;
+}
+
+.checkout-empty {
+    color: #aaa;
+    font-size: 13px;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.checkout-form {
+    flex: 1.2;
+    min-width: 320px;
+    background-color: var(--beige);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(15, 61, 46, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation: slideUp 0.35s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.checkout-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.checkout-field label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mint);
+}
+
+.checkout-field input {
+    padding: 12px 14px;
+    background-color: var(--white);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 13px;
+    color: var(--dark-green);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.checkout-field input:focus {
+    border-color: var(--mint);
+}
+
+.checkout-field input::placeholder {
+    color: #bbb;
+    font-size: 12px;
+}
+
+.checkout-readonly {
+    background-color: #f0f0f0 !important;
+    cursor: default;
+    color: var(--dark-green) !important;
+}
+
+.checkout-row {
+    display: flex;
+    gap: 12px;
+}
+
+.checkout-row .checkout-field {
+    flex: 1;
+}
+
+.checkout-row .checkout-field-wide {
+    flex: 2;
+}
+
+.checkout-divider {
+    height: 2px;
+    background-color: var(--mint);
+    border-radius: 2px;
+    margin: 0.4rem 0;
+}
+
+.checkout-btn {
+    margin-top: 0.5rem;
+    padding: 16px;
+    background-color: var(--dark-green);
+    color: var(--beige);
+    border: none;
+    border-radius: 10px;
+    font-family: "Alfa Slab One", serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.checkout-btn:hover {
+    background-color: #0a2b1f;
+    transform: translateY(-1px);
+}
+
+.checkout-btn:active {
+    transform: translateY(0);
+}
+
+.checkout-success {
+    background-color: var(--beige);
+    border-radius: 20px;
+    padding: 3rem 4rem;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(15, 61, 46, 0.12);
+    animation: slideUp 0.4s ease;
+    max-width: 500px;
+    width: 100%;
+}
+
+.checkout-success-icon {
+    width: 70px;
+    height: 70px;
+    background-color: var(--mint);
+    color: var(--dark-green);
+    border-radius: 50%;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.checkout-success h2 {
+    font-family: "Alfa Slab One", serif;
+    font-size: 24px;
+    color: var(--dark-green);
+    margin-bottom: 0.8rem;
+    letter-spacing: 2px;
+}
+
+.checkout-success p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.checkout-success strong {
+    color: var(--dark-green);
+}
+
+.checkout-success-date {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+.checkout-success-total {
+    font-size: 18px;
+    color: var(--dark-green);
+    margin: 1rem 0 1.5rem;
+}

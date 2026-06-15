@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import '../../Styles/Profile.css';
+import WishlistDetail from './WishlistDetail';
 
 const API = 'http://localhost:5261/api';
 
@@ -20,14 +21,21 @@ type OrderItem = {
 };
 
 type Order = {
-    orderId: number; date: string; items: OrderItem[];
+    orderId: number; orderDate: string; items: OrderItem[];
 };
 
-type ProductInfo = {
+export type ProductInfo = {
     id: number; name: string; productImage: string; price: number;
 };
 
-type Tab = 'profile' | 'password' | 'orders';
+export type Wishlist = {
+    id: number,
+    name: string;
+    userid: number;
+    productid: number;
+}
+
+type Tab = 'profile' | 'password' | 'orders' | `wishlists`;
 
 export default function ProfilePage() {
     const navigate = useNavigate();
@@ -51,6 +59,72 @@ export default function ProfilePage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [productMap, setProductMap] = useState<Record<number, ProductInfo>>({});
     const [ordersLoading, setOrdersLoading] = useState(false);
+
+    const [wishlists, setWislists] = useState<Wishlist[]>([]);
+    const [newWishlistName, setNewWishlistName] = useState(``)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [formError, setFormError] = useState(``)
+
+    async function handleCreateEmptyWishlist(e: React.FormEvent) {
+        e.preventDefault()
+        setFormError(``)
+
+        if(!newWishlistName.trim()){
+            setFormError(`naam is verplicht`)
+            return;
+        }
+        try{
+            setIsSubmitting(true)
+
+            const token = localStorage.getItem(`token`)
+
+            const response = await fetch(`${API}/Wishlist/create`, {
+                method: `POST`,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization" : `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: newWishlistName.trim(),
+                    productId: null
+                })
+            })
+            if(!response.ok){
+                if(response.status == 401) throw new Error(`je ben niet ingelogd`)
+                throw new Error(`wishlist creation failure`)
+            }
+            const CreatedWishlist = await response.json()
+
+            setWislists([...wishlists, CreatedWishlist])
+            setNewWishlistName(``)
+        }
+        catch(e: any){
+            setFormError(e.message || `err ging iets mis`)
+        }
+        finally{
+            setIsSubmitting(false)
+        }
+}
+
+    useEffect(() => {
+        if(!token) return;
+
+        async function GetWishLists(){
+            try {
+                const query = API + `/Wishlist/mine`
+                const reponse = await fetch(query, {headers: {Authorization: `Bearer ${token}`}})
+                if (!reponse.ok) throw new Error(`failed to load wishlists`)
+                const data : Wishlist[] = await reponse.json()
+                console.log(data)
+                setWislists(data)
+            }
+            catch{
+                setMsg({type: `error`, text: `could not load wishlists`})
+            }
+        }
+        GetWishLists()
+    }, [token])
+
 
     useEffect(() => {
         if (!token) navigate('/auth');
@@ -182,12 +256,12 @@ export default function ProfilePage() {
         <h1 className="profile-heading">My Account</h1>
 
         <div className="profile-tabs">
-            {(['profile', 'password', 'orders'] as Tab[]).map(t => (<button
+            {(['profile', 'password', 'orders', `wishlists`] as Tab[]).map(t => (<button
                 key={t}
                 className={`profile-tab ${tab === t ? 'active' : ''}`}
                 onClick={() => handleTabSwitch(t)}
             >
-                {t === 'profile' ? 'Profile' : t === 'password' ? 'Password' : 'Order History'}
+                {t === 'profile' ? 'Profile' : t === 'password' ? 'Password' : t === `wishlists` ? `Wishlists`: 'Order History'}
             </button>))}
         </div>
 
@@ -358,7 +432,7 @@ export default function ProfilePage() {
                     return (<div key={order.orderId} className="order-card">
                         <div className="order-card-header">
                             <span>Order #{order.orderId}</span>
-                            <span className="order-date">{order.date}</span>
+                            <span className="order-date">{order.orderDate}</span>
                         </div>
                         <ul className="order-items-list">
                             {order.items.map(item => {
@@ -386,5 +460,52 @@ export default function ProfilePage() {
                 })}
             </div>)}
         </div>)}
+        {tab === 'wishlists' && (
+            <div className="profile-card">
+                <p className="profile-section-title">My Wishlists</p>
+
+                <form onSubmit={handleCreateEmptyWishlist} className="wishlist-create-form">
+                    <div className="wishlist-create-row">
+                        <input
+                            type="text"
+                            placeholder="New wishlist name..."
+                            value={newWishlistName}
+                            onChange={(e) => setNewWishlistName(e.target.value)}
+                            disabled={isSubmitting}
+                            className="wishlist-input"
+                        />
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="wishlist-create-btn"
+                        >
+                            {isSubmitting ? 'Creating...' : '+ Create'}
+                        </button>
+                    </div>
+                    {formError && <p className="profile-error" style={{ marginTop: '0.5rem' }}>{formError}</p>}
+                </form>
+
+                {wishlists.length === 0 ? (
+                    <p className="order-empty">No wishlists yet. Create one above!</p>
+                ) : (
+                    <div className="wishlist-list">
+                        {wishlists
+                            .filter((w, index, self) => self.findIndex(x => x.name === w.name) === index)
+                            .map((wishlist) => (
+                                <Link
+                                    key={wishlist.id}
+                                    to={`/wishlist/${wishlist.id}`}
+                                    state={{ allWishlist: wishlists, currentName: wishlist.name }}
+                                    className="wishlist-card"
+                                >
+                                    <span className="wishlist-card-icon">♡</span>
+                                    <span className="wishlist-card-name">{wishlist.name}</span>
+                                    <span className="wishlist-card-arrow">→</span>
+                                </Link>
+                            ))}
+                    </div>
+                )}
+            </div>
+        )}
     </div>);
 }

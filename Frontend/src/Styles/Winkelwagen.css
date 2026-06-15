@@ -1,18 +1,157 @@
-.Winkelwagen_container{
-    background-color: beige;
-    border-radius: 0.5rem;
-    position: relative;
-    justify-self: center;
+/* ── Page wrapper ─────────────────────────────────────────── */
+.Winkelwagen_container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2rem 6rem;
 }
-.items-lijst ul{
+
+.Winkelwagen_container h1 {
+    font-family: "Alfa Slab One", serif;
+    font-size: 24px;
+    color: var(--dark-green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+
+/* ── Layout: items left, payment right ───────────────────── */
+.cart-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.items-lijst {
+    flex: 1;
+    min-width: 0;
+}
+
+.items-lijst ul {
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
-.items-lijst ul li{
-    padding: 0.5rem;
+
+/* ── Cart Item Card ───────────────────────────────────────── */
+.winkelwagen-container-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--beige);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 12px rgba(15, 61, 46, 0.06);
+    transition: box-shadow 0.2s;
 }
-.items-lijst ul li img{
-    border-radius: 0.5rem;
+
+.winkelwagen-container-item:hover {
+    box-shadow: 0 4px 20px rgba(15, 61, 46, 0.1);
 }
-.totale-prijs p{
-    justify-self: center;
+
+.winkelwagen-item-img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: var(--white);
+    flex-shrink: 0;
+}
+
+/* ── Item Info ────────────────────────────────────────────── */
+.winkelwagen-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.winkelwagen-name {
+    font-family: "Alfa Slab One", serif;
+    font-size: 14px;
+    color: var(--dark-green);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.winkelwagen-qty-label {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+/* ── Price ────────────────────────────────────────────────── */
+.winkelwagen-price {
+    font-family: "Alfa Slab One", serif;
+    font-size: 15px;
+    color: var(--dark-green);
+    flex-shrink: 0;
+    min-width: 70px;
+    text-align: right;
+}
+
+/* ── Delete Button ────────────────────────────────────────── */
+.bin-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bin-button:hover {
+    background-color: #ffe0e0;
+}
+
+.bin-img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.bin-button:hover .bin-img {
+    opacity: 1;
+}
+
+/* ── Empty / Not logged in states ────────────────────────── */
+.None-p-tag {
+    text-align: center;
+    font-family: "Alfa Slab One", serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--dark-green);
+    background-color: var(--beige);
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    max-width: 500px;
+    margin: 4rem auto;
+}
+
+.cart-empty-state {
+    text-align: center;
+    background-color: var(--beige);
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    max-width: 500px;
+    margin: 4rem auto;
+}
+
+.cart-empty-state p {
+    font-family: "Alfa Slab One", serif;
+    font-size: 15px;
+    color: var(--dark-green);
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Total row (below items) ──────────────────────────────── */
+.totale-prijs {
+    display: none; /* Payment component handles total */
 }

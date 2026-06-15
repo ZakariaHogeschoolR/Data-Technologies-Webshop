@@ -11,8 +11,11 @@ import CategoryDetail from './Component/CategoryDetail.tsx'
 import Winkelwagen from './Component/Layout/Winkelwagen';
 import AdminPage from "../src/Component/Pages/AdminPage";
 import Authentication from "./Component/Pages/Authentication.tsx";
+import ForgotPassword from "./Component/Pages/ForgotPassword";
+import ResetPassword from "./Component/Pages/ResetPassword";
 import ProfilePage from "./Component/Pages/ProfilePage.tsx";
-
+import CheckoutPage from "./Component/Pages/Checkout.tsx";
+import WishlistDetail from './Component/Pages/WishlistDetail.tsx';
 const router = createHashRouter([
   {
     path: '/',
@@ -20,13 +23,17 @@ const router = createHashRouter([
     children: [
         { index: true, element: <Home /> },
         { path: 'about', element: <About /> },
-        { path: 'products/:id', element: <ProductDetail/>},
-        { path: 'category/:id', element: <CategoryDetail/>},
-        { path: `winkelwagen/mine`, element: <Winkelwagen/>},
+        { path: 'products/:id', element: <ProductDetail />},
+        { path: 'category/:id', element: <CategoryDetail />},
+        { path: `winkelwagen/mine`, element: <Winkelwagen />},
+        { path: `wishlist/:id`, element: <WishlistDetail />},
         { path: 'admin', element: <AdminPage /> },
         { path: 'profile', element: <ProfilePage/> },
         { path: '*', element: <NotFound /> },
-        { path: 'auth', element: <Authentication/>},
+        { path: 'auth', element: <Authentication />},
+        { path: 'forgot-password', element: <ForgotPassword /> },
+        { path: 'reset-password', element: <ResetPassword /> },
+        { path: "checkout", element: <CheckoutPage /> }
     ],
   }
 ]);

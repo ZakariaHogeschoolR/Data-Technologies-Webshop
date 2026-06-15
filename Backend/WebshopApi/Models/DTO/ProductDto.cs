@@ -19,5 +19,5 @@ public class ProductDto
     public decimal Price { get; set; }
 
     [Required]
-    public int TeamId { get; set; }
+    public int? TeamId { get; set; }
 }

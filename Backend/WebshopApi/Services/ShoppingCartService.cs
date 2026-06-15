@@ -4,7 +4,7 @@ using models;
 
 namespace Service;
 
-public class ShoppingCartService
+public class ShoppingCartService : IShoppingCartService
 {
     private readonly ShoppingCartRepository _shoppingcartRepository;
     public ShoppingCartService(ShoppingCartRepository shoppingcartRepository)
@@ -40,10 +40,12 @@ public class ShoppingCartService
     {
         await _shoppingcartRepository.DeleteShoppingCarts(id);
     }
-    public async void DeleteProductsService(ShoppingCartDTO shoppingCartDTO)
+    public async Task DeleteProductsService(ShoppingCartDTO shoppingCartDTO)
     {
-        _shoppingcartRepository.DeleteProductFromShoppingcarts(shoppingCartDTO);
+        await _shoppingcartRepository.DeleteProductFromShoppingcarts(shoppingCartDTO);
     }
 
     public async Task<List<OrderHistoryDto>?> GetOrderHistoryService(int userId) => await _shoppingcartRepository.GetOrderHistoryByUserId(userId);
+
+    public async Task<CheckoutResultDto> Checkout(int userId, string paymentMethod = "card") => await _shoppingcartRepository.Checkout(userId, paymentMethod);
 }
