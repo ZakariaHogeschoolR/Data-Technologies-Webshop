@@ -32,4 +32,11 @@ public class GraphController : ControllerBase
         await _graphService.AddBulkBoughtService(dto);
         return Ok(new { message = "Bulk BOUGHT relations updated" });
     }
+
+    [HttpGet("trending")]
+    public async Task<IActionResult> TrendingTeams()
+    {
+        var teams = await _graphService.TrendingTeamsService();
+        return Ok(teams);
+    }
 }
