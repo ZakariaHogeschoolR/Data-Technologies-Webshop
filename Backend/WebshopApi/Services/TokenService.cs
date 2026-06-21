@@ -18,6 +18,7 @@ public class TokenService(IConfiguration configuration) : ITokenService
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email),
             new("Username", user.Username),
             new(ClaimTypes.Role, user.Role)
