@@ -26,7 +26,13 @@ public class UserRepository : IUser
     {
         var users = new List<Users>();
         using var conn = await _dbConnectie.GetConnection();
-        var sql = "SELECT * FROM users";
+
+        const string sql = """
+                           SELECT u.id, u.first_name, u.last_name, u.username, u.role,
+                                  p.email, p.password, p.address, p.postcode
+                           FROM public.users u
+                           JOIN pii.users_pii p ON p.user_id = u.id
+                           """;
 
         using var cmd = new NpgsqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
@@ -46,8 +52,6 @@ public class UserRepository : IUser
                 Role = reader.GetString(reader.GetOrdinal("role")),
             });
         }
-        // only activate when there is already items in the database
-        //await GetAllUsersForGraph();
         return users;
     }
 
