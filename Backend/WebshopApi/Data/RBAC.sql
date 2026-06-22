@@ -65,3 +65,8 @@ GRANT ALL ON public."Payments" TO webshop_dba;
 
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO webshop_transact, webshop_manage, webshop_dba;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA pii TO webshop_manage, webshop_dba;
+
+GRANT SELECT, INSERT ON public.order_items TO webshop_transact;
+GRANT ALL ON public.order_items TO webshop_manage;
+GRANT ALL ON public.order_items TO webshop_dba;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO webshop_transact;
