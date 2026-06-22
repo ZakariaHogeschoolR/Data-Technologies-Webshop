@@ -11,7 +11,7 @@ public class ProductRepository : IProduct
     private readonly DatabaseConnectie _dbConnectie;
     private readonly Neo4jService _neo4j;
 
-    public ProductRepository(DatabaseConnectie dbConnectie, Neo4jService neo4j)
+    public ProductRepository(AdminDatabaseConnection dbConnectie, Neo4jService neo4j)
     {
         _dbConnectie = dbConnectie;
         _neo4j = neo4j;
@@ -601,10 +601,14 @@ public class ProductRepository : IProduct
     {
         using var conn = await _dbConnectie.GetConnection();
 
-        var sql = "DELETE FROM products WHERE id = @id";
+        var deleteCategoriesSql = "DELETE FROM product_categories WHERE product_id = @id";
+        using var categoriesCmd = new NpgsqlCommand(deleteCategoriesSql, conn);
+        categoriesCmd.Parameters.AddWithValue("@id", id);
+        await categoriesCmd.ExecuteNonQueryAsync();
 
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@id", id);
-        await cmd.ExecuteNonQueryAsync();
+        var deleteProductSql = "DELETE FROM products WHERE id = @id";
+        using var productCmd = new NpgsqlCommand(deleteProductSql, conn);
+        productCmd.Parameters.AddWithValue("@id", id);
+        await productCmd.ExecuteNonQueryAsync();
     }
 }
